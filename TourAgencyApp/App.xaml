@@ -1,0 +1,11 @@
+﻿<Application x:Class="TourAgencyApp.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:viewModels="clr-namespace:TourAgencyApp.ViewModels"
+              xmlns:views="clr-namespace:TourAgencyApp.Views.Client.Pages"
+             xmlns:local="clr-namespace:TourAgencyApp"
+             StartupUri="/Views/Login.xaml">
+    <Application.Resources>
+         
+    </Application.Resources>
+</Application>

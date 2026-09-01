@@ -1,0 +1,57 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style x:Key="LeftBorderStyle" TargetType="{x:Type Border}">
+        <Setter Property="Background" Value="#776582"/>
+        <Setter Property="BorderThickness" Value="4" />
+        <Setter Property="BorderBrush" Value="#493a54"/>
+    </Style>
+
+
+    <Style x:Key="BordersButtonStyle" TargetType="{x:Type Button}">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="#b9a5d2"/>
+        <Setter Property="Margin" Value="2"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="Foreground" Value="#ebd7ce"/>
+        <Setter Property="Padding" Value="5"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Foreground" Value="Black"/>
+                <Setter Property="BorderThickness" Value="3"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="LabelUsername" TargetType="{x:Type Label}">
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="Margin" Value="5"/>
+        <Setter Property="Foreground" Value="#eeeadf"/>
+    </Style>
+
+    <Style x:Key="LabelStyle1" TargetType="{x:Type Label}">
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="Margin" Value="5"/>
+        <Setter Property="Foreground" Value="Black"/>
+    </Style>
+
+    <Style x:Key="ButtonStyle1" TargetType="{x:Type Button}">
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="Margin" Value="10,0,5,0"/>
+        <Setter Property="Padding" Value="5"/>
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="Height" Value="40"/>
+    </Style>
+
+    <Style x:Key="ComboboxStyle1" TargetType="{x:Type ComboBox}">
+        <Setter Property="Width" Value="350"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+
+    <Style x:Key="MainFrameStyle" TargetType="{x:Type Frame}">
+        <Setter Property="NavigationUIVisibility" Value="Hidden"/>
+        <Setter Property="Padding" Value="10"/>
+        <Setter Property="Background" Value="#c2dbfc"/>
+    </Style>
+
+</ResourceDictionary>

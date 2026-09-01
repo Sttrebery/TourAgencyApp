@@ -1,0 +1,101 @@
+﻿<Page x:Class="TourAgencyApp.Views.Employee.Pages.HotelsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:TourAgencyApp.Views.Employee.Pages"
+      xmlns:l="clr-namespace:TourAgencyApp"
+      mc:Ignorable="d" 
+      d:DesignHeight="700" d:DesignWidth="800"
+      Title="HotelsPage">
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <l:ByteArrayToImageConverter x:Key="ByteToImageConverter" />
+
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Dictionaries/PagesDictionary.xaml"/>
+                <ResourceDictionary Source="/Dictionaries/MainWindowDictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <ScrollViewer Background="AliceBlue" VerticalScrollBarVisibility="Auto">
+        <TabControl>
+            <TabItem Name="tab_hotels_list" Header="Список отелей" Selector.Selected="tab_hotels_list_Selected">
+                <StackPanel>
+                    <DataGrid ItemsSource="{Binding Hotels}" AutoGenerateColumns="False" IsReadOnly="True" >
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Название" Binding="{Binding Name_}" />
+                            <DataGridTextColumn Header="Информация" Binding="{Binding Information_}" />
+                            <DataGridTextColumn Header="Местоположение" Binding="{Binding Location_}" />
+                            <DataGridTemplateColumn Header="Фото" Width="Auto">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Image Source="{Binding ImageHotel, Converter={StaticResource ByteToImageConverter}}"
+                                               Width="100" Height="100" 
+                                               Stretch="Uniform"
+                                               Margin="2"/>     
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+            </TabItem>
+            <TabItem x:Name="tab_AddHotel" Header="Добавить отель" HorizontalContentAlignment="Center" Selector.Selected="tab_AddHotel_Selected" >
+                <StackPanel Margin="10" >
+                    <Label FontSize="18">Название отеля*:</Label>
+                    <TextBox FontSize="18" Text="{Binding Name}"></TextBox>
+
+                    <Label FontSize="18">Описание*:</Label>
+                    <TextBox FontSize="18" Text="{Binding Information}"></TextBox>
+
+                    <Label FontSize="18">Адрес*:</Label>
+                    <TextBox FontSize="18" Text="{Binding Location}"></TextBox>
+
+                    <Button Margin="10" HorizontalAlignment="Left" Height="25" Width="120" Command="{Binding LoadPhotoCommand}">Загрузить фото</Button>
+                    <Border BorderBrush="Black" BorderThickness="1">
+                        <Image Source="{Binding Photo}" Height="200" Width="400"/>
+                    </Border>
+
+                    <WrapPanel HorizontalAlignment="Center" Margin="10">
+                        <Button Margin="20,0,20,0" FontSize="16" Height="40" Width="100" Command="{Binding AddHotelCommand}">Добавить</Button>
+                        <Button Margin="20,0,20,0" FontSize="16" Height="40" Width="100" Command="{Binding ClearFormCommand}">Очистить</Button>
+                    </WrapPanel>
+
+
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Редактировать / Удалить отель">
+                <StackPanel>
+                    <Label Style="{StaticResource LabelStyle1}" FontSize="20" Margin="30,20,30,0" >Выберите отель:</Label>
+                    <ComboBox Name="cmb_hotel" Margin="30,20,30,0"  FontSize="20" ItemsSource="{Binding HotelsToSelect}" SelectedValue="{Binding SelectedHotel}" SelectionChanged="cmb_hotel_SelectionChanged"></ComboBox>
+                    <StackPanel Margin="30,10,30,0">
+                        <Label FontSize="18">Название отеля*:</Label>
+                        <TextBox FontSize="18" Text="{Binding Name}"></TextBox>
+
+                        <Label FontSize="18" >Описание*:</Label>
+                        <TextBox FontSize="18" Text="{Binding Information}"></TextBox>
+
+                        <Label FontSize="18" >Адрес*:</Label>
+                        <TextBox FontSize="18"  Text="{Binding Location}"></TextBox>
+
+                        <Button Margin="10" HorizontalAlignment="Left" Height="25" Width="120" Command="{Binding LoadPhotoCommand}">Загрузить фото</Button>
+                        <Border BorderBrush="Black" BorderThickness="1">
+                            <Image Source="{Binding Photo}" Height="200"/>
+                        </Border>
+                    </StackPanel>
+
+                    <WrapPanel HorizontalAlignment="Center">
+                        <Button FontSize="16" Margin="20" Padding="10" Command="{Binding SaveHotelCommand}">Сохранить изменения</Button>
+                        <Button FontSize="16" Margin="20" Padding="10" Command="{Binding DeleteHotelCommand}">Удалить</Button>
+                    </WrapPanel>
+                    
+                </StackPanel>
+
+            </TabItem>
+      
+        </TabControl>
+    </ScrollViewer>
+</Page>

@@ -1,0 +1,56 @@
+﻿<Page x:Class="TourAgencyApp.Views.Client.Pages.ClientProfile"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:wpfx="http://schemas.xceed.com/wpf/xaml/toolkit"
+      xmlns:local="clr-namespace:TourAgencyApp.Views.Client.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="500"
+      Title="ClientProfile">
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Dictionaries/PagesDictionary.xaml"/>
+                <ResourceDictionary Source="/Dictionaries/MainWindowDictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <ScrollViewer Background="#c2dbfc" VerticalScrollBarVisibility="Auto">
+        <StackPanel HorizontalAlignment="Center">
+            <Label Style="{StaticResource LabelPageHeader}" Content="Мой профиль" Padding="20"></Label>
+            <WrapPanel Margin="10">
+                <Label Margin="0,0,2,0" Style="{StaticResource LabelStyle2}">Фамилия:</Label>
+                <TextBox Style="{StaticResource TextboxProfileStyle}" Text="{Binding Surname}"></TextBox>
+            </WrapPanel>
+
+            <WrapPanel Margin="10">
+                <Label Margin="20,0,26,0" Style="{StaticResource LabelStyle2}">Имя:</Label>
+                <TextBox Style="{StaticResource TextboxProfileStyle}" Text="{Binding Name}"></TextBox>
+            </WrapPanel>
+
+            <WrapPanel Margin="10">
+                <Label Style="{StaticResource LabelStyle2}">Отчество:</Label>
+                <TextBox Style="{StaticResource TextboxProfileStyle}" Text="{Binding Patronymic}"></TextBox>
+            </WrapPanel>
+
+            <WrapPanel Margin="10">
+                <Label Margin="0,0,6,0" Style="{StaticResource LabelStyle2}">Телефон:</Label>
+                <TextBox Style="{StaticResource TextboxProfileStyle}" Text="{Binding Phone}" ></TextBox>
+            </WrapPanel>
+
+            <WrapPanel Margin="10">
+                <Label Margin="0,0,10,0" Style="{StaticResource LabelStyle2}">Почта:</Label>
+                <TextBox Width="260" Style="{StaticResource TextboxProfileStyle}" Text="{Binding Email}"></TextBox>
+            </WrapPanel>
+
+            <WrapPanel Margin="20,0,20,0" HorizontalAlignment="Center">
+                <Button Margin="20" Style="{StaticResource ButtonStyle1}" Command="{Binding SaveChangesCommand}">Сохранить</Button>
+                <Button Margin="20" Style="{StaticResource ButtonStyle1}" Command="{Binding ClearCommand}">Отмена</Button>
+            </WrapPanel>
+            
+        </StackPanel>
+    </ScrollViewer>
+</Page>

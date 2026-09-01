@@ -1,0 +1,63 @@
+﻿<Window x:Class="TourAgencyApp.Views.Employee.MainEmployeeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:TourAgencyApp.ViewModels"
+        xmlns:views="clr-namespace:TourAgencyApp.Views.Employee.Pages"
+        xmlns:local="clr-namespace:TourAgencyApp.Views.Employee"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        Icon="/res/world_travel_icon.ico"
+        Height="600" Width="1000"
+        MinHeight="600" MinWidth="900">
+    
+    <Window.Resources>
+        <ResourceDictionary>
+            <DataTemplate DataType="{x:Type vm:EmployeeTourViewModel}">
+                <views:Tours />
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:EmployeeHotelsViewModel}">
+                <views:HotelsPage />
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:StatsViewModel}">
+                <views:Stats />
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:ClientCheckViewModel}">
+                <views:CheckPage />
+            </DataTemplate>
+
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Dictionaries/MainWindowDictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="350"/>
+            <ColumnDefinition Width="70*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0" Style="{StaticResource LeftBorderStyle}">
+            <StackPanel Grid.Column="0" Grid.RowSpan="2" Margin="20">
+
+                <WrapPanel>
+                    <Label Style="{StaticResource LabelUsername}">Сотрудник:</Label>
+                    <Label Style="{StaticResource LabelUsername}" Content="{Binding UserName}"></Label>
+                </WrapPanel>
+                <Button x:Name="btn_tours" Style="{StaticResource BordersButtonStyle}" Command="{Binding NavigateToToursCommand}">Туры</Button>
+                <Button x:Name="btn_hotels" Style="{StaticResource BordersButtonStyle}" Command="{Binding NavigateToHotelsCommand}">Отели</Button>
+                <Button x:Name="btn_stats" Style="{StaticResource BordersButtonStyle}" Command="{Binding NavigateToStatsCommand}">Статистика</Button>
+                <Button x:Name="btn_check" Style="{StaticResource BordersButtonStyle}" Command="{Binding NavigateToClientCheckCommand}">Проверить клиента</Button>
+
+            </StackPanel>
+        </Border>
+
+        <Frame x:Name="frame_content" Grid.Column="1" Content="{Binding CurrentPage}" Style="{StaticResource MainFrameStyle}"></Frame>
+    </Grid>
+</Window>
