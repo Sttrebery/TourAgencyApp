@@ -16,7 +16,7 @@ namespace TourAgencyApp.ViewModels
     public class LoginViewModel : INotifyPropertyChanged
     {
         #region Fields
-        private AgencyClients Client { get; set; } = null;
+        private Tourist Client { get; set; } = null;
         private Employee Employee { get; set; } = null;
         private string _username = string.Empty;
         private string _myPassword = string.Empty;
@@ -83,61 +83,61 @@ namespace TourAgencyApp.ViewModels
 
         private void SignIn()
         {
-            Window logged;
-            if (IsClient)
-            {
-                using (var db = new TourAgencyDbContext())
-                {
-                    Client = db.AgencyClients.FirstOrDefault(c => c.Login == Username);
-                }
-                Validate(Client);
-                if(IsValidated)
-                {
-                    logged = new MainClientWindow();
-                    var clientViewModel = new ClientMainViewModel(Client);
-                    logged.DataContext = clientViewModel;
-                    logged.Show();
-                }
-            }
-            else if (IsEmployee)
-            {
-                using (var db = new TourAgencyDbContext())
-                {
-                    Employee = db.Employees.FirstOrDefault(c => c.Login == Username);
-                }
-                Validate(Employee);
-                if (IsValidated)
-                {
-                    logged = new MainEmployeeWindow();
-                    var empViewModel = new EmployeeMainViewModel(Employee);
-                    logged.DataContext = empViewModel;
-                    logged.Show();
-                }
-            }
+            //Window logged;
+            //if (IsClient)
+            //{
+            //    using (var db = new TourAgencyDbContext())
+            //    {
+            //        Client = db.AgencyClients.FirstOrDefault(c => c.Login == Username);
+            //    }
+            //    Validate(Client);
+            //    if(IsValidated)
+            //    {
+            //        logged = new MainClientWindow();
+            //        var clientViewModel = new ClientMainViewModel(Client);
+            //        logged.DataContext = clientViewModel;
+            //        logged.Show();
+            //    }
+            //}
+            //else if (IsEmployee)
+            //{
+            //    using (var db = new TourAgencyDbContext())
+            //    {
+            //        Employee = db.Employees.FirstOrDefault(c => c.Login == Username);
+            //    }
+            //    Validate(Employee);
+            //    if (IsValidated)
+            //    {
+            //        logged = new MainEmployeeWindow();
+            //        var empViewModel = new EmployeeMainViewModel(Employee);
+            //        logged.DataContext = empViewModel;
+            //        logged.Show();
+            //    }
+            //}
         }
 
         private void Validate(object User)
         {
-            if (User == null)
-            {
-                Validation = "Такой пользователь не найден";
-            }
-            else if (User is AgencyClients agencyClient && agencyClient.Password != MyPassword)
-            {
-                Validation = "Неправильный пароль";
-            }
-            else if (User is Employee employee && employee.Password != MyPassword)
-            {
-                Validation = "Неправильный пароль";
-            }
-            else
-            {
-                Validation = string.Empty;
-                IsValidated = true;
-                return;
-            }
-            MessageBox.Show(Validation);
-            IsValidated = false;
+            //if (User == null)
+            //{
+            //    Validation = "Такой пользователь не найден";
+            //}
+            //else if (User is Tourist agencyClient && agencyClient.Password != MyPassword)
+            //{
+            //    Validation = "Неправильный пароль";
+            //}
+            //else if (User is Employee employee && employee.Password != MyPassword)
+            //{
+            //    Validation = "Неправильный пароль";
+            //}
+            //else
+            //{
+            //    Validation = string.Empty;
+            //    IsValidated = true;
+            //    return;
+            //}
+            //MessageBox.Show(Validation);
+            //IsValidated = false;
         }
 
         private void Register()

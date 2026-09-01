@@ -23,7 +23,7 @@ namespace TourAgencyApp.ViewModels
         }
         public string UserName
         {
-            get => $"{Employee.Surname} {Employee.Name_} {Employee.Patronymic}";
+            get => $"{Employee.Surname} {Employee.Name} {Employee.Patronimyc}";
         }
 
         // текущая выбранная страница

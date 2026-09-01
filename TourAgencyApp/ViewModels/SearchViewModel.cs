@@ -86,8 +86,8 @@ namespace TourAgencyApp.ViewModels
         {
             _dataService = dataService;
             _allTours = _dataService.GetTours();
-            Countries = _dataService.GetAllCountries().Select(c => c.Name_).Distinct().ToList();
-            Transports = _dataService.GetAllTransports().Select(t => t.Name_).Distinct().ToList();
+            Countries = _dataService.GetAllCountries().Select(c => c.Name).Distinct().ToList();
+            Transports = _dataService.GetAllTransports().Select(t => t.Name).Distinct().ToList();
             SearchResults = new ObservableCollection<Tour>();
 
             MiniSearchCommand = new RelayCommand(ExecuteTextSearch, CanExecuteSearch);
@@ -112,7 +112,7 @@ namespace TourAgencyApp.ViewModels
                 return;
             }
 
-            var results = _allTours.Where(t => t.NameTour.StartsWith(SearchText, StringComparison.InvariantCultureIgnoreCase));
+            var results = _allTours.Where(t => t.Name.StartsWith(SearchText, StringComparison.InvariantCultureIgnoreCase));
             SearchResults = new ObservableCollection<Tour>(results);
         }
 

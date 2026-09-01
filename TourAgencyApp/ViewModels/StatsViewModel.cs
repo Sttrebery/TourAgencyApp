@@ -41,9 +41,9 @@ namespace TourAgencyApp.ViewModels
 
         public void LoadData()
         {
-            TopTour = new ObservableCollection<Tour>(_dataService.GetTopActualTour());
-            AntiTopTour = new ObservableCollection<Tour>(_dataService.GetUnpopularTour());
-            TopTourist = _dataService.GetActiveTourist();
+            //TopTour = new ObservableCollection<Tour>(_dataService.GetTopActualTour());
+            //AntiTopTour = new ObservableCollection<Tour>(_dataService.GetUnpopularTour());
+            //TopTourist = _dataService.GetActiveTourist();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

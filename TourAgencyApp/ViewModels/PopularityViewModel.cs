@@ -21,7 +21,6 @@ namespace TourAgencyApp.ViewModels
         private int _topCountryCount;
 
         private ObservableCollection<Tour> _topTour;
-        private ObservableCollection<ArchiveTours> _topArchiveTour;
         private ObservableCollection<Hotel> _topHotel;
         #endregion
 
@@ -60,12 +59,12 @@ namespace TourAgencyApp.ViewModels
 
         public void LoadData()
         {
-            _dataService.GetTopCountry(out _topCountryName,out _topCountryCount);
+            //_dataService.GetTopCountry(out _topCountryName,out _topCountryCount);
             OnPropertyChanged(nameof(TopCountryName));
             OnPropertyChanged(nameof(TopCountryCount));
 
-            TopTour = new ObservableCollection<Tour>(_dataService.GetTopActualTour());
-            TopHotel = new ObservableCollection<Hotel>(_dataService.GetTopHotel());
+            //TopTour = new ObservableCollection<Tour>(_dataService.GetTopActualTour());
+            //TopHotel = new ObservableCollection<Hotel>(_dataService.GetTopHotel());
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

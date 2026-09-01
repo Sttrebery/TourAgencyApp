@@ -132,84 +132,84 @@ namespace TourAgencyApp.Data
         }
 
         // todo: Получение популярной страны
-        public void GetTopCountry(out string name, out int count)
-        {
-            using (var db = new TourAgencyDbContext())
-            {
-                var res = db.Populist_Country();
-                name = res.Select(r => r.NameCountry).First();
-                count = res.Select(r => r.AllTours).First() ?? 0;
-            }
-        }
+        //public void GetTopCountry(out string name, out int count)
+        //{
+        //    using (var db = new TourAgencyDbContext())
+        //    {
+        //        var res = db.Populist_Country();
+        //        name = res.Select(r => r.NameCountry).First();
+        //        count = res.Select(r => r.AllTours).First() ?? 0;
+        //    }
+        //}
 
         // todo:  Получение популярного актуального тура
-        public IEnumerable<Tour> GetTopActualTour()
-        {
-            List<Tour> topTour = new List<Tour>();
-            try
-            {
-                using (var db = new TourAgencyDbContext())
-                {
-                    var res = db.PopularTour;
-                    Tour tmp = db.Tours.First(t => t.NameTour == res.Select(r => r.NameTour).FirstOrDefault());
-                    topTour.Add(tmp);
-                }
-            }
-            catch { }
-            return topTour;
-        }
+        //public IEnumerable<Tour> GetTopActualTour()
+        //{
+        //    List<Tour> topTour = new List<Tour>();
+        //    try
+        //    {
+        //        using (var db = new TourAgencyDbContext())
+        //        {
+        //            var res = db.PopularTour;
+        //            Tour tmp = db.Tours.First(t => t.NameTour == res.Select(r => r.NameTour).FirstOrDefault());
+        //            topTour.Add(tmp);
+        //        }
+        //    }
+        //    catch { }
+        //    return topTour;
+        //}
 
         // todo: Получение популярного отеля
         //
-        public IEnumerable<Hotel> GetTopHotel()
-        {
-            List<Hotel> topHotel = new List<Hotel>();
-            try
-            {
-                using (var db = new TourAgencyDbContext())
-                {
-                    var res = db.Populist_Hotel();
-                    string name = res.Select(r => r.NameHotel).First();
-                    Hotel tmp = db.Hotels.First(h => h.Name_ == name);
-                    topHotel.Add(tmp);
-                }
-            }
-            catch { }
-            return topHotel;
-        }
+        //public IEnumerable<Hotel> GetTopHotel()
+        //{
+        //    List<Hotel> topHotel = new List<Hotel>();
+        //    try
+        //    {
+        //        using (var db = new TourAgencyDbContext())
+        //        {
+        //            var res = db.Populist_Hotel();
+        //            string name = res.Select(r => r.NameHotel).First();
+        //            Hotel tmp = db.Hotels.First(h => h.Name_ == name);
+        //            topHotel.Add(tmp);
+        //        }
+        //    }
+        //    catch { }
+        //    return topHotel;
+        //}
 
         // todo: Получение непопулярного тура - также как и популярные, просто last, а не first
-        public IEnumerable<Tour> GetUnpopularTour()
-        {
-            List<Tour> antiTour = new List<Tour>();
-            try
-            {
-                using (var db = new TourAgencyDbContext())
-                {
-                    var res = db.AntiPopularTour;
-                    Tour tmp = db.Tours.First(t => t.NameTour == res.Select(r => r.NameTour).FirstOrDefault());
-                    antiTour.Add(tmp);
-                }
-            }
-            catch {}
-            return antiTour;
-        }
+        //public IEnumerable<Tour> GetUnpopularTour()
+        //{
+        //    List<Tour> antiTour = new List<Tour>();
+        //    try
+        //    {
+        //        using (var db = new TourAgencyDbContext())
+        //        {
+        //            var res = db.AntiPopularTour;
+        //            Tour tmp = db.Tours.First(t => t.NameTour == res.Select(r => r.NameTour).FirstOrDefault());
+        //            antiTour.Add(tmp);
+        //        }
+        //    }
+        //    catch {}
+        //    return antiTour;
+        //}
 
         // todo: Получение активного пользователя
-        public string GetActiveTourist()
-        {
-            string tourist = string.Empty;
-            try
-            {
-                using (var db = new TourAgencyDbContext())
-                {
-                    var res = db.ActiveTourist().First();
-                    tourist = $"{res.Surname} {res.FirstName} {res.Patronymic}";
-                }
-            }
-            catch { }
-            return tourist;
-        }
+        //public string GetActiveTourist()
+        //{
+        //    string tourist = string.Empty;
+        //    try
+        //    {
+        //        using (var db = new TourAgencyDbContext())
+        //        {
+        //            var res = db.ActiveTourist().First();
+        //            tourist = $"{res.Surname} {res.FirstName} {res.Patronymic}";
+        //        }
+        //    }
+        //    catch { }
+        //    return tourist;
+        //}
 
         //Туры пользователя
         public IEnumerable<Tour> GetClientTours(string name, string surname, string patronimyc)
@@ -335,31 +335,31 @@ namespace TourAgencyApp.Data
         }
 
         //todo: проверка клиента в туре ли он
-        public string CheckClient(string surname, string name, string patronimyc)
-        {
-            string result = string.Empty;
-            try
-            {
-                using(var db = new TourAgencyDbContext())
-                {
-                    var temp = db.stp_GetLocation2(name,patronimyc,surname).First();
+        //public string CheckClient(string surname, string name, string patronimyc)
+        //{
+        //    string result = string.Empty;
+        //    try
+        //    {
+        //        using(var db = new TourAgencyDbContext())
+        //        {
+        //            var temp = db.stp_GetLocation2(name,patronimyc,surname).First();
 
-                    if (temp.IsOnTour.Value)
-                    {
-                        result = $"{temp.Surname} {temp.FirstName} {temp.Patronymic} в туре {temp.NameTour} с {temp.StartDate} по {temp.EndDate}";
-                    }
-                    else
-                    {
-                        result = $"{temp.Surname} {temp.FirstName} {temp.Patronymic} сейчас не в туре";
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                result = e.Message;
-            }
-            return result;
-        }
+        //            if (temp.IsOnTour.Value)
+        //            {
+        //                result = $"{temp.Surname} {temp.FirstName} {temp.Patronymic} в туре {temp.NameTour} с {temp.StartDate} по {temp.EndDate}";
+        //            }
+        //            else
+        //            {
+        //                result = $"{temp.Surname} {temp.FirstName} {temp.Patronymic} сейчас не в туре";
+        //            }
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        result = e.Message;
+        //    }
+        //    return result;
+        //}
 
         // ======Поиск=====
 
@@ -398,40 +398,40 @@ namespace TourAgencyApp.Data
         }
 
         //todo: получение клиента по ФИО
-        public AgencyClients GetClientByFIO(string surname, string name, string patronimyc)
-        {
-            AgencyClients client;
-            try
-            {
-                using (var db = new TourAgencyDbContext())
-                {
-                    client = db.AgencyClients.Where(c => c.Name_ == name && c.Surname == surname && c.Patronymic == patronimyc).FirstOrDefault();
-                }
-            }
-            catch
-            {
-                client = null;
-            }
-            return client;
-        }
+        //public AgencyClients GetClientByFIO(string surname, string name, string patronimyc)
+        //{
+        //    AgencyClients client;
+        //    try
+        //    {
+        //        using (var db = new TourAgencyDbContext())
+        //        {
+        //            client = db.AgencyClients.Where(c => c.Name_ == name && c.Surname == surname && c.Patronymic == patronimyc).FirstOrDefault();
+        //        }
+        //    }
+        //    catch
+        //    {
+        //        client = null;
+        //    }
+        //    return client;
+        //}
 
         //todo: получени сотрудника по логину
-        public Employee GetEmployeeByLogin(string login)
-        {
-            Employee emp;
-            try
-            {
-                using (var db = new TourAgencyDbContext())
-                {
-                    emp = db.Employees.Where(e => e.Login == login).FirstOrDefault();
-                }
-            }
-            catch
-            {
-                emp = null;
-            }
-            return emp;
-        }
+        //public Employee GetEmployeeByLogin(string login)
+        //{
+        //    Employee emp;
+        //    try
+        //    {
+        //        using (var db = new TourAgencyDbContext())
+        //        {
+        //            emp = db.Employees.Where(e => e.Login == login).FirstOrDefault();
+        //        }
+        //    }
+        //    catch
+        //    {
+        //        emp = null;
+        //    }
+        //    return emp;
+        //}
 
         //todo: добавление нового сотрудника
         public bool AddNewEmployee(Employee e)
@@ -454,23 +454,23 @@ namespace TourAgencyApp.Data
         }
 
         //todo: добавление нового клиента
-        public bool AddNewClient(AgencyClients ac)
-        {
-            bool result;
-            try
-            {
-                using (var db = new TourAgencyDbContext())
-                {
-                    db.AgencyClients.Add(ac);
-                    db.SaveChanges();
-                }
-                result = true;
-            }
-            catch
-            {
-                result = false;
-            }
-            return result;
-        }
+        //public bool AddNewClient(AgencyClients ac)
+        //{
+        //    bool result;
+        //    try
+        //    {
+        //        using (var db = new TourAgencyDbContext())
+        //        {
+        //            db.AgencyClients.Add(ac);
+        //            db.SaveChanges();
+        //        }
+        //        result = true;
+        //    }
+        //    catch
+        //    {
+        //        result = false;
+        //    }
+        //    return result;
+        //}
     }
 }

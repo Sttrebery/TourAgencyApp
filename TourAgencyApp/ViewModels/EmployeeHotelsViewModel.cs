@@ -66,7 +66,7 @@ namespace TourAgencyApp.ViewModels
 
         public IEnumerable<string> HotelsToSelect
         {
-            get => Hotels.Select(h => h.Name_);
+            get => Hotels.Select(h => h.Name);
         }
 
         public string SelectedHotel
@@ -112,42 +112,42 @@ namespace TourAgencyApp.ViewModels
 
         private void AddHotel()
         {
-            if(!CanExecute())
-            {
-                MessageBox.Show("Заполните все обязательные поля");
-                return;
-            }
+            //if(!CanExecute())
+            //{
+            //    MessageBox.Show("Заполните все обязательные поля");
+            //    return;
+            //}
 
-            Hotel to_add = new Hotel() { Name_ = Name, Location_ = Location, Information_ = Information, ImageHotel = Photo };
-            try
-            {
-                _dataService.AddNewHotel(to_add);
-                MessageBox.Show("Отель успешно добавлен");
-            }
-            catch
-            {
-                MessageBox.Show("Не удалось добавить отель");
-            }
+            //Hotel to_add = new Hotel() { Name_ = Name, Location_ = Location, Information_ = Information, ImageHotel = Photo };
+            //try
+            //{
+            //    _dataService.AddNewHotel(to_add);
+            //    MessageBox.Show("Отель успешно добавлен");
+            //}
+            //catch
+            //{
+            //    MessageBox.Show("Не удалось добавить отель");
+            //}
         }
 
         private void EditHotel()
         {
-            if (!CanExecute())
-            {
-                MessageBox.Show("Заполните все обязательные поля");
-                return;
-            }
+            //if (!CanExecute())
+            //{
+            //    MessageBox.Show("Заполните все обязательные поля");
+            //    return;
+            //}
 
-            Hotel edited = new Hotel() { Name_ = Name, Location_ = Location, Information_ = Information, ImageHotel = Photo };
-            try
-            {
-                _dataService.EditHotel(SelectedHotel, edited);
-                MessageBox.Show("Изменения сохранены");
-            }
-            catch
-            {
-                MessageBox.Show("Не удалось внести изменения");
-            }
+            //Hotel edited = new Hotel() { Name_ = Name, Location_ = Location, Information_ = Information, ImageHotel = Photo };
+            //try
+            //{
+            //    _dataService.EditHotel(SelectedHotel, edited);
+            //    MessageBox.Show("Изменения сохранены");
+            //}
+            //catch
+            //{
+            //    MessageBox.Show("Не удалось внести изменения");
+            //}
         }
 
         private void DeleteHotel()
@@ -166,11 +166,11 @@ namespace TourAgencyApp.ViewModels
         //очистка данных при SelectionChanged
         public void UpdateData()
         {
-            var selected = Hotels.First(h => h.Name_ == SelectedHotel);
-            Name = selected.Name_;
-            Information = selected.Information_;
-            Location = selected.Location_;
-            Photo = selected.ImageHotel;
+            var selected = Hotels.First(h => h.Name == SelectedHotel);
+            //Name = selected.Name_;
+            //Information = selected.Information_;
+            //Location = selected.Location_;
+            //Photo = selected.ImageHotel;
         }
 
         private void LoadPhoto()

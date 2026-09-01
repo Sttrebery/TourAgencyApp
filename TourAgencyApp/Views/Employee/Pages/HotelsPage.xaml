@@ -3,16 +3,15 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:TourAgencyApp.Views.Employee.Pages"
-      xmlns:l="clr-namespace:TourAgencyApp"
+      xmlns:emp="clr-namespace:TourAgencyApp.Views.Employee.Pages"
+      xmlns:local_page="clr-namespace:TourAgencyApp"
       mc:Ignorable="d" 
       d:DesignHeight="700" d:DesignWidth="800"
       Title="HotelsPage">
-
     <Page.Resources>
         <ResourceDictionary>
-            <l:ByteArrayToImageConverter x:Key="ByteToImageConverter" />
-
+            <!---todo: -->
+            <local_page:ByteArrayToImageConverter x:Key="ByteToImageConverter"/>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Dictionaries/PagesDictionary.xaml"/>
                 <ResourceDictionary Source="/Dictionaries/MainWindowDictionary.xaml"/>

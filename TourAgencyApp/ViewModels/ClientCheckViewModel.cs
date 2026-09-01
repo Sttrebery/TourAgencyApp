@@ -81,12 +81,12 @@ namespace TourAgencyApp.ViewModels
 
         public void LoadData()
         {
-            _allClients = _dataService.GetAllClients().Select(c => new FIO { Name = c.Name_, SurName = c.Surname, Patronimyc = c.Patronymic }).Distinct();
+            //_allClients = _dataService.GetAllClients().Select(c => new FIO { Name = c.Name_, SurName = c.Surname, Patronimyc = c.Patronymic }).Distinct();
         }
 
         private void Check()
         {
-            MessageBox.Show(_dataService.CheckClient(SelectedClient.SurName, SelectedClient.Name, SelectedClient.Patronimyc));
+            //MessageBox.Show(_dataService.CheckClient(SelectedClient.SurName, SelectedClient.Name, SelectedClient.Patronimyc));
         }
 
 

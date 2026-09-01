@@ -17,7 +17,7 @@ namespace TourAgencyApp.ViewModels
     {
         #region vars
         private DataService _dataService;
-        private AgencyClients Client { get; set; }
+        private Tourist Client { get; set; }
         private Employee Employee { get; set; }
 
         private string _validation = string.Empty;
@@ -128,7 +128,7 @@ namespace TourAgencyApp.ViewModels
         {
             //_dataService = new DataService();
 
-            RegisterEvent = Register;
+            //RegisterEvent = Register;
             RegisterCommand = new RelayCommand(() => RegisterEvent());
         }
 
@@ -157,37 +157,37 @@ namespace TourAgencyApp.ViewModels
 
         private bool CanRegister()
         {
-            if (!IsFormFilled())
-            {
-                Validation = "Форма не заполнена полностью";
-                return false;
-            }
+            //if (!IsFormFilled())
+            //{
+            //    Validation = "Форма не заполнена полностью";
+            //    return false;
+            //}
 
-            if(!CheckPassword())
-            {
-                Validation = "Пароли не совпадают";
-                return false;
-            }
+            //if(!CheckPassword())
+            //{
+            //    Validation = "Пароли не совпадают";
+            //    return false;
+            //}
 
-            if(IsClient)
-            {
-                var founded = _dataService.GetClientByFIO(Surname, Firstname, Patronimyc);
-                if (founded != null)
-                {
-                    Validation = "Клиент уже зарегистрирован в базе";
-                    return false;
-                }
-            }
+            //if(IsClient)
+            //{
+            //    var founded = _dataService.GetClientByFIO(Surname, Firstname, Patronimyc);
+            //    if (founded != null)
+            //    {
+            //        Validation = "Клиент уже зарегистрирован в базе";
+            //        return false;
+            //    }
+            //}
             
-            if(IsEmployee)
-            {
-                var founded = _dataService.GetEmployeeByLogin(Username);
-                if (founded != null)
-                {
-                    Validation = "Сотрудник уже зарегистрирован в базе";
-                    return false;
-                }
-            }
+            //if(IsEmployee)
+            //{
+            //    var founded = _dataService.GetEmployeeByLogin(Username);
+            //    if (founded != null)
+            //    {
+            //        Validation = "Сотрудник уже зарегистрирован в базе";
+            //        return false;
+            //    }
+            //}
 
             return true;
         }

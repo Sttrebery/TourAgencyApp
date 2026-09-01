@@ -12,7 +12,8 @@ namespace TourAgencyApp.Models
     {
         public TourAgencyDbContext() 
         {
-
+            //Database.EnsureDeleted();
+            //Database.EnsureCreated();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -33,6 +34,24 @@ namespace TourAgencyApp.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            //modelBuilder.Entity<User>().HasData(
+            //    new User { ID = 1, Username = "Tom", Password = "", Role = RoleEnum.Client },
+            //    new User { ID = 2, Username = "Alice", Password = "", Role = RoleEnum.Employee }
+
+
+            // Явная настройка связи многие-ко-многим
+            modelBuilder.Entity<Tour>()
+                .HasMany(t => t.Tourists)
+                .WithMany(t => t.ClientTours)
+                .UsingEntity<Dictionary<string, object>>( "TourTourists",
+                j => j.HasOne<Tourist>()
+                      .WithMany()
+                      .OnDelete(DeleteBehavior.Restrict),
+                j => j.HasOne<Tour>()
+                      .WithMany()
+                      .OnDelete(DeleteBehavior.Restrict) 
+                );
         }
     }
 }
