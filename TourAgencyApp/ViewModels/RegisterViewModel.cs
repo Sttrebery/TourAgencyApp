@@ -38,7 +38,6 @@ namespace TourAgencyApp.ViewModels
 
         //для сотрудника
         private string _position = string.Empty;
-        private DateTime? _workdate = null;
         #endregion
 
         #region props
@@ -113,12 +112,6 @@ namespace TourAgencyApp.ViewModels
             get => _position;
             set { _position = value; OnPropertyChanged(); }
         }
-
-        public DateTime? WorkDate
-        {
-            get => _workdate;
-            set { _workdate = value; OnPropertyChanged(); }
-        }
         #endregion
 
         public event Action RegisterEvent;
@@ -126,12 +119,13 @@ namespace TourAgencyApp.ViewModels
 
         public RegisterViewModel()
         {
-            //_dataService = new DataService();
+            _dataService = new DataService();
 
-            //RegisterEvent = Register;
+            RegisterEvent = Register;
             RegisterCommand = new RelayCommand(() => RegisterEvent());
         }
 
+        //todo:
         private bool IsFormFilled()
         {
             bool isFilled = true;
@@ -143,7 +137,7 @@ namespace TourAgencyApp.ViewModels
                 isFilled = false;
             }
 
-            if (_isEmployee && (string.IsNullOrEmpty(Position) || !WorkDate.HasValue) )
+            if (_isEmployee && (string.IsNullOrEmpty(Position)) )
             {
                 isFilled = false;
             }
@@ -169,78 +163,67 @@ namespace TourAgencyApp.ViewModels
             //    return false;
             //}
 
-            //if(IsClient)
-            //{
-            //    var founded = _dataService.GetClientByFIO(Surname, Firstname, Patronimyc);
+            //var founded = _dataService.GetUserByUsername(Username);
             //    if (founded != null)
             //    {
-            //        Validation = "Клиент уже зарегистрирован в базе";
+            //        Validation = "Пользователь уже зарегистрирован в базе";
             //        return false;
             //    }
-            //}
-            
-            //if(IsEmployee)
-            //{
-            //    var founded = _dataService.GetEmployeeByLogin(Username);
-            //    if (founded != null)
-            //    {
-            //        Validation = "Сотрудник уже зарегистрирован в базе";
-            //        return false;
-            //    }
-            //}
 
             return true;
         }
 
-        //private void Register()
-        //{
-        //    if(!CanRegister())
-        //    {
-        //        MessageBox.Show(Validation);
-        //        return;
-        //    }
+        private void Register()
+        {
+            if (!CanRegister())
+            {
+                MessageBox.Show(Validation);
+                return;
+            }
 
-        //    Validation = "Ошибка! Не удалось зарегистрировать пользователя";
+            Validation = "Ошибка! Не удалось зарегистрировать пользователя";
 
-        //    if (IsClient)
-        //    {
-        //        Client = new AgencyClients();
-        //        Client.Login = Username;
-        //        Client.Password = MyPassword;
-        //        Client.Name_ = Firstname;
-        //        Client.Surname = Surname;
-        //        Client.Patronymic = Patronimyc;
-        //        Client.NumberPhone = Number;
-        //        Client.Email = Email;
+            User user = new User()
+            {
+                Username = Username,
+                Password = MyPassword,
+                Email = Email,
+                //Role = 
+            };
 
-        //        if(_dataService.AddNewClient(Client))
-        //        {
-        //            Validation = "Регистрация прошла успешно";
-        //            _isValidated = true;
-        //        }
-        //    }
-        //    else if(IsEmployee)
-        //    {
-        //        Employee = new Employees();
-        //        Employee.Login = Username;
-        //        Employee.Password = MyPassword;
-        //        Employee.Name_ = Firstname;
-        //        Employee.Surname = Surname;
-        //        Employee.Patronymic = Patronimyc;
-        //        Employee.NumberPhone = Number;
-        //        Employee.Email = Email;
-        //        Employee.Position = Position;
-        //        Employee.DateEmployment = WorkDate.Value;
+            if(IsClient)
+            {
+                user.Client = new Tourist()
+                {
+                    UserID = user.ID,
+                    Name = Firstname,
+                    Surname = Surname,
+                    Patronimyc = Patronimyc,
+                    PhoneNumber = Number
+                };
+            }
+            else if (IsEmployee)
+            {
+                user.Employee = new Employee()
+                {
+                    UserID = user.ID,
+                    Name = Firstname,
+                    Surname = Surname,
+                    Patronimyc = Patronimyc,
+                    PhoneNumber = Number,
+                    //Position = PositionEnum
+                };
+            }
 
-        //        if(_dataService.AddNewEmployee(Employee))
-        //        {
-        //            Validation = "Регистрация прошла успешно";
-        //            _isValidated = true;
-        //        }
-        //    }
+            //if(_dataService.AddUser(user))
+            //{
+            //            Validation = "Регистрация прошла успешно";
+            //            _isValidated = true;
+            //}
 
-        //    MessageBox.Show(Validation);
-        //}
+            //    MessageBox.Show(Validation);
+
+        }
 
 
         public event PropertyChangedEventHandler PropertyChanged;
