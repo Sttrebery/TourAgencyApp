@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TourAgencyApp.Views"
         mc:Ignorable="d"
-        Title="EmailConfirmView" Height="350" Width="800">
+        Title="Подтверждение почты" Height="350" Width="800">
     <Grid Margin="30">
         <Grid.RowDefinitions>
             <RowDefinition Height="50*"/>
@@ -18,7 +18,8 @@
         </Grid.ColumnDefinitions>
 
         <TextBlock Grid.ColumnSpan="2" Margin="10" VerticalAlignment="Bottom" FontSize="24">Введите код подтверждения, пришедший на почту:</TextBlock>
-        <TextBox Grid.Row="1" Margin="10" Height="30" VerticalAlignment="Top"></TextBox>
-        <Button Grid.Row="1" Grid.Column="1" Margin="10" VerticalAlignment="Top" FontSize="20">Подтвердить</Button>
+        <TextBox Grid.Row="1" Margin="10" Height="30" VerticalAlignment="Top" Text="{Binding Code}"></TextBox>
+        <Button Grid.Row="1" Grid.Column="1" Margin="10" VerticalAlignment="Top" FontSize="20" Command="{Binding ConfirmCommand}">Подтвердить</Button>
+        <ToggleButton Visibility="Hidden" IsChecked="{Binding Success}" Checked="ToggleButton_Checked" />
     </Grid>
 </Window>

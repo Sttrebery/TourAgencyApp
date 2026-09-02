@@ -10,6 +10,7 @@ using TourAgencyApp.Services;
 using TourAgencyApp.Models;
 using TourAgencyApp.Views.Client;
 using TourAgencyApp.Views.Employee;
+using TourAgencyApp.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace TourAgencyApp.ViewModels
@@ -136,7 +137,7 @@ namespace TourAgencyApp.ViewModels
             {
                 Validation = "Такой пользователь не найден";
             }
-            else if (User is User u && u.Password != MyPassword)
+            else if (User is User u && u.Password != HashService.HashPassword(MyPassword))
             {
                 Validation = "Неправильный пароль";
             }

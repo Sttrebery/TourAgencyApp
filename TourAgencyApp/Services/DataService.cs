@@ -14,7 +14,7 @@ namespace TourAgencyApp.Services
 {
     public class DataService
     {
-        #region Get Lists With data From Database
+        #region Get data From Database
         // получение актуальных туров
         public IEnumerable<Tour> GetTours()
         {
@@ -139,6 +139,43 @@ namespace TourAgencyApp.Services
                 tr = new List<Transport>();
             }
             return tr;
+        }
+
+        public User GetUserByUsername(string username)
+        {
+            using var db = new TourAgencyDbContext();
+            User user = db.Users.FirstOrDefault(x => x.Username == username);
+            return user;
+        }
+
+        public async Task<User> GetUserByUsernameAsync(string username)
+        {
+            using var db = new TourAgencyDbContext();
+            User user = await db.Users.FirstOrDefaultAsync(x => x.Username == username);
+            return user;
+        }
+
+        #endregion
+
+        #region Adding data into Database
+
+        /// <summary>
+        /// Return true if added succesfully, otherwise - false
+        /// </summary>
+        /// <returns></returns>
+        public bool AddUser(User user)
+        {
+            using var db = new TourAgencyDbContext();
+            try
+            {
+                db.Users.Add(user);
+                db.SaveChanges();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         #endregion

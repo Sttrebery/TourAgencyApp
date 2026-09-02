@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Input;
 using TourAgencyApp.Models;
 using TourAgencyApp.Services;
+using TourAgencyApp.Views;
 
 namespace TourAgencyApp.ViewModels
 {
@@ -17,8 +18,6 @@ namespace TourAgencyApp.ViewModels
     {
         #region vars
         private DataService _dataService;
-        private Tourist Client { get; set; }
-        private Employee Employee { get; set; }
 
         private string _validation = string.Empty;
         private bool _isClient = true;
@@ -29,7 +28,6 @@ namespace TourAgencyApp.ViewModels
         private string _username = string.Empty;
         private string _myPassword = string.Empty;
         private string _repeatedPassword = string.Empty;
-
         private string _surname = string.Empty;
         private string _firstName = string.Empty;
         private string _patronimyc = string.Empty;
@@ -37,7 +35,7 @@ namespace TourAgencyApp.ViewModels
         private string _email = string.Empty;
 
         //для сотрудника
-        private string _position = string.Empty;
+        private PositionEnum? _position = null;
         #endregion
 
         #region props
@@ -107,13 +105,22 @@ namespace TourAgencyApp.ViewModels
             set { _email = value; OnPropertyChanged(); }
         }
 
-        public string Position
+        public PositionEnum? Position
         {
             get => _position;
             set { _position = value; OnPropertyChanged(); }
         }
+
+        public IEnumerable<PositionEnum> PositionEnumValues
+        {
+            get
+            {
+                return Enum.GetValues(typeof(PositionEnum)).Cast<PositionEnum>();
+            }
+        }
         #endregion
 
+        //public delegate Task AsyncEventHandler();
         public event Action RegisterEvent;
         public ICommand RegisterCommand { get; set; } 
 
@@ -121,11 +128,11 @@ namespace TourAgencyApp.ViewModels
         {
             _dataService = new DataService();
 
-            RegisterEvent = Register;
+            RegisterEvent += async () => { await Register(); }; //todo: нет ли ошибок
             RegisterCommand = new RelayCommand(() => RegisterEvent());
         }
 
-        //todo:
+        //проверка на заполнение полей формы
         private bool IsFormFilled()
         {
             bool isFilled = true;
@@ -137,7 +144,7 @@ namespace TourAgencyApp.ViewModels
                 isFilled = false;
             }
 
-            if (_isEmployee && (string.IsNullOrEmpty(Position)) )
+            if (_isEmployee && !Position.HasValue)
             {
                 isFilled = false;
             }
@@ -151,29 +158,55 @@ namespace TourAgencyApp.ViewModels
 
         private bool CanRegister()
         {
-            //if (!IsFormFilled())
-            //{
-            //    Validation = "Форма не заполнена полностью";
-            //    return false;
-            //}
+            if (!IsFormFilled())
+            {
+                Validation = "Форма не заполнена полностью";
+                return false;
+            }
 
-            //if(!CheckPassword())
-            //{
-            //    Validation = "Пароли не совпадают";
-            //    return false;
-            //}
+            if (!CheckPassword())
+            {
+                Validation = "Пароли не совпадают";
+                return false;
+            }
 
-            //var founded = _dataService.GetUserByUsername(Username);
-            //    if (founded != null)
-            //    {
-            //        Validation = "Пользователь уже зарегистрирован в базе";
-            //        return false;
-            //    }
+            var founded = _dataService.GetUserByUsername(Username);
+            if (founded != null)
+            {
+                Validation = "Пользователь уже зарегистрирован в базе";
+                return false;
+            }
 
             return true;
         }
 
-        private void Register()
+        private async Task<bool> ConfirmEmail()
+        {
+            string code = GenerateCode();
+            Window email_confirm = new EmailConfirmView() { DataContext = new EmailConfirmViewModel(code) };
+            
+            await MailService.SendConfirmationEmail(code, Email);
+            
+            email_confirm.ShowDialog();
+            if((email_confirm.DataContext as EmailConfirmViewModel)!.Success)
+            {
+                return true;
+            }
+            else return false;
+        }
+
+        private string GenerateCode()
+        {
+            Random rand = new Random();
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < 6; i++)
+            {
+                builder.Append(rand.Next(0, 10).ToString());
+            }
+            return builder.ToString();
+        }
+
+        private async Task Register()
         {
             if (!CanRegister())
             {
@@ -181,14 +214,21 @@ namespace TourAgencyApp.ViewModels
                 return;
             }
 
-            Validation = "Ошибка! Не удалось зарегистрировать пользователя";
+            //код подтверждения с почты
+            bool _isConfirmed = await ConfirmEmail();
+            if (!_isConfirmed)
+            {
+                MessageBox.Show("Не удалось подтвердить почту", "Ошибка");
+                return;
+            }
 
+            //создание нового пользователя - можно вынести в отдельный метод
             User user = new User()
             {
                 Username = Username,
-                Password = MyPassword,
+                Password = HashService.HashPassword(MyPassword), //шифрование пароля
                 Email = Email,
-                //Role = 
+                Role = IsClient ? RoleEnum.Client : RoleEnum.Employee
             };
 
             if(IsClient)
@@ -211,20 +251,32 @@ namespace TourAgencyApp.ViewModels
                     Surname = Surname,
                     Patronimyc = Patronimyc,
                     PhoneNumber = Number,
-                    //Position = PositionEnum
+                    Position = Position.Value
                 };
             }
 
-            //if(_dataService.AddUser(user))
-            //{
-            //            Validation = "Регистрация прошла успешно";
-            //            _isValidated = true;
-            //}
+            if (_dataService.AddUser(user))
+            {
+                Validation = "Регистрация прошла успешно";
+                ClearForm();
+                _isValidated = true;
+            }
+            else Validation = "Неизвестная ошибка! Не удалось зарегистрировать пользователя";
 
-            //    MessageBox.Show(Validation);
-
+            MessageBox.Show(Validation);
         }
 
+        private void ClearForm()
+        {
+            Username = string.Empty;
+            MyPassword = string.Empty;
+            RepeatedPassword = string.Empty;
+            Surname = string.Empty;
+            Firstname = string.Empty;
+            Patronimyc = string.Empty;
+            Number = string.Empty;
+            Email = string.Empty;
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
