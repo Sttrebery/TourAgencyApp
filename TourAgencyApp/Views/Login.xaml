@@ -22,11 +22,7 @@
 
         <StackPanel x:Name="panel" Grid.Column="0" VerticalAlignment="Center">
             <Label Foreground="Black" FontSize="30" HorizontalAlignment="Center">Страница входа</Label>
-            <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="20" >
-                <Label FontSize="20">Зайти как:</Label>
-                <RadioButton FontSize="20" Margin="10,0,10,0" VerticalContentAlignment="Center" IsChecked="{Binding IsClient}">Клиент</RadioButton>
-                <RadioButton FontSize="20" Margin="10,0,10,0" VerticalContentAlignment="Center" IsChecked="{Binding IsEmployee}">Сотрудник</RadioButton>
-            </WrapPanel>
+
             <Label Margin="20,0,20,0" FontSize="16">Введите логин:</Label>
             <TextBox Margin="20,5,20,10" Height="40" FontSize="20" Text="{Binding Username}"></TextBox>
             <Label Margin="20,0,20,0" FontSize="16">Введите пароль:</Label>
