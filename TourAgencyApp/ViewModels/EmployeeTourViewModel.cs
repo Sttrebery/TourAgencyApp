@@ -138,7 +138,7 @@ namespace TourAgencyApp.ViewModels
             _dataService = d;
             LoadData();
             ClearTour();
-            _del_tour = _actualTours.First();
+            _del_tour = _actualTours.FirstOrDefault();
 
             //команды
             AddTourCommand = new RelayCommand(() => { AddTour(); LoadData(); } );

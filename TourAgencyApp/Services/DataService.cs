@@ -155,6 +155,20 @@ namespace TourAgencyApp.Services
             return user;
         }
 
+        public async Task<Tourist> GetClientByID(int id)
+        {
+            using var db = new TourAgencyDbContext();
+            Tourist c = await db.Clients.FirstOrDefaultAsync(cl => cl.ID == id);
+            return c;
+        }
+
+        public async Task<Employee> GetEmployeeByID(int id)
+        {
+            using var db = new TourAgencyDbContext();
+            Employee emp = await db.Employees.FirstOrDefaultAsync(e => e.ID == id);
+            return emp;
+        }
+
         #endregion
 
         #region Adding data into Database
@@ -501,6 +515,8 @@ namespace TourAgencyApp.Services
             }
             return result;
         }
+
+
 
         //todo: добавление нового клиента
         //public bool AddNewClient(AgencyClients ac)

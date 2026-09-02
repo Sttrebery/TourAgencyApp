@@ -18,6 +18,7 @@ namespace TourAgencyApp.ViewModels
     public class LoginViewModel : INotifyPropertyChanged
     {
         #region Fields
+        private DataService _dataService;
         private Tourist Client { get; set; } = null;
         private Employee Employee { get; set; } = null;
         private List<User> Users { get; set; }
@@ -71,8 +72,9 @@ namespace TourAgencyApp.ViewModels
 
         public LoginViewModel()
         {
+            _dataService = new DataService();
             //todo: посмотреть можно ли упростить
-            SignEvent += SignIn;
+            SignEvent += async () => { await SignIn(); } ;
             RegisterEvent += Register;
             SignCommand = new RelayCommand(async () =>
             {
@@ -82,36 +84,36 @@ namespace TourAgencyApp.ViewModels
                     SignEvent();
                 }
             });
-            RegisterCommand = new RelayCommand(async () =>
+            RegisterCommand = new RelayCommand(() =>
             {
                 if (RegisterEvent != null)
                 {
-                    await LoadUsers();
                     RegisterEvent();
                 }
-                    
             });
         }
 
-        private void SignIn()
+        private async Task SignIn()
         {
             Window logged;
-
             User = Users.FirstOrDefault(u => u.Username == Username)!;
             Validate(User);
             if(IsValidated)
             {
+
                 if(User.Role == RoleEnum.Client)
                 {
                     logged = new MainClientWindow();
-                    var clientViewModel = new ClientMainViewModel(Client); //todo нужно clienta из бд подгрузить
+                    Client = await _dataService.GetClientByID(User.ID);
+                    var clientViewModel = new ClientMainViewModel(Client);
                     logged.DataContext = clientViewModel;
                     logged.Show();
                 }
                 else
                 {
                     logged = new MainEmployeeWindow();
-                    var empViewModel = new EmployeeMainViewModel(Employee);  //todo нужно сотрудника из бд подгрузить
+                    Employee = await _dataService.GetEmployeeByID(User.ID);
+                    var empViewModel = new EmployeeMainViewModel(Employee); 
                     logged.DataContext = empViewModel;
                     logged.Show();
                 }
