@@ -14,57 +14,47 @@ namespace TourAgencyApp.Services
 {
     public class DataService
     {
-        //todo
+        #region Get Lists With data From Database
         // получение актуальных туров
         public IEnumerable<Tour> GetTours()
         {
-            using (var db = new TourAgencyDbContext())
+            List<Tour> actualTours = null!;
+            try
             {
-                List<Tour> actualTours = new List<Tour>();
-                var res = db.Tours.ToList();
-                foreach (var tour in res)
+                using (var db = new TourAgencyDbContext())
                 {
-                    Tour tmp = new Tour();
-                    tmp.ID = tour.ID;
-                    tmp.Name = tour.Name;
-                    tmp.Cost = tour.Cost;
-                    tmp.StartDate = tour.StartDate;
-                    tmp.EndDate = tour.EndDate;
-                    tmp.Description = tour.Description;
-                    tmp.MaxTouristCount = tour.MaxTouristCount;
-                    tmp.ResponsibleEmployeeID = tour.ResponsibleEmployeeID;
-                    tmp.CountyID = tour.CountyID;
-                    tmp.TransoprtTypeID = tour.TransoprtTypeID;
-                    tmp.HotelID = tour.HotelID;
-                    tmp.IsOnTour = tour.IsOnTour;
-                    tmp.IsConducted = tour.IsConducted;
-
-                    actualTours.Add(tmp);
+                    actualTours = db.Tours.ToList();
                 }
-                return actualTours;
             }
+            catch (Exception ex)
+            {
+                actualTours = new();
+            }
+            return actualTours;
         }
 
         //получение архивных туров
         public IEnumerable<Tour> GetArchiveTours()
         {
-            List<Tour> archives = new List<Tour>();
+            List<Tour> archiveTours = null!;
             try
             {
                 using (var db = new TourAgencyDbContext())
                 {
-                    archives = db.Tours.Where(t => t.IsConducted == true).ToList();
+                    archiveTours = db.Tours.Where(t => t.IsConducted == true).ToList();
                 }
             }
-            catch
-            { }
-            return archives;
+            catch (Exception ex)
+            {
+                archiveTours = new();
+            }
+            return archiveTours;
         }
 
         //получение всех сотрудников
         public IEnumerable<Employee> GetAllEmployees()
         {
-            List<Employee> emps = new List<Employee>();
+            List<Employee> emps = null!;
             try
             {
                 using (var db = new TourAgencyDbContext())
@@ -73,14 +63,16 @@ namespace TourAgencyApp.Services
                 }
             }
             catch
-            { }
+            {
+                emps = new List<Employee>();
+            }
             return emps;
         }
 
         //получение всех отелей
         public IEnumerable<Hotel> GetHotels()
         {
-            List<Hotel> hotels = new List<Hotel>();
+            List<Hotel> hotels = null!;
             try
             {
                 using (var db = new TourAgencyDbContext())
@@ -89,14 +81,16 @@ namespace TourAgencyApp.Services
                 }
             }
             catch
-            { }
+            {
+                hotels = new List<Hotel>();
+            }
             return hotels;
         }
 
         //получение всех клиентов
         public IEnumerable<Tourist> GetAllClients()
         {
-            List<Tourist> clients = new List<Tourist>();
+            List<Tourist> clients = null!;
             try
             {
                 using (var db = new TourAgencyDbContext())
@@ -105,17 +99,26 @@ namespace TourAgencyApp.Services
                 }
             }
             catch
-            { }
+            {
+                clients = new List<Tourist>();
+            }
             return clients;
         }
 
         //получение всех стран
         public IEnumerable<Country> GetAllCountries()
         {
-            List<Country> countries;
-            using (var db = new TourAgencyDbContext())
+            List<Country> countries = null!;
+            try
             {
-               countries = db.Countries.ToList();
+                using (var db = new TourAgencyDbContext())
+                {
+                    countries = db.Countries.ToList();
+                }
+            }
+            catch
+            {
+                countries = new List<Country>();
             }
             return countries;
         }
@@ -123,13 +126,22 @@ namespace TourAgencyApp.Services
         //получение всех способов передвижения
         public IEnumerable<Transport> GetAllTransports()
         {
-            List<Transport> tr;
-            using (var db = new TourAgencyDbContext())
+            List<Transport> tr = null!;
+            try
             {
-                tr = db.Transports.ToList();
+                using (var db = new TourAgencyDbContext())
+                {
+                    tr = db.Transports.ToList();
+                }
+            }
+            catch
+            {
+                tr = new List<Transport>();
             }
             return tr;
         }
+
+        #endregion
 
         // todo: Получение популярной страны
         //public void GetTopCountry(out string name, out int count)
