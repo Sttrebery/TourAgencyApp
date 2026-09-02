@@ -21,7 +21,22 @@
         <StackPanel Margin="20">
             <Label Style="{StaticResource LabelPageHeader}">Проверить находится ли клиент в туре</Label>
             <Label Style="{StaticResource LabelStyle2}" Margin="30,0,0,0">Выберите клиента:</Label>
-            <ComboBox FontSize="22" Margin="30,0,30,0" ItemsSource="{Binding AllClients}" SelectedValue="{Binding SelectedClient}"></ComboBox>
+            <ComboBox FontSize="22" Margin="30,0,30,0"
+                      ItemsSource="{Binding Path=AllClients}"
+                      SelectedValuePath="ID"
+                      SelectedValue="{Binding Path=SelectedClient}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding ID}" Margin="0,0,5,0"/>
+                            <TextBlock Text="–"/>
+                            <TextBlock Text="{Binding Surname}" Margin="5,0,0,0" />
+                            <TextBlock Text="{Binding Name}" Margin="5,0,0,0" />
+                            <TextBlock Text="{Binding Patronimyc}" Margin="5,0,0,0"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
             <Button Margin="20" Style="{StaticResource ButtonStyle1}" Width="200" Command="{Binding CheckCommand}">Проверить</Button>
         </StackPanel>
        

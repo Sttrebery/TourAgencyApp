@@ -158,14 +158,14 @@ namespace TourAgencyApp.Services
         public async Task<Tourist> GetClientByID(int id)
         {
             using var db = new TourAgencyDbContext();
-            Tourist c = await db.Clients.FirstOrDefaultAsync(cl => cl.ID == id);
+            Tourist c = await db.Clients.FirstOrDefaultAsync(cl => cl.UserID == id);
             return c;
         }
 
         public async Task<Employee> GetEmployeeByID(int id)
         {
             using var db = new TourAgencyDbContext();
-            Employee emp = await db.Employees.FirstOrDefaultAsync(e => e.ID == id);
+            Employee emp = await db.Employees.FirstOrDefaultAsync(e => e.UserID == id);
             return emp;
         }
 

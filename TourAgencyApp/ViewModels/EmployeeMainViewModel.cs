@@ -23,6 +23,7 @@ namespace TourAgencyApp.ViewModels
         }
         public string UserName
         {
+            //вот здесь ошибка CRITICAL
             get => $"{Employee.Surname} {Employee.Name} {Employee.Patronimyc}";
         }
 

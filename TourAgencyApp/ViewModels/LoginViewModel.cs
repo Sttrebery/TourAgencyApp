@@ -113,9 +113,12 @@ namespace TourAgencyApp.ViewModels
                 {
                     logged = new MainEmployeeWindow();
                     Employee = await _dataService.GetEmployeeByID(User.ID);
-                    var empViewModel = new EmployeeMainViewModel(Employee); 
-                    logged.DataContext = empViewModel;
-                    logged.Show();
+                    if (Employee != null)
+                    {
+                        var empViewModel = new EmployeeMainViewModel(Employee);
+                        logged.DataContext = empViewModel;
+                        logged.Show();
+                    }
                 }
             }
         }
