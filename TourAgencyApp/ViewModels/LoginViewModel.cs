@@ -103,14 +103,14 @@ namespace TourAgencyApp.ViewModels
                 if(User.Role == RoleEnum.Client)
                 {
                     logged = new MainClientWindow();
-                    var clientViewModel = new ClientMainViewModel(Client);
+                    var clientViewModel = new ClientMainViewModel(Client); //todo нужно clienta из бд подгрузить
                     logged.DataContext = clientViewModel;
                     logged.Show();
                 }
                 else
                 {
                     logged = new MainEmployeeWindow();
-                    var empViewModel = new EmployeeMainViewModel(Employee);
+                    var empViewModel = new EmployeeMainViewModel(Employee);  //todo нужно сотрудника из бд подгрузить
                     logged.DataContext = empViewModel;
                     logged.Show();
                 }
