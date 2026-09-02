@@ -21,10 +21,6 @@ namespace TourAgencyApp.Models
 
         //[Required] //Проверку валидации узнать как делать в WPF
         public string PhoneNumber { get; set; }
-
-        [Required]  //Проверку валидации узнать как делать в WPF
-        public string Email { get; set; }
-
         public int? PhotoID { get; set; }
         [ForeignKey("PhotoID")]
         public Photo? Photo { get; set; }

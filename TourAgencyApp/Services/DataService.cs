@@ -10,7 +10,7 @@ using TourAgencyApp.Views.Client.Pages;
 using TourAgencyApp.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace TourAgencyApp.Data
+namespace TourAgencyApp.Services
 {
     public class DataService
     {

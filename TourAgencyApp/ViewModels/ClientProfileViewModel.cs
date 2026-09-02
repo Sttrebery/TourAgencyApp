@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using TourAgencyApp.Data;
+using TourAgencyApp.Services;
 using System.Windows;
 using TourAgencyApp.Models;
 
@@ -82,7 +82,7 @@ namespace TourAgencyApp.ViewModels
             Surname = c.Surname;
             Patronymic = c.Patronimyc;
             Phone = c.PhoneNumber;
-            Email = c.Email;
+            //Email = c.Email;
 
             SaveChangesCommand = new RelayCommand(SaveChanges);
             ClearCommand = new RelayCommand(Clear);
@@ -95,7 +95,7 @@ namespace TourAgencyApp.ViewModels
             Surname = Client.Surname;
             Patronymic = Client.Patronimyc;
             Phone = Client.PhoneNumber;
-            Email = Client.Email;
+            //Email = Client.Email;
         }
 
         private void SaveChanges()
@@ -110,7 +110,7 @@ namespace TourAgencyApp.ViewModels
                     Client.Surname = Surname;
                     Client.Patronimyc= Patronymic;
                     Client.PhoneNumber = Phone;
-                    Client.Email = Email;
+                    //Client.Email = Email;
 
                     db.SaveChanges();
                 }

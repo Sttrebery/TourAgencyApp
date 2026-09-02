@@ -13,8 +13,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using TourAgencyApp.Data;
 using TourAgencyApp.Models;
+using TourAgencyApp.Services;
 
 namespace TourAgencyApp.ViewModels
 {

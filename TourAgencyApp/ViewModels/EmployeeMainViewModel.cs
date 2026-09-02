@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using TourAgencyApp.Data;
+using TourAgencyApp.Services;
 using TourAgencyApp.Models;
 
 namespace TourAgencyApp.ViewModels

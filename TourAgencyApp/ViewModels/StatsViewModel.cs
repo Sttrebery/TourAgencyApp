@@ -6,8 +6,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using TourAgencyApp.Data;
 using TourAgencyApp.Models;
+using TourAgencyApp.Services;
 
 namespace TourAgencyApp.ViewModels
 {

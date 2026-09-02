@@ -28,10 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Converters\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Resource Include="res\world_travel_icon.ico" />
     <Resource Include="res\backgroubd4.png" />
   </ItemGroup>
