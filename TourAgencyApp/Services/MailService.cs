@@ -19,7 +19,7 @@ namespace TourAgencyApp.Services
         public static async Task SendConfirmationEmail(string code, string email_to)
         {
             MimeMessage message = new MimeMessage();
-            message.From.Add(new MailboxAddress("Email Confirmation Example", EMAIL_ADDRESS));
+            message.From.Add(new MailboxAddress("Подтверждение адреса электронной почты", EMAIL_ADDRESS));
             message.To.Add(new MailboxAddress("receiver", email_to)); //адрес получателя
             message.Subject = "Confirm your email";
 
