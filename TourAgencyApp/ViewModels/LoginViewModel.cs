@@ -10,6 +10,7 @@ using TourAgencyApp.Services;
 using TourAgencyApp.Models;
 using TourAgencyApp.Views.Client;
 using TourAgencyApp.Views.Employee;
+using Microsoft.EntityFrameworkCore;
 
 namespace TourAgencyApp.ViewModels
 {
@@ -18,6 +19,8 @@ namespace TourAgencyApp.ViewModels
         #region Fields
         private Tourist Client { get; set; } = null;
         private Employee Employee { get; set; } = null;
+        private List<User> Users { get; set; }
+        private User User { get; set; } = null;
         private string _username = string.Empty;
         private string _myPassword = string.Empty;
         private string _validation = string.Empty;
@@ -67,77 +70,84 @@ namespace TourAgencyApp.ViewModels
 
         public LoginViewModel()
         {
+            //todo: посмотреть можно ли упростить
             SignEvent += SignIn;
             RegisterEvent += Register;
-            SignCommand = new RelayCommand(() =>
+            SignCommand = new RelayCommand(async () =>
             {
                 if (SignEvent != null)
+                {
+                    await LoadUsers();
                     SignEvent();
+                }
             });
-            RegisterCommand = new RelayCommand(() =>
+            RegisterCommand = new RelayCommand(async () =>
             {
                 if (RegisterEvent != null)
+                {
+                    await LoadUsers();
                     RegisterEvent();
+                }
+                    
             });
         }
 
         private void SignIn()
         {
-            //Window logged;
-            //if (IsClient)
-            //{
-            //    using (var db = new TourAgencyDbContext())
-            //    {
-            //        Client = db.AgencyClients.FirstOrDefault(c => c.Login == Username);
-            //    }
-            //    Validate(Client);
-            //    if(IsValidated)
-            //    {
-            //        logged = new MainClientWindow();
-            //        var clientViewModel = new ClientMainViewModel(Client);
-            //        logged.DataContext = clientViewModel;
-            //        logged.Show();
-            //    }
-            //}
-            //else if (IsEmployee)
-            //{
-            //    using (var db = new TourAgencyDbContext())
-            //    {
-            //        Employee = db.Employees.FirstOrDefault(c => c.Login == Username);
-            //    }
-            //    Validate(Employee);
-            //    if (IsValidated)
-            //    {
-            //        logged = new MainEmployeeWindow();
-            //        var empViewModel = new EmployeeMainViewModel(Employee);
-            //        logged.DataContext = empViewModel;
-            //        logged.Show();
-            //    }
-            //}
+            Window logged;
+
+            User = Users.FirstOrDefault(u => u.Username == Username)!;
+            Validate(User);
+            if(IsValidated)
+            {
+                if(User.Role == RoleEnum.Client)
+                {
+                    logged = new MainClientWindow();
+                    var clientViewModel = new ClientMainViewModel(Client);
+                    logged.DataContext = clientViewModel;
+                    logged.Show();
+                }
+                else
+                {
+                    logged = new MainEmployeeWindow();
+                    var empViewModel = new EmployeeMainViewModel(Employee);
+                    logged.DataContext = empViewModel;
+                    logged.Show();
+                }
+            }
         }
 
-        private void Validate(object User)
+        private async Task LoadUsers()
         {
-            //if (User == null)
-            //{
-            //    Validation = "Такой пользователь не найден";
-            //}
-            //else if (User is Tourist agencyClient && agencyClient.Password != MyPassword)
-            //{
-            //    Validation = "Неправильный пароль";
-            //}
-            //else if (User is Employee employee && employee.Password != MyPassword)
-            //{
-            //    Validation = "Неправильный пароль";
-            //}
-            //else
-            //{
-            //    Validation = string.Empty;
-            //    IsValidated = true;
-            //    return;
-            //}
-            //MessageBox.Show(Validation);
-            //IsValidated = false;
+            try
+            {
+                using var db = new TourAgencyDbContext();
+                Users = await db.Users.ToListAsync();
+            }
+            catch
+            {
+                Users = new(); 
+            }
+        }
+
+        private void Validate(object? User)
+        {
+            if (User == null)
+            {
+                Validation = "Такой пользователь не найден";
+            }
+            else if (User is User u && u.Password != MyPassword)
+            {
+                Validation = "Неправильный пароль";
+            }
+            else
+            {
+                Validation = string.Empty;
+                IsValidated = true;
+                return;
+            }
+            MessageBox.Show(Validation);
+            IsValidated = false;
         }
 
         private void Register()
