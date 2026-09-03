@@ -66,7 +66,7 @@
 
                 </StackPanel>
             </TabItem>
-            <TabItem Header="Редактировать / Удалить отель">
+            <TabItem Header="Редактировать отель">
                 <StackPanel>
                     <Label Style="{StaticResource LabelStyle1}" FontSize="20" Margin="30,20,30,0" >Выберите отель:</Label>
                     <ComboBox Name="cmb_hotel" Margin="30,20,30,0"  FontSize="20" ItemsSource="{Binding HotelsToSelect}" SelectedValue="{Binding SelectedHotel}" SelectionChanged="cmb_hotel_SelectionChanged"></ComboBox>
@@ -87,8 +87,8 @@
                     </StackPanel>
 
                     <WrapPanel HorizontalAlignment="Center">
-                        <Button FontSize="16" Margin="20" Padding="10" Command="{Binding SaveHotelCommand}">Сохранить изменения</Button>
-                        <Button FontSize="16" Margin="20" Padding="10" Command="{Binding DeleteHotelCommand}">Удалить</Button>
+                        <Button FontSize="16" Margin="20" Padding="10" Command="{Binding SaveHotelCommand}">Сохранить</Button>
+                        <Button FontSize="16" Margin="20" Padding="10" Command="{Binding }">Отменить изменения</Button>
                     </WrapPanel>
                     
                 </StackPanel>

@@ -36,7 +36,7 @@
                 </StackPanel>
             </TabItem>
             <TabItem Header="Добавить тур" HorizontalContentAlignment="Center">
-                <StackPanel Margin="10" >
+                <StackPanel Margin="30" >
                     <Label>Название тура*:</Label>
                     <TextBox Text="{Binding TourName}"></TextBox>
                     <Label>Стоимость тура*:</Label>
@@ -54,7 +54,7 @@
                     <Label>Дата окончания*:</Label>
                     <DatePicker SelectedDate="{Binding EndDate}"></DatePicker>
                     <Label>Описание тура:</Label>
-                    <TextBox Height="150" Width="400"></TextBox>
+                    <TextBox Text="{Binding Description}" Height="150" Width="400"></TextBox>
                     <Label>Максимальное количество туристов*:</Label>
                     <TextBox>
                         <TextBox.Text>
@@ -101,21 +101,24 @@
 
                     <Label>Отель:</Label>
                     <ComboBox ItemsSource="{Binding AllHotels}" SelectedValue="{Binding Hotel}">
-                        <ComboBox ItemsSource="{Binding AllEmployees}" SelectedValue="{Binding SelectedEmployee}">
-                            <!--todo:DataTemplate-->
-                        </ComboBox>
+                       
                     </ComboBox>
 
                     <!--todo: Add Command-->
-                    <Button Height="40" Width="100" Command="{Binding AddPhotoCommand}">Загрузить фото</Button>
-                    <ListView ItemsSource="{Binding Images}">
+                    <Button Margin="10" Height="35" Width="150" HorizontalAlignment="Left" Command="{Binding AddPhotoCommand}">Загрузить фото</Button>
+                    <ListView x:Name="ImagesListView" ItemsSource="{Binding Images}">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="Превью" Width="120">
+                                <GridViewColumn Header="Превью">
+                                    <GridViewColumn.Width>
+                                        <Binding ElementName="ImagesListView" Path="ActualWidth" />
+                                    </GridViewColumn.Width>
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <Image Source="{Binding Path=PhotoValue, Converter={StaticResource ByteToImage}}" 
-                                                Width="100" Height="75" Stretch="Uniform" />
+                                                 HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   Height="150" Stretch="Uniform" />
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
@@ -124,7 +127,7 @@
                     </ListView>
 
 
-                    <WrapPanel Margin="10">
+                    <WrapPanel Margin="10" HorizontalAlignment="Center" >
                         <Button Margin="20,0,20,0" Height="40" Width="100" Command="{Binding AddTourCommand}" IsEnabled="True">Добавить</Button>
                         <Button Margin="20,0,20,0" Height="40" Width="100" Command="{Binding ClearTourCommand}">Очистить</Button>
                     </WrapPanel>
@@ -135,7 +138,22 @@
             <TabItem Header="Удалить тур">
                 <StackPanel>
                     <Label Style="{StaticResource LabelStyle1}" Margin="30,20,0,0">Выберите тур, который хотите удалить</Label>
-                    <ComboBox Style="{StaticResource ComboboxStyle1}" Width="550" ItemsSource="{Binding ActualToursNames}" SelectedValue="{Binding TourToDelete}"></ComboBox>
+                    <ComboBox Style="{StaticResource ComboboxStyle1}" Width="550"
+                              ItemsSource="{Binding ActualToursNames}" 
+                              SelectedValuePath="ID"
+                              SelectedValue="{Binding TourToDelete}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding ID}" Margin="5"></TextBlock>
+                                    <TextBlock Text="-" Margin="5"></TextBlock>
+                                    <TextBlock Text="{Binding Name}" Margin="5"></TextBlock>
+                                    <TextBlock Text="{Binding StartDate}" Margin="5"></TextBlock>
+                                    <TextBlock Text="{Binding EndDate}" Margin="5"></TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
                     <Button HorizontalAlignment="Right" Width="150" FontSize="16" Margin="0,20,40,0" Padding="5" Command="{Binding DeleteTourCommand}">Удалить тур</Button>
                 </StackPanel>
                 

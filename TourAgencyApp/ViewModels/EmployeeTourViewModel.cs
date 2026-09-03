@@ -30,6 +30,7 @@ namespace TourAgencyApp.ViewModels
         private decimal _tourCost;
         private DateTime? _startdate;
         private DateTime? _enddate;
+        private string _description;
         private int _touristMaxCount;
         private IEnumerable<Employee> _all_employees;
         private Employee _selected_employee;
@@ -40,16 +41,16 @@ namespace TourAgencyApp.ViewModels
         private string _hotelName;
         private int _transportId;
         private IEnumerable<Transport> _transports;
-        private List<Photo> _images;
+        private List<Photo> _images = new();
 
         //поля для удаления тура (помещения в архив)
-        private Tour _del_tour;
+        private int? _del_tour;
 
         #region props
         public List<Photo> Images
         {
             get { return _images; }
-            set { _images = value; OnPropertyChanged(nameof(Images)); }
+            set { _images = value; OnPropertyChanged(); }
         }
 
         public ObservableCollection<Tour> ActualTours
@@ -88,6 +89,11 @@ namespace TourAgencyApp.ViewModels
         {
             get => _enddate;
             set { _enddate = value; OnPropertyChanged(); }
+        }
+        public string Description
+        {
+            get => _description;
+            set { _description = value; OnPropertyChanged(); }
         }
         public int TouristMaxCount
         {
@@ -148,10 +154,10 @@ namespace TourAgencyApp.ViewModels
 
         #region Delete Tour
 
-        public string TourToDelete
+        public int? TourToDelete
         {
-            get => _del_tour.Name;
-            set { _del_tour = _actualTours.First(a => a.Name == value); OnPropertyChanged(); }
+            get => _del_tour;
+            set { _del_tour = value; OnPropertyChanged(); }
         }
 
         #endregion
@@ -162,13 +168,12 @@ namespace TourAgencyApp.ViewModels
         public ICommand AddPhotoCommand { get; set; }
         public ICommand ClearTourCommand { get; set; } //очистка формы в окне добавления
         public ICommand DeleteTourCommand { get; set; }
-
+        
         public EmployeeTourViewModel(DataService d)
         {
             _dataService = d;
             LoadData();
             ClearTour();
-            _del_tour = _actualTours.FirstOrDefault();
 
             //команды
             //todo: вот тут мб убрать load data - работать с локальными изменениями, а потом отправлять изменения в бд
@@ -184,9 +189,12 @@ namespace TourAgencyApp.ViewModels
             fileDialog.Multiselect = true;
             fileDialog.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp";
 
+            List<Photo> photosToAdd = new List<Photo>();
+
             bool? result = fileDialog.ShowDialog();
             if (result == true)
             {
+                //todo: вынести загрузку всех фото в асинхронный метод
                 foreach (string filename in fileDialog.FileNames)
                 {
                     byte[] image_data = null;
@@ -200,7 +208,7 @@ namespace TourAgencyApp.ViewModels
 
                         if(image_data != null)
                         {
-                            Images.Add(new Photo() { PhotoValue = image_data });
+                            photosToAdd.Add(new Photo() { PhotoValue = image_data });
                         }
                     }
                     catch
@@ -208,7 +216,7 @@ namespace TourAgencyApp.ViewModels
                         MessageBox.Show($"Не удалось загрузить файл: {filename}", "Ошибка");
                     }
                 }
-                
+                Images = photosToAdd;
             }
 
         }
@@ -216,11 +224,12 @@ namespace TourAgencyApp.ViewModels
         //загрузка данных из бд
         public void LoadData()
         {
-            ActualTours = new ObservableCollection<Tour>( _dataService.GetTours());
-            ArchiveTours = new ObservableCollection<Tour>( _dataService.GetArchiveTours());
+            //todo: переделать потом мб
+            ActualTours = new ObservableCollection<Tour>(_dataService.GetTours()) ?? new ObservableCollection<Tour>();
+            ArchiveTours = new ObservableCollection<Tour>( _dataService.GetArchiveTours()) ?? new ObservableCollection<Tour>();
 
-            _all_employees = _dataService.GetAllEmployees();
-            _allHotels = _dataService.GetHotels();
+            _all_employees = _dataService.GetAllEmployees() ?? new List<Employee>();
+            _allHotels = _dataService.GetHotels() ?? new List<Hotel>();
 
             OnPropertyChanged();
         }
@@ -276,7 +285,7 @@ namespace TourAgencyApp.ViewModels
             EndDate = null;
             TouristMaxCount = 0;
             SelectedEmployee = _all_employees.Select(e => e.ID).First();
-            Country = string.Empty;
+            //Country = string.Empty;
             Hotel = string.Empty;
         }
 
@@ -284,7 +293,8 @@ namespace TourAgencyApp.ViewModels
         {
             try
             {
-                _dataService.DeleteActualTour(_del_tour);
+                //todo:
+                //_dataService.DeleteActualTour(_del_tour.Value);
                 MessageBox.Show("Тур был помещен в архив");
             }
             catch
