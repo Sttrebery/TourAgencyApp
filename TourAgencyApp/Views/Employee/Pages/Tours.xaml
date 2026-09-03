@@ -52,6 +52,8 @@
                     <DatePicker SelectedDate="{Binding StartDate}"></DatePicker>
                     <Label>Дата окончания*:</Label>
                     <DatePicker SelectedDate="{Binding EndDate}"></DatePicker>
+                    <Label>Описание тура:</Label>
+                    <TextBox Height="150" Width="400"></TextBox>
                     <Label>Максимальное количество туристов*:</Label>
                     <TextBox>
                         <TextBox.Text>
@@ -64,13 +66,41 @@
                     </TextBox>
                     <Label>Ответственный сотрудник*:</Label>
                     <Label Content="{Binding SelectedEmployeeFullName}"></Label>
-                    <ComboBox ItemsSource="{Binding AllEmployees}" SelectedValue="{Binding SelectedEmployee}"></ComboBox>
+                    <ComboBox ItemsSource="{Binding AllEmployees}" SelectedValue="{Binding SelectedEmployee}">
+                        <!--todo:DataTemplate-->
+                    </ComboBox>
 
                     <Label>Страна посещения:</Label>
-                    <TextBox Text="{Binding Country}"></TextBox>
+                    <ComboBox Text="{Binding Country}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Name}" Margin="5"></TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <Label>Транспорт:</Label>
+                    <ComboBox
+                        ItemsSource="{Binding Path=Transports}"
+                        SelectedValuePath="ID"
+                        SelectedValue="{Binding Path=TransportID}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Name}" Margin="5"></TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
 
                     <Label>Отель:</Label>
-                    <ComboBox ItemsSource="{Binding AllHotels}" SelectedValue="{Binding Hotel}"></ComboBox>
+                    <ComboBox ItemsSource="{Binding AllHotels}" SelectedValue="{Binding Hotel}">
+                        <ComboBox ItemsSource="{Binding AllEmployees}" SelectedValue="{Binding SelectedEmployee}">
+                            <!--todo:DataTemplate-->
+                        </ComboBox>
+                    </ComboBox>
 
                     <WrapPanel Margin="10">
                         <Button Margin="20,0,20,0" Height="40" Width="100" Command="{Binding AddTourCommand}" IsEnabled="True">Добавить</Button>

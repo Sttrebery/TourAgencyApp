@@ -20,7 +20,7 @@ namespace TourAgencyApp.ViewModels
         
         //поля для просмотра
         private ObservableCollection<Tour> _actualTours;   //Актуальных туров
-        private ObservableCollection<Tour> _archiveTours; //Архивных туров
+        private ObservableCollection<Tour> _archiveTours; //Архивных туров //todo: мб сделать вычисляемым
 
         //поля при добавлении тура
         private string _tourName;
@@ -34,6 +34,8 @@ namespace TourAgencyApp.ViewModels
         private IEnumerable<Hotel> _allHotels;
         private Hotel _hotel;
         private string _hotelName;
+        private int _transportId;
+        private IEnumerable<Transport> _transports;
 
         //поля для удаления тура (помещения в архив)
         private Tour _del_tour;
@@ -43,6 +45,18 @@ namespace TourAgencyApp.ViewModels
         {
             get => _actualTours;
             set { _actualTours = value; OnPropertyChanged(); }
+        }
+
+        public IEnumerable<Transport> Transports
+        {
+            get => _transports;
+            set { _transports = value; OnPropertyChanged(); }
+        }
+
+        public int TransportID
+        {
+            get => _transportId;
+            set { _transportId = value; OnPropertyChanged(); }
         }
 
         public IEnumerable<string> ActualToursNames
