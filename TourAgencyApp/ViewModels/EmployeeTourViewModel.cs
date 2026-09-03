@@ -10,7 +10,10 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using TourAgencyApp.Models;
 using TourAgencyApp.Services;
+using Microsoft.Win32;
 using Xceed.Wpf.Toolkit;
+using System.Drawing;
+using System.IO;
 
 namespace TourAgencyApp.ViewModels
 {
@@ -30,33 +33,29 @@ namespace TourAgencyApp.ViewModels
         private int _touristMaxCount;
         private IEnumerable<Employee> _all_employees;
         private Employee _selected_employee;
-        private string _country;
+        private int _countryId;
+        private IEnumerable<Country> _countries;
         private IEnumerable<Hotel> _allHotels;
         private Hotel _hotel;
         private string _hotelName;
         private int _transportId;
         private IEnumerable<Transport> _transports;
+        private List<Photo> _images;
 
         //поля для удаления тура (помещения в архив)
         private Tour _del_tour;
 
         #region props
+        public List<Photo> Images
+        {
+            get { return _images; }
+            set { _images = value; OnPropertyChanged(nameof(Images)); }
+        }
+
         public ObservableCollection<Tour> ActualTours
         {
             get => _actualTours;
             set { _actualTours = value; OnPropertyChanged(); }
-        }
-
-        public IEnumerable<Transport> Transports
-        {
-            get => _transports;
-            set { _transports = value; OnPropertyChanged(); }
-        }
-
-        public int TransportID
-        {
-            get => _transportId;
-            set { _transportId = value; OnPropertyChanged(); }
         }
 
         public IEnumerable<string> ActualToursNames
@@ -115,11 +114,7 @@ namespace TourAgencyApp.ViewModels
                 OnPropertyChanged(nameof(SelectedEmployeeFullName));
             }
         }
-        public string Country
-        {
-            get => _country;
-            set { _country = value; OnPropertyChanged(); }
-        }
+
         public IEnumerable<string> AllHotels
         {
             get => _allHotels.Select(a => a.Name).Distinct();
@@ -128,6 +123,26 @@ namespace TourAgencyApp.ViewModels
         {
             get => _hotelName;
             set { _hotelName = value; OnPropertyChanged(); }
+        }
+        public int TransportID
+        {
+            get => _transportId;
+            set { _transportId = value; OnPropertyChanged(); }
+        }
+        public IEnumerable<Transport> Transports
+        {
+            get => _transports;
+            set { _transports = value; OnPropertyChanged(); }
+        }
+        public int CountryID
+        {
+            get => _countryId;
+            set { _countryId = value; OnPropertyChanged(); }
+        }
+        public IEnumerable<Country> Countries
+        {
+            get => _countries;
+            set { _countries = value; OnPropertyChanged(); }
         }
         #endregion
 
@@ -144,6 +159,7 @@ namespace TourAgencyApp.ViewModels
         #endregion
 
         public ICommand AddTourCommand { get; set; }
+        public ICommand AddPhotoCommand { get; set; }
         public ICommand ClearTourCommand { get; set; } //очистка формы в окне добавления
         public ICommand DeleteTourCommand { get; set; }
 
@@ -155,9 +171,45 @@ namespace TourAgencyApp.ViewModels
             _del_tour = _actualTours.FirstOrDefault();
 
             //команды
+            //todo: вот тут мб убрать load data - работать с локальными изменениями, а потом отправлять изменения в бд
             AddTourCommand = new RelayCommand(() => { AddTour(); LoadData(); } );
             ClearTourCommand = new RelayCommand(ClearTour);
             DeleteTourCommand = new RelayCommand( () => { DeleteTour(); LoadData(); });
+            AddPhotoCommand = new RelayCommand(AddPhoto);
+        }
+
+        private void AddPhoto()
+        {
+            OpenFileDialog fileDialog = new OpenFileDialog();
+            fileDialog.Multiselect = true;
+            fileDialog.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp";
+
+            bool? result = fileDialog.ShowDialog();
+            if (result == true)
+            {
+                foreach (string filename in fileDialog.FileNames)
+                {
+                    byte[] image_data = null;
+                    try
+                    {
+                        using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read))
+                        {
+                            image_data = new byte[fs.Length];
+                            fs.Read(image_data, 0, (int)fs.Length);
+                        }
+
+                        if(image_data != null)
+                        {
+                            Images.Add(new Photo() { PhotoValue = image_data });
+                        }
+                    }
+                    catch
+                    {
+                        MessageBox.Show($"Не удалось загрузить файл: {filename}", "Ошибка");
+                    }
+                }
+                
+            }
 
         }
 
