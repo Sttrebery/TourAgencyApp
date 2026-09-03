@@ -39,13 +39,14 @@ namespace TourAgencyApp.ViewModels
         public EmployeeHotelsViewModel HotelsVM { get; set; }
         public StatsViewModel StatsVM { get; set; }
         public ClientCheckViewModel ClientCheckVM { get; set; }
-
+        public EmployeeCountriesViewModel CountriesVM { get; set; }
         #endregion
 
         public ICommand NavigateToToursCommand { get; }
         public ICommand NavigateToHotelsCommand { get; }
         public ICommand NavigateToStatsCommand { get; }
         public ICommand NavigateToClientCheckCommand { get; }
+        public ICommand NavigateToCountriesCommand { get; }
 
         public EmployeeMainViewModel(Employee e)
         {
@@ -57,11 +58,13 @@ namespace TourAgencyApp.ViewModels
             ToursVM = new EmployeeTourViewModel(dataService);
             HotelsVM = new EmployeeHotelsViewModel(dataService);
             ClientCheckVM = new ClientCheckViewModel(dataService);
+            CountriesVM = new EmployeeCountriesViewModel(dataService);
 
             NavigateToStatsCommand = new RelayCommand(() => { StatsVM.LoadData(); CurrentPage = StatsVM; });
             NavigateToToursCommand = new RelayCommand(() => {  ToursVM.LoadData(); CurrentPage =  ToursVM; });
             NavigateToHotelsCommand = new RelayCommand(() => {  CurrentPage =  HotelsVM; });
             NavigateToClientCheckCommand = new RelayCommand(() => CurrentPage = ClientCheckVM);
+            NavigateToCountriesCommand = new RelayCommand(() =>  CurrentPage = CountriesVM);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

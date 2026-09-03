@@ -30,6 +30,10 @@
                 <views:CheckPage />
             </DataTemplate>
 
+            <DataTemplate DataType="{x:Type vm:EmployeeCountriesViewModel}">
+                <views:CountriesPage />
+            </DataTemplate>
+
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Dictionaries/MainWindowDictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>
@@ -52,6 +56,7 @@
                 </WrapPanel>
                 <Button x:Name="btn_tours" Style="{StaticResource BordersButtonStyle}" Command="{Binding NavigateToToursCommand}">Туры</Button>
                 <Button x:Name="btn_hotels" Style="{StaticResource BordersButtonStyle}" Command="{Binding NavigateToHotelsCommand}">Отели</Button>
+                <Button x:Name="btn_countries" Style="{StaticResource BordersButtonStyle}" Command="{Binding NavigateToCountriesCommand}">Страны</Button>
                 <Button x:Name="btn_stats" Style="{StaticResource BordersButtonStyle}" Command="{Binding NavigateToStatsCommand}">Статистика</Button>
                 <Button x:Name="btn_check" Style="{StaticResource BordersButtonStyle}" Command="{Binding NavigateToClientCheckCommand}">Проверить клиента</Button>
 

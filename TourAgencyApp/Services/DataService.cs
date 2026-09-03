@@ -123,6 +123,24 @@ namespace TourAgencyApp.Services
             return countries;
         }
 
+        //получение всех стран async
+        public async Task<IEnumerable<Country>> GetAllCountriesAsync()
+        {
+            List<Country> countries = null!;
+            try
+            {
+                using (var db = new TourAgencyDbContext())
+                {
+                    countries = await db.Countries.ToListAsync();
+                }
+            }
+            catch
+            {
+                countries = new List<Country>();
+            }
+            return countries;
+        }
+
         //получение всех способов передвижения
         public IEnumerable<Transport> GetAllTransports()
         {
@@ -189,6 +207,34 @@ namespace TourAgencyApp.Services
             catch
             {
                 return false;
+            }
+        }
+
+        //Добавление страны в базу данных
+
+        #endregion
+
+        #region Save Changes to Data (dateched mode)
+        public async Task SaveCountriesAsync(IEnumerable<Country> countries)
+        {
+            using (var context = new TourAgencyDbContext())
+            {
+                foreach (var country in countries)
+                {
+                    if (country.ID == 0)
+                    {
+                        // добавление новой записи
+                        context.Countries.Attach(country);
+                        await context.Countries.AddAsync(country);
+                    }
+                    else
+                    {
+                        // существующую - помечаем как измененную
+                        context.Countries.Attach(country);
+                        context.Entry(country).State = EntityState.Modified;
+                    }
+                }
+                await context.SaveChangesAsync();
             }
         }
 
@@ -496,46 +542,5 @@ namespace TourAgencyApp.Services
         //    return emp;
         //}
 
-        //todo: добавление нового сотрудника
-        public bool AddNewEmployee(Employee e)
-        {
-            bool result;
-            try
-            {
-                using(var db = new TourAgencyDbContext())
-                {
-                    db.Employees.Add(e);
-                    db.SaveChanges();
-                }
-                result = true;
-            }
-            catch
-            {
-                result = false;
-            }
-            return result;
-        }
-
-
-
-        //todo: добавление нового клиента
-        //public bool AddNewClient(AgencyClients ac)
-        //{
-        //    bool result;
-        //    try
-        //    {
-        //        using (var db = new TourAgencyDbContext())
-        //        {
-        //            db.AgencyClients.Add(ac);
-        //            db.SaveChanges();
-        //        }
-        //        result = true;
-        //    }
-        //    catch
-        //    {
-        //        result = false;
-        //    }
-        //    return result;
-        //}
     }
 }
