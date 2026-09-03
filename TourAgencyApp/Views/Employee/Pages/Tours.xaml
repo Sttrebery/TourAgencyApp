@@ -107,7 +107,7 @@
                     </ComboBox>
 
                     <!--todo: Add Command-->
-                    <Button Height="40" Width="100">Загрузить фото</Button>
+                    <Button Height="40" Width="100" Command="{Binding AddPhotoCommand}">Загрузить фото</Button>
                     <ListView ItemsSource="{Binding Images}">
                         <ListView.View>
                             <GridView>
