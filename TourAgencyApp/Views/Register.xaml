@@ -5,10 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:wpfx="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:TourAgencyApp.Views"
+        xmlns:converters="clr-namespace:TourAgencyApp"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Height="850" Width="900" Icon="/res/world_travel_icon.ico"
         MinHeight="550" MinWidth="550" DataContextChanged="registerWindow_DataContextChanged">
+
+    <Window.Resources>
+        <converters:EnumDescriptionConverter x:Key="enumConverter" />
+    </Window.Resources>
     <Window.Background>
         <ImageBrush ImageSource="/res/backgroubd4.png" Opacity="0.7"/>
     </Window.Background>
@@ -53,7 +58,15 @@
             <StackPanel x:Name="panel_employee_info"  Visibility="Collapsed">
                 <Label Margin="20" FontSize="20" FontWeight="DemiBold">Введите дополнительные сведения о сотруднике</Label>
                 <Label Margin="20,0,20,0" FontSize="16">Должность*</Label>
-                <ComboBox Margin="20,5,20,10" FontSize="16" Height="40" SelectedItem="{Binding Position}" ItemsSource="{Binding PositionEnumValues}"></ComboBox>
+                <ComboBox Margin="20,5,20,10" FontSize="16" Height="40"
+                          ItemsSource="{Binding PositionEnumValues}"
+                          SelectedItem="{Binding Position}" >
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Converter={StaticResource enumConverter}}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
                 <Border BorderBrush="BurlyWood" BorderThickness="4"/>
             </StackPanel>
 

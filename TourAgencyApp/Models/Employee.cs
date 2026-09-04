@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -35,5 +36,15 @@ namespace TourAgencyApp.Models
         public List<Tour> Tours { get; set; }
     }
 
-    public enum PositionEnum { Director, SeniorManager, Manager }
+    public enum PositionEnum 
+    {
+        [Description("Руководитель")]
+        Director,
+        [Description("Администратор")]
+        Admin,
+        [Description("Старший менеджер")]
+        SeniorManager,
+        [Description("Менеджер")]
+        Manager 
+    }
 }
