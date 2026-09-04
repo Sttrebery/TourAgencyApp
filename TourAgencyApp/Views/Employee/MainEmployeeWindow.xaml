@@ -60,8 +60,10 @@
                 </WrapPanel>
                 <Button x:Name="btn_tours" Style="{StaticResource BordersButtonStyle}" Command="{Binding NavigateToToursCommand}">Туры</Button>
                 <Button x:Name="btn_hotels" Style="{StaticResource BordersButtonStyle}" Command="{Binding NavigateToHotelsCommand}">Отели</Button>
-                <Button x:Name="btn_countries" Style="{StaticResource BordersButtonStyle}" Command="{Binding NavigateToCountriesCommand}">Страны</Button>
-                <Button x:Name="btn_transports" Style="{StaticResource BordersButtonStyle}" Command="{Binding NavigateToTransportsCommand}">Транспорт</Button>
+                <StackPanel Visibility="{Binding IsRoot}">
+                    <Button x:Name="btn_countries" Style="{StaticResource BordersButtonStyle}" Command="{Binding NavigateToCountriesCommand}">Страны</Button>
+                    <Button x:Name="btn_transports" Style="{StaticResource BordersButtonStyle}" Command="{Binding NavigateToTransportsCommand}">Транспорт</Button>
+                </StackPanel>
                 <Button x:Name="btn_stats" Style="{StaticResource BordersButtonStyle}" Command="{Binding NavigateToStatsCommand}">Статистика</Button>
                 <Button x:Name="btn_check" Style="{StaticResource BordersButtonStyle}" Command="{Binding NavigateToClientCheckCommand}">Проверить клиента</Button>
 

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using TourAgencyApp.Services;
 using TourAgencyApp.Models;
+using System.Windows;
 
 namespace TourAgencyApp.ViewModels
 {
@@ -33,6 +34,8 @@ namespace TourAgencyApp.ViewModels
             get => _currentPage;
             set { _currentPage = value; OnPropertyChanged(); }
         }
+
+        public Visibility IsRoot { get => Employee.Position != PositionEnum.Manager ? Visibility.Visible : Visibility.Collapsed; }
 
         #region Viewmodels
         public EmployeeTourViewModel ToursVM { get; set; }
@@ -61,7 +64,7 @@ namespace TourAgencyApp.ViewModels
             HotelsVM = new EmployeeHotelsViewModel(dataService);
             ClientCheckVM = new ClientCheckViewModel(dataService);
             CountriesVM = new EmployeeCountriesViewModel(dataService);
-            TransportsVM = new EmployeeTransportsViewModel();
+            TransportsVM = new EmployeeTransportsViewModel(dataService);
 
             NavigateToStatsCommand = new RelayCommand(() => { StatsVM.LoadData(); CurrentPage = StatsVM; });
             NavigateToToursCommand = new RelayCommand(() => {  ToursVM.LoadData(); CurrentPage =  ToursVM; });
