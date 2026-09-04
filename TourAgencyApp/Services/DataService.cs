@@ -9,6 +9,7 @@ using System.Xml.Linq;
 using TourAgencyApp.Views.Client.Pages;
 using TourAgencyApp.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.ObjectModel;
 
 namespace TourAgencyApp.Services
 {
@@ -159,6 +160,24 @@ namespace TourAgencyApp.Services
             return tr;
         }
 
+        //получение всех типо трансопрта async
+        public async Task<IEnumerable<Transport>> GetAllTransportsAsync()
+        {
+            List<Transport> tr = null!;
+            try
+            {
+                using (var db = new TourAgencyDbContext())
+                {
+                    tr = await db.Transports.ToListAsync();
+                }
+            }
+            catch
+            {
+                tr = new List<Transport>();
+            }
+            return tr;
+        }
+
         public User GetUserByUsername(string username)
         {
             using var db = new TourAgencyDbContext();
@@ -214,7 +233,7 @@ namespace TourAgencyApp.Services
 
         #endregion
 
-        #region Save Changes to Data (dateched mode)
+        #region Save Changes to Data (detached mode)
         public async Task SaveCountriesAsync(IEnumerable<Country> countries)
         {
             using (var context = new TourAgencyDbContext())
@@ -232,6 +251,29 @@ namespace TourAgencyApp.Services
                         // существующую - помечаем как измененную
                         context.Countries.Attach(country);
                         context.Entry(country).State = EntityState.Modified;
+                    }
+                }
+                await context.SaveChangesAsync();
+            }
+        }
+
+        public async Task SaveTransportsAsync(IEnumerable<Transport> transports)
+        {
+            using (var context = new TourAgencyDbContext())
+            {
+                foreach (var transport in transports)
+                {
+                    if (transport.ID == 0)
+                    {
+                        // добавление новой записи
+                        //context.Transports.Attach(transport);
+                        await context.Transports.AddAsync(transport);
+                    }
+                    else
+                    {
+                        // существующую - помечаем как измененную
+                        context.Transports.Attach(transport);
+                        context.Entry(transport).State = EntityState.Modified;
                     }
                 }
                 await context.SaveChangesAsync();
