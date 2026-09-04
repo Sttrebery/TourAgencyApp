@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:emp="clr-namespace:TourAgencyApp.Views.Employee.Pages"
+      xmlns:l="clr-namespace:TourAgencyApp.Views"
       xmlns:local_page="clr-namespace:TourAgencyApp"
       mc:Ignorable="d" 
       d:DesignHeight="700" d:DesignWidth="800"
@@ -25,21 +26,21 @@
                 <StackPanel>
                     <DataGrid ItemsSource="{Binding Hotels}" AutoGenerateColumns="False" IsReadOnly="True" >
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Название" Binding="{Binding Name_}" />
-                            <DataGridTextColumn Header="Информация" Binding="{Binding Information_}" />
-                            <DataGridTextColumn Header="Местоположение" Binding="{Binding Location_}" />
+                            <DataGridTextColumn Header="Название" Binding="{Binding Name}" />
+                            <DataGridTextColumn Header="Описание" Binding="{Binding Description}" />
+                            <DataGridTextColumn Header="Адрес" Binding="{Binding Address}" />
                             <DataGridTemplateColumn Header="Фото" Width="Auto">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Image Source="{Binding ImageHotel, Converter={StaticResource ByteToImageConverter}}"
-                                               Width="100" Height="100" 
-                                               Stretch="Uniform"
-                                               Margin="2"/>     
+                                        <Button Margin="10" Command="{Binding DataContext.ShowPhotoCommand, 
+                                          RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="{Binding}">Посмотреть фото</Button>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
+                    
+                    
                 </StackPanel>
             </TabItem>
             <TabItem x:Name="tab_AddHotel" Header="Добавить отель" HorizontalContentAlignment="Center" Selector.Selected="tab_AddHotel_Selected" >
@@ -48,47 +49,84 @@
                     <TextBox FontSize="18" Text="{Binding Name}"></TextBox>
 
                     <Label FontSize="18">Описание*:</Label>
-                    <TextBox FontSize="18" Text="{Binding Information}"></TextBox>
+                    <TextBox FontSize="18" Padding="2" Height="150" Text="{Binding Description}"></TextBox>
 
                     <Label FontSize="18">Адрес*:</Label>
-                    <TextBox FontSize="18" Text="{Binding Location}"></TextBox>
+                    <TextBox FontSize="18" Padding="2" Height="50" Text="{Binding Address}"></TextBox>
 
-                    <Button Margin="10" HorizontalAlignment="Left" Height="25" Width="120" Command="{Binding LoadPhotoCommand}">Загрузить фото</Button>
-                    <Border BorderBrush="Black" BorderThickness="1">
-                        <Image Source="{Binding Photo}" Height="200" Width="400"/>
-                    </Border>
+                    <Button Margin="10" HorizontalAlignment="Left" Height="25" Width="120" Command="{Binding LoadPhotosCommand}">Загрузить фото</Button>
+                    <l:ViewingPhotoControl Images="{Binding Images}">
+                    </l:ViewingPhotoControl>
 
                     <WrapPanel HorizontalAlignment="Center" Margin="10">
                         <Button Margin="20,0,20,0" FontSize="16" Height="40" Width="100" Command="{Binding AddHotelCommand}">Добавить</Button>
                         <Button Margin="20,0,20,0" FontSize="16" Height="40" Width="100" Command="{Binding ClearFormCommand}">Очистить</Button>
                     </WrapPanel>
 
-
                 </StackPanel>
             </TabItem>
+            
             <TabItem Header="Редактировать отель">
                 <StackPanel>
                     <Label Style="{StaticResource LabelStyle1}" FontSize="20" Margin="30,20,30,0" >Выберите отель:</Label>
-                    <ComboBox Name="cmb_hotel" Margin="30,20,30,0"  FontSize="20" ItemsSource="{Binding HotelsToSelect}" SelectedValue="{Binding SelectedHotel}" SelectionChanged="cmb_hotel_SelectionChanged"></ComboBox>
+                    <ComboBox Name="cmb_hotel" Margin="30,20,30,0"  FontSize="20"
+                              ItemsSource="{Binding Path=Hotels}"
+                              SelectedValuePath="ID"
+                              SelectedValue="{Binding Path=SelectedHotelID}"
+                              SelectionChanged="cmb_hotel_SelectionChanged">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding ID}" Margin="5"></TextBlock>
+                                    <TextBlock Text="-" Margin="1,5,1,5"></TextBlock>
+                                    <TextBlock Text="{Binding Name}" Margin="5"></TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
                     <StackPanel Margin="30,10,30,0">
                         <Label FontSize="18">Название отеля*:</Label>
-                        <TextBox FontSize="18" Text="{Binding Name}"></TextBox>
+                        <TextBox FontSize="18" Text="{Binding EditName}"></TextBox>
 
                         <Label FontSize="18" >Описание*:</Label>
-                        <TextBox FontSize="18" Text="{Binding Information}"></TextBox>
+                        <TextBox FontSize="18" Text="{Binding EditDescription}"></TextBox>
 
                         <Label FontSize="18" >Адрес*:</Label>
-                        <TextBox FontSize="18"  Text="{Binding Location}"></TextBox>
+                        <TextBox FontSize="18"  Text="{Binding EditAddress}"></TextBox>
 
-                        <Button Margin="10" HorizontalAlignment="Left" Height="25" Width="120" Command="{Binding LoadPhotoCommand}">Загрузить фото</Button>
-                        <Border BorderBrush="Black" BorderThickness="1">
-                            <Image Source="{Binding Photo}" Height="200"/>
-                        </Border>
+                        <!--todo редактирование списка фото-->
+                        <Button Margin="10" HorizontalAlignment="Left" Height="25" Width="120" Command="{Binding LoadPhotosCommand}">Загрузить фото</Button>
+   
+                        <ListView ItemsSource="{Binding Images}" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Превью">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Image Source="{Binding Path=PhotoValue, Converter={StaticResource ByteToImageConverter}}" 
+                                                 HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   Height="150" Stretch="Uniform" />
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn>
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button Command="{Binding DataContext.DeletePhotoCommand, 
+                                          RelativeSource={RelativeSource AncestorType=ListView}}" CommandParameter="{Binding}">Удалить</Button>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                        
                     </StackPanel>
 
                     <WrapPanel HorizontalAlignment="Center">
                         <Button FontSize="16" Margin="20" Padding="10" Command="{Binding SaveHotelCommand}">Сохранить</Button>
-                        <Button FontSize="16" Margin="20" Padding="10" Command="{Binding }">Отменить изменения</Button>
+                        <Button FontSize="16" Margin="20" Padding="10" Command="{Binding CancelCommand}">Отмена</Button>
                     </WrapPanel>
                     
                 </StackPanel>

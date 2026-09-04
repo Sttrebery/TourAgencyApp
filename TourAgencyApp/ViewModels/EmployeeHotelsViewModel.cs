@@ -1,19 +1,16 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Windows.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using TourAgencyApp.Models;
+using TourAgencyApp.Views;
 using TourAgencyApp.Services;
 
 namespace TourAgencyApp.ViewModels
@@ -23,15 +20,18 @@ namespace TourAgencyApp.ViewModels
         private readonly DataService _dataService;
         private ObservableCollection<Hotel> _hotels;
 
-        //поля для добавления/редактирования
-        private string _filename;
+        private bool _isChanged = false;
+        //поля для добавления
         private string _name;
-        private string _information;
-        private string _location;
-        private byte[] _photo;
+        private string _desc;
+        private string _address;
+        private ObservableCollection<Photo> _images;
 
-        //поля для удаления
-        private string _selected_hotel;
+        //поля для редактирования
+        private string _editName;
+        private string _editDesc;
+        private string _editAddress;
+        private int _selectedHotelId;
 
         public string Name
         {
@@ -39,187 +39,249 @@ namespace TourAgencyApp.ViewModels
             set { _name = value; OnPropertyChanged(); }
         }
 
-        public string Information
+        public string Description
         {
-            get => _information;
-            set { _information = value; OnPropertyChanged(); }
+            get => _desc;
+            set { _desc = value; OnPropertyChanged(); }
         }
 
-        public string Location
+        public string Address
         {
-            get => _location;
-            set { _location = value; OnPropertyChanged(); }
+            get => _address;
+            set { _address = value; OnPropertyChanged(); }
         }
 
-        public byte[] Photo
+        public ObservableCollection<Photo> Images
         {
-            get => _photo;
-            set { _photo = value; OnPropertyChanged(); }
+            get => _images;
+            set { _images = value; OnPropertyChanged(); }
         }
 
-        
+        public string EditName
+        {
+            get => _editName;
+            set { _editName = value; OnPropertyChanged(); }
+        }
+
+        public string EditDescription
+        {
+            get => _editDesc;
+            set { _editDesc = value; OnPropertyChanged(); }
+        }
+
+        public string EditAddress
+        {
+            get => _editAddress;
+            set { _editAddress = value; OnPropertyChanged(); }
+        }
+
         public ObservableCollection<Hotel> Hotels
         {
             get => _hotels;
             set { _hotels = value; OnPropertyChanged(); }
         }
 
-        public IEnumerable<string> HotelsToSelect
+        public int SelectedHotelID
         {
-            get => Hotels.Select(h => h.Name);
+            get => _selectedHotelId;
+            set { _selectedHotelId = value; OnPropertyChanged(); }
         }
-
-        public string SelectedHotel
-        {
-            get => _selected_hotel;
-            set { _selected_hotel = value; OnPropertyChanged(); }
-        }
-
 
         public ICommand AddHotelCommand { get; set; }
         public ICommand ClearFormCommand { get; set; }
-        public ICommand LoadPhotoCommand { get; set; }
-        public ICommand DeleteHotelCommand { get; set; }
+        public ICommand LoadPhotosCommand { get; set; }
+        public ICommand DeletePhotoCommand { get; set; }
         public ICommand SaveHotelCommand { get; set; }
+        public ICommand ShowPhotoCommand { get; set; }
+        public ICommand CancelCommand { get; set; }
 
         public EmployeeHotelsViewModel(DataService dataService)
         {
             _dataService = dataService;
+            Hotels = new ObservableCollection<Hotel>(_dataService.GetHotels());
 
-            AddHotelCommand = new RelayCommand(AddHotel);
+            AddHotelCommand = new AsyncRelayCommand(AddHotel);
             ClearFormCommand = new RelayCommand(ClearForm);
-            LoadPhotoCommand = new RelayCommand(LoadPhoto);
-            SaveHotelCommand = new RelayCommand(EditHotel);
-            DeleteHotelCommand = new RelayCommand(DeleteHotel);
+            LoadPhotosCommand = new RelayCommand(LoadPhoto);
+            SaveHotelCommand = new AsyncRelayCommand(EditHotel);
+            DeletePhotoCommand = new RelayCommand<object>(parameter => DeletePhoto(parameter));
+            ShowPhotoCommand = new RelayCommand<object>(parameter => ShowPhoto(parameter));
+            CancelCommand = new RelayCommand(UpdateData);
         }
         
+        private void ShowPhoto(object? param)
+        {
+            var hotel = param as Hotel;
+            if (hotel != null && hotel.Photos != null && hotel.Photos.Any())
+            {
+                var view = new PhotoViewer() { ImagesCollection = new ObservableCollection<Photo>(hotel.Photos)};
+                view.Show();
+            }
+        }
+
         public void ClearForm()
         {
             Name = string.Empty;
-            Information = string.Empty;
-            Location = string.Empty;
-            Photo = null;
+            Description = string.Empty;
+            Address = string.Empty;
+            Images = null;
+            //OnPropertyChanged();
         }
 
         private bool CanExecute()
         {
-            if(string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(Information) || string.IsNullOrEmpty(Location))
+            if(string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(Description) || string.IsNullOrEmpty(Address))
             {
                 return false;
             }
             return true;
         }
 
-        private void AddHotel()
+        private async Task AddHotel()
         {
-            //if(!CanExecute())
-            //{
-            //    MessageBox.Show("Заполните все обязательные поля");
-            //    return;
-            //}
+            if (!CanExecute())
+            {
+                MessageBox.Show("Заполните все обязательные поля");
+                return;
+            }
 
-            //Hotel to_add = new Hotel() { Name_ = Name, Location_ = Location, Information_ = Information, ImageHotel = Photo };
-            //try
-            //{
-            //    _dataService.AddNewHotel(to_add);
-            //    MessageBox.Show("Отель успешно добавлен");
-            //}
-            //catch
-            //{
-            //    MessageBox.Show("Не удалось добавить отель");
-            //}
-        }
-
-        private void EditHotel()
-        {
-            //if (!CanExecute())
-            //{
-            //    MessageBox.Show("Заполните все обязательные поля");
-            //    return;
-            //}
-
-            //Hotel edited = new Hotel() { Name_ = Name, Location_ = Location, Information_ = Information, ImageHotel = Photo };
-            //try
-            //{
-            //    _dataService.EditHotel(SelectedHotel, edited);
-            //    MessageBox.Show("Изменения сохранены");
-            //}
-            //catch
-            //{
-            //    MessageBox.Show("Не удалось внести изменения");
-            //}
-        }
-
-        private void DeleteHotel()
-        {
+            Hotel to_add = new Hotel() { Name = Name, Description = Description, Address = Address, Photos = Images.ToList() };
             try
             {
-                _dataService.DeleteHotel(SelectedHotel);
-                MessageBox.Show("Отель был удален");
+                await _dataService.AddHotel(to_add);
+                _isChanged = true;
+                MessageBox.Show("Отель успешно добавлен");
+                ClearForm();
             }
             catch
             {
-                MessageBox.Show("Не удалось удалить отель");
+                MessageBox.Show("Не удалось добавить отель");
             }
         }
 
-        //очистка данных при SelectionChanged
+        private async Task EditHotel()
+        {
+            if (!CanExecute())
+            {
+                MessageBox.Show("Заполните все обязательные поля");
+                return;
+            }
+
+            Hotel edited = new Hotel() { Name = EditName, Description = EditDescription, Address = EditAddress, Photos = Images.ToList()};
+            try
+            {
+                await _dataService.EditHotel(SelectedHotelID, edited);
+                _isChanged = true;
+                MessageBox.Show("Изменения сохранены");
+            }
+            catch
+            {
+                MessageBox.Show("Не удалось внести изменения");
+            }
+        }
+
+        private void DeletePhoto(object? param)
+        {
+            var p = param as Photo;
+            if (p != null)
+            {
+                Images.Remove(p);
+            }
+        }
+
+        //изменение данных при SelectionChanged
         public void UpdateData()
         {
-            var selected = Hotels.First(h => h.Name == SelectedHotel);
-            //Name = selected.Name_;
-            //Information = selected.Information_;
-            //Location = selected.Location_;
-            //Photo = selected.ImageHotel;
+            var selected = Hotels.FirstOrDefault(h => h.ID == SelectedHotelID);
+            if(selected != null)
+            {
+                EditName = selected.Name;
+                EditDescription = selected.Description;
+                EditAddress = selected.Address;
+                Images = new(selected.Photos);
+            }
+            else
+            {
+                EditName = EditAddress = EditDescription = string.Empty;
+                Images = null;
+            }
         }
 
         private void LoadPhoto()
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "Графические файлы|*.jpeg; *.jpg; *.png; *.bmp; *.gif";
-            ofd.FileName = "";
-            if (ofd.ShowDialog() == true)
+            OpenFileDialog fileDialog = new OpenFileDialog();
+            fileDialog.Multiselect = true;
+            fileDialog.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp";
+
+            List<Photo> photosToAdd = new List<Photo>();
+
+            bool? result = fileDialog.ShowDialog();
+            if (result == true)
             {
-                _filename = ofd.FileName;
-                byte[] bytes = CreateCopy();
-                Photo = bytes;
+                //todo: вынести загрузку всех фото в асинхронный метод
+                foreach (string filename in fileDialog.FileNames)
+                {
+                    byte[] image_data = null;
+                    try
+                    {
+                        using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read))
+                        {
+                            image_data = new byte[fs.Length];
+                            fs.Read(image_data, 0, (int)fs.Length);
+                        }
+
+                        if (image_data != null)
+                        {
+                            photosToAdd.Add(new Photo() { PhotoValue = image_data });
+                        }
+                    }
+                    catch
+                    {
+                        MessageBox.Show($"Не удалось загрузить файл: {filename}", "Ошибка");
+                    }
+                }
+                Images = new ObservableCollection<Photo>(photosToAdd);
             }
         }
 
-        private byte[] CreateCopy()
-        {
-            try
-            {
-                System.Drawing.Image img = Bitmap.FromFile(_filename);
-                int maxWidth = 300, maxHeight = 300;
-                double ratioX = (double)maxWidth / img.Width;
-                double ratioY = (double)maxHeight / img.Height;
-                double ratio = Math.Min(ratioX, ratioY);
-                int newWidth = (int)(img.Width * ratio);
-                int newHeight = (int)(img.Height * ratio);
+        //private byte[] CreateCopy()
+        //{
+        //    try
+        //    {
+        //        System.Drawing.Image img = Bitmap.FromFile(_filename);
+        //        int maxWidth = 300, maxHeight = 300;
+        //        double ratioX = (double)maxWidth / img.Width;
+        //        double ratioY = (double)maxHeight / img.Height;
+        //        double ratio = Math.Min(ratioX, ratioY);
+        //        int newWidth = (int)(img.Width * ratio);
+        //        int newHeight = (int)(img.Height * ratio);
 
-                Image im = new Bitmap(newWidth, newHeight);
-                Graphics g = Graphics.FromImage(im);
-                g.DrawImage(img, 0, 0, newWidth, newHeight);
-                MemoryStream ms = new MemoryStream();
-                im.Save(ms, ImageFormat.Jpeg);
-                ms.Flush();
-                ms.Seek(0, SeekOrigin.Begin);
-                BinaryReader br = new BinaryReader(ms);
-                byte[] buf = br.ReadBytes((int)ms.Length);
-                return buf;
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("Error CreateCopy");
-                return null;
-            }
-        }
+        //        Image im = new Bitmap(newWidth, newHeight);
+        //        Graphics g = Graphics.FromImage(im);
+        //        g.DrawImage(img, 0, 0, newWidth, newHeight);
+        //        MemoryStream ms = new MemoryStream();
+        //        im.Save(ms, ImageFormat.Jpeg);
+        //        ms.Flush();
+        //        ms.Seek(0, SeekOrigin.Begin);
+        //        BinaryReader br = new BinaryReader(ms);
+        //        byte[] buf = br.ReadBytes((int)ms.Length);
+        //        return buf;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        MessageBox.Show("Error CreateCopy");
+        //        return null;
+        //    }
+        //}
 
         public void LoadHotels()
         {
-            var hotelsFromDB = _dataService.GetHotels();
-            Hotels = new ObservableCollection<Hotel>(hotelsFromDB);
+            if(_isChanged)
+            {
+                var hotelsFromDB = _dataService.GetHotels(); //todo: async
+                Hotels = new ObservableCollection<Hotel>(hotelsFromDB);
+                _isChanged = false;
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -1,15 +1,16 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
 using System.Xml.Linq;
-using TourAgencyApp.Views.Client.Pages;
 using TourAgencyApp.Models;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.ObjectModel;
+using TourAgencyApp.Views.Client.Pages;
 
 namespace TourAgencyApp.Services
 {
@@ -78,7 +79,7 @@ namespace TourAgencyApp.Services
             {
                 using (var db = new TourAgencyDbContext())
                 {
-                    hotels = db.Hotels.ToList();
+                    hotels = db.Hotels.Include("Photos").ToList();
                 }
             }
             catch
@@ -206,6 +207,20 @@ namespace TourAgencyApp.Services
             return emp;
         }
 
+        //Туры пользователя
+        public IEnumerable<Tour> GetClientTours(string name, string surname, string patronimyc)
+        {
+            List<Tour> tours = new List<Tour>();
+            using (var db = new TourAgencyDbContext())
+            {
+                //fOrDef + try-catch or if
+                var clients = db.Clients.Include("ClientTours").First(c => c.ID == 1); //брать айди из User.ID, который будет хранится при входе в программу
+                                                                                       //(отношение таблиц 1-1)
+                tours = clients.ClientTours.ToList();
+            }
+            return tours;
+        }
+
         #endregion
 
         #region Adding data into Database
@@ -231,6 +246,23 @@ namespace TourAgencyApp.Services
 
         //Добавление страны в базу данных
 
+
+        //добавить новый отель async
+        public async Task AddHotel(Hotel h)
+        {
+            using (var db = new TourAgencyDbContext())
+            {
+                if (await db.Hotels.Where(old => old.Name == h.Name &&
+                        old.Address == h.Address).AnyAsync())
+                {
+                    throw new Exception("Отель уже есть в базе");
+                }
+
+                //db.Hotels.Attach(h);
+                await db.Hotels.AddAsync(h);
+                await db.SaveChangesAsync();
+            }
+        }
         #endregion
 
         #region Save Changes to Data (detached mode)
@@ -242,8 +274,8 @@ namespace TourAgencyApp.Services
                 {
                     if (country.ID == 0)
                     {
-                        // добавление новой записи
-                        context.Countries.Attach(country);
+                        // добавление новой записи todo: проверить работает ли без Attach
+                        //context.Countries.Attach(country);
                         await context.Countries.AddAsync(country);
                     }
                     else
@@ -265,7 +297,7 @@ namespace TourAgencyApp.Services
                 {
                     if (transport.ID == 0)
                     {
-                        // добавление новой записи
+                        // добавление новой записи todo: проверить работает ли без Attach
                         //context.Transports.Attach(transport);
                         await context.Transports.AddAsync(transport);
                     }
@@ -282,6 +314,28 @@ namespace TourAgencyApp.Services
 
         #endregion
 
+
+        #region Edit data (without detached mode)
+
+        //внести изменения в данные Отеля async
+        public async Task EditHotel(int origId, Hotel changes)
+        {
+            using (var db = new TourAgencyDbContext())
+            {
+                var founded = await db.Hotels.Include("Photos").Where(h => h.ID == origId).FirstOrDefaultAsync();
+                if (founded == null)
+                {
+                    await AddHotel(changes);
+                }
+                else
+                {
+                    db.Hotels.Attach(changes);
+                    db.Entry(changes).State = EntityState.Modified;
+                }
+                await db.SaveChangesAsync();
+            }
+        }
+        #endregion
         // todo: Получение популярной страны
         //public void GetTopCountry(out string name, out int count)
         //{
@@ -362,19 +416,6 @@ namespace TourAgencyApp.Services
         //    return tourist;
         //}
 
-        //Туры пользователя
-        public IEnumerable<Tour> GetClientTours(string name, string surname, string patronimyc)
-        {
-            List<Tour> tours = new List<Tour>();
-            using (var db = new TourAgencyDbContext())
-            {
-                //fOrDef + try-catch or if
-                var clients = db.Clients.Include("ClientTours").First(c => c.ID == 1); //брать айди из User.ID, который будет хранится при входе в программу
-                                                                                       //(отношение таблиц 1-1)
-                tours = clients.ClientTours.ToList();
-            }
-            return tours;
-        }
 
         //todo: check записаться на тур( туристом)
         public async Task<bool> SignUpFoTour(Tourist client, Tour tour)
@@ -429,44 +470,6 @@ namespace TourAgencyApp.Services
             }
         }
 
-        //добавить новый отель
-        public void AddNewHotel(Hotel h)
-        {
-            using (var db = new TourAgencyDbContext())
-            {
-                if (db.Hotels.Where(h2 => h2.Name == h.Name).Any()) //todo: сделать проверку по ВСЕМ полям
-                {
-                    throw new Exception("Отель уже есть в базе");
-                }
-                db.Hotels.Attach(h);
-                db.Hotels.Add(h);
-                db.SaveChanges();
-            }
-        }
-
-        //внести изменения в данные Отеля
-        public void EditHotel(string orig_name, Hotel changes)
-        {
-            using (var db = new TourAgencyDbContext())
-            {
-                var founded = db.Hotels.Include("Photos").Where(h => h.Name == orig_name).ToList();
-                if (founded == null)
-                {
-                    AddNewHotel(changes);
-                }
-                else
-                {
-                    foreach(var f in founded)
-                    {
-                        f.Name = changes.Name;
-                        f.Address = changes.Address;
-                        f.Description = changes.Description;
-                        f.Photos = changes.Photos;
-                    }
-                    db.SaveChanges();
-                }
-            }
-        }
 
         //удалить отель из базы 
         public void DeleteHotel(string hotelName)
