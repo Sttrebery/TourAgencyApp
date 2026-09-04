@@ -34,6 +34,10 @@
                 <views:CountriesPage />
             </DataTemplate>
 
+            <DataTemplate DataType="{x:Type vm:EmployeeTransportsViewModel}">
+                <views:TransportsPage />
+            </DataTemplate>
+
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Dictionaries/MainWindowDictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>
