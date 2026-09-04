@@ -9,53 +9,88 @@
       Title="CountriesPage">
 
     <ScrollViewer Background="AliceBlue" VerticalScrollBarVisibility="Auto">
-        <TabControl>
-            <TabItem Header="Добавление страны">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    
-                    
-                    <StackPanel>
-                        <Button Margin="10" Width="100" HorizontalAlignment="Left" Command="{Binding UpdateListCommmand}">Обновить</Button>
-                        <ScrollViewer Grid.Row="0" Margin="5" VerticalScrollBarVisibility="Auto" >
-                            <ListView x:Name="CountriesListView" ItemsSource="{Binding Countries}" HorizontalContentAlignment="Center" FontSize="14">
-                                <ListView.View>
-                                    <GridView>
-                                        <GridViewColumn Header="ID" Width="100">
-                                            <GridViewColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBlock Text="{Binding Path=ID}"></TextBlock>
-                                                </DataTemplate>
-                                            </GridViewColumn.CellTemplate>
-                                        </GridViewColumn>
-                                        <GridViewColumn Header="Название" Width="350">
-                                            <GridViewColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBlock Text="{Binding Path=Name}"></TextBlock>
-                                                </DataTemplate>
-                                            </GridViewColumn.CellTemplate>
-                                        </GridViewColumn>
-                                    </GridView>
-                                </ListView.View>
-                            </ListView>
-                        </ScrollViewer>
-                    </StackPanel>
+        <DockPanel>
+            <WrapPanel DockPanel.Dock="Top" Background="SlateBlue">
+                <Button Margin="5" Width="100" HorizontalAlignment="Left" Command="{Binding UpdateListCommmand}">Обновить</Button>
+            </WrapPanel>
+            <TabControl>
+                <TabItem Header="Добавление страны">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
 
-                    <StackPanel Grid.Row="1" Margin="10">
-                        <Label FontWeight="DemiBold" FontSize="18">Добавление страны</Label>
-                        <Border BorderBrush="Black" BorderThickness="2"></Border>
-                        <TextBlock Margin="5" FontSize="16">Введите название страны:</TextBlock>
-                        <TextBox Margin="5" FontSize="16" Text="{Binding CountryToAdd}"></TextBox>
-                        <Button Margin="5" Width="150" Command="{Binding AddCountryCommmand}">Добавить</Button>
-                    </StackPanel>
-                </Grid>
-            </TabItem>
-            <TabItem Header="Редактирование страны">
 
-            </TabItem>
-        </TabControl>
+                        <StackPanel>
+                            <ScrollViewer Grid.Row="0" Margin="5" VerticalScrollBarVisibility="Auto" >
+                                <ListView x:Name="CountriesListView" ItemsSource="{Binding CountriesView}" HorizontalContentAlignment="Center" FontSize="14">
+                                    <ListView.View>
+                                        <GridView>
+                                            <GridViewColumn Header="ID" Width="100">
+                                                <GridViewColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock Text="{Binding Path=ID}"></TextBlock>
+                                                    </DataTemplate>
+                                                </GridViewColumn.CellTemplate>
+                                            </GridViewColumn>
+                                            <GridViewColumn Header="Название" Width="350">
+                                                <GridViewColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock Text="{Binding Path=Name}"></TextBlock>
+                                                    </DataTemplate>
+                                                </GridViewColumn.CellTemplate>
+                                            </GridViewColumn>
+                                        </GridView>
+                                    </ListView.View>
+                                </ListView>
+                            </ScrollViewer>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="1" Margin="10">
+                            <Label FontWeight="DemiBold" FontSize="18">Добавление страны</Label>
+                            <Border BorderBrush="Black" BorderThickness="2"></Border>
+                            <TextBlock Margin="5" FontSize="16">Введите название страны:</TextBlock>
+                            <TextBox Margin="5" FontSize="16" Text="{Binding CountryToAdd}"></TextBox>
+                            <Button Margin="5" Width="150" Command="{Binding AddCountryCommmand}">Добавить</Button>
+                        </StackPanel>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Редактирование страны">
+                    <Grid Margin="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition  Height="1*"/>
+                            <RowDefinition Height="2.5*"/>
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Grid.Row="0" >
+                            <Label Margin="10,10,10,0" FontSize="18">Выберите страну:</Label>
+                            <ComboBox Margin="10" FontSize="18"
+                                      ItemsSource="{Binding Path=CountriesView}"
+                                      SelectedValuePath="Name"
+                                      SelectedValue="{Binding Path=CountryToRename}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding Name}" Margin="5"></TextBlock>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="1">
+                            <Border BorderThickness="2" BorderBrush="Black" CornerRadius="5"></Border>
+                            <Label Margin="10,10,10,0" FontSize="18">Название страны:</Label>
+                            <TextBox Margin="10" FontSize="18" Padding="5"
+                                     Text="{Binding CountryName}"></TextBox>
+                            <Button Margin="10" Padding="5"
+                                    FontSize="14" Width="170"
+                                    Command="{Binding RenameCountryCommand}">Сохранить изменения</Button>
+                        </StackPanel>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </DockPanel>
     </ScrollViewer>
 </Page>
