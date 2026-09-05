@@ -51,13 +51,11 @@ namespace TourAgencyApp.Models
         [ForeignKey("HotelID")]
         public Hotel? Hotel { get; set; }
 
-        public List<Tourist> Tourists { get; set; }
+        public List<Tourist> Tourists { get; set; } = new();
         public List<Photo> Photos { get; set; }
 
-        /// вот тут подумать
-        //public bool HasAvailableSpots { get; set; } = true;
         public bool HasAvailableSpots { get { return (MaxTouristCount > Tourists.Count); } }
-        public bool IsOnTour { get; set; } = false;
+        public bool IsOnTour { get { return DateTime.Now >= StartDate && DateTime.Now <= EndDate;  } }
         public bool IsConducted { get; set; } = false;
 
     }

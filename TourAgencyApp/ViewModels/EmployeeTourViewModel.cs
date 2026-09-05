@@ -1,8 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -10,10 +13,8 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using TourAgencyApp.Models;
 using TourAgencyApp.Services;
-using Microsoft.Win32;
+using TourAgencyApp.Views;
 using Xceed.Wpf.Toolkit;
-using System.Drawing;
-using System.IO;
 
 namespace TourAgencyApp.ViewModels
 {
@@ -32,21 +33,30 @@ namespace TourAgencyApp.ViewModels
         private DateTime? _enddate;
         private string _description;
         private int _touristMaxCount;
-        private IEnumerable<Employee> _all_employees;
-        private Employee _selected_employee;
-        private int _countryId;
-        private IEnumerable<Country> _countries;
-        private IEnumerable<Hotel> _allHotels;
-        private Hotel _hotel;
-        private string _hotelName;
-        private int _transportId;
-        private IEnumerable<Transport> _transports;
         private ObservableCollection<Photo> _images = new();
 
+        private int? _selectedEmployeeID;
+        private ObservableCollection<Employee> _all_employees;
+
+        private int? _countryId;
+        private ObservableCollection<Country> _countries;
+
+        //private Hotel _hotel;
+        private int? _hotelId;
+        private ObservableCollection<Hotel> _allHotels;
+
+        private int? _transportId;
+        private ObservableCollection<Transport> _transports;
+
+        //редактирование тура
+        private ICollectionView _toursView; //todo:
+
         //поля для удаления тура (помещения в архив)
-        private int? _del_tour;
+        private int? tourToDeleteId;
 
         #region props
+
+        #region Property to View Data
         public ObservableCollection<Photo> Images
         {
             get { return _images; }
@@ -59,15 +69,12 @@ namespace TourAgencyApp.ViewModels
             set { _actualTours = value; OnPropertyChanged(); }
         }
 
-        public IEnumerable<string> ActualToursNames
-        {
-            get => _actualTours.Select(a => a.Name);
-        }
         public ObservableCollection<Tour> ArchiveTours
         {
             get => _archiveTours;
             set { _archiveTours = value; OnPropertyChanged(); }
         }
+        #endregion
 
         #region Add Tour
         public string TourName
@@ -100,52 +107,45 @@ namespace TourAgencyApp.ViewModels
             get => _touristMaxCount;
             set { _touristMaxCount = value; OnPropertyChanged(); }
         }
-        public IEnumerable<int> AllEmployees
+        public ObservableCollection<Employee> AllEmployees
         {
-            get { return _all_employees.Select(a => a.ID); }
+            get => _all_employees;
+            set { _all_employees = value; OnPropertyChanged(); }
         }
 
-        public string SelectedEmployeeFullName
+        public int? SelectedEmployeeID
         {
-            get => _all_employees.Where(e => e.ID == SelectedEmployee).Select(a => $"{a.Surname} {a.Name} {a.Patronimyc}").FirstOrDefault();
+            get => _selectedEmployeeID;
+            set { _selectedEmployeeID = value; OnPropertyChanged(); }
         }
 
-        public int SelectedEmployee
+        public int? HotelID
         {
-            get => _selected_employee?.ID ?? -1;
-            set
-            {
-                _selected_employee = _all_employees.First(e => e.ID == value);
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(SelectedEmployeeFullName));
-            }
+            get => _hotelId;
+            set { _hotelId = value; OnPropertyChanged(); }
+        }
+        public ObservableCollection<Hotel> AllHotels
+        {
+            get => _allHotels;
+            set { _allHotels = value; OnPropertyChanged(); }
         }
 
-        public IEnumerable<string> AllHotels
-        {
-            get => _allHotels.Select(a => a.Name).Distinct();
-        }
-        public string Hotel
-        {
-            get => _hotelName;
-            set { _hotelName = value; OnPropertyChanged(); }
-        }
-        public int TransportID
+        public int? TransportID
         {
             get => _transportId;
             set { _transportId = value; OnPropertyChanged(); }
         }
-        public IEnumerable<Transport> Transports
+        public ObservableCollection<Transport> Transports
         {
             get => _transports;
             set { _transports = value; OnPropertyChanged(); }
         }
-        public int CountryID
+        public int? CountryID
         {
             get => _countryId;
             set { _countryId = value; OnPropertyChanged(); }
         }
-        public IEnumerable<Country> Countries
+        public ObservableCollection<Country> Countries
         {
             get => _countries;
             set { _countries = value; OnPropertyChanged(); }
@@ -156,8 +156,8 @@ namespace TourAgencyApp.ViewModels
 
         public int? TourToDelete
         {
-            get => _del_tour;
-            set { _del_tour = value; OnPropertyChanged(); }
+            get => tourToDeleteId;
+            set { tourToDeleteId = value; OnPropertyChanged(); }
         }
 
         #endregion
@@ -168,19 +168,29 @@ namespace TourAgencyApp.ViewModels
         public ICommand AddPhotoCommand { get; set; }
         public ICommand ClearTourCommand { get; set; } //очистка формы в окне добавления
         public ICommand DeleteTourCommand { get; set; }
-        
+        public ICommand ShowPhotoCommand { get; set; }
+
         public EmployeeTourViewModel(DataService d)
         {
             _dataService = d;
-            LoadData();
-            ClearTour();
 
             //команды
             //todo: вот тут мб убрать load data - работать с локальными изменениями, а потом отправлять изменения в бд
-            AddTourCommand = new RelayCommand(() => { AddTour(); LoadData(); } );
+            AddTourCommand = new AsyncRelayCommand(AddTour);
             ClearTourCommand = new RelayCommand(ClearTour);
-            DeleteTourCommand = new RelayCommand( () => { DeleteTour(); LoadData(); });
+            DeleteTourCommand = new RelayCommand(DeleteTour);
             AddPhotoCommand = new AsyncRelayCommand(AddPhoto);
+            ShowPhotoCommand = new RelayCommand<object>(parameter => ShowPhoto(parameter));
+        }
+
+        private void ShowPhoto(object? param)
+        {
+            var tour = param as Tour;
+            if (tour != null && tour.Photos != null && tour.Photos.Any())
+            {
+                var view = new PhotoViewer() { ImagesCollection = new ObservableCollection<Photo>(tour.Photos) };
+                view.Show();
+            }
         }
 
         private async Task AddPhoto()
@@ -203,54 +213,59 @@ namespace TourAgencyApp.ViewModels
         }
 
         //загрузка данных из бд
-        public void LoadData()
+        public async Task LoadDataFromDB()
         {
             //todo: переделать потом мб
-            ActualTours = new ObservableCollection<Tour>(_dataService.GetTours()) ?? new ObservableCollection<Tour>();
-            ArchiveTours = new ObservableCollection<Tour>( _dataService.GetArchiveTours()) ?? new ObservableCollection<Tour>();
+            ActualTours = new ObservableCollection<Tour>(_dataService.GetTours()) ?? new();
+            ArchiveTours = new ObservableCollection<Tour>( ActualTours.Where(t=> t.IsConducted == true) ) ?? new();
 
-            _all_employees = _dataService.GetAllEmployees() ?? new List<Employee>();
-            _allHotels = _dataService.GetHotels() ?? new List<Hotel>();
-
-            OnPropertyChanged();
+            AllEmployees = new ObservableCollection<Employee>(_dataService.GetAllEmployees()) ?? new();
+            AllHotels = new ObservableCollection<Hotel>(await _dataService.GetHotelsAsync()) ?? new();
+            Countries = new ObservableCollection<Country>(await _dataService.GetAllCountriesAsync()) ?? new();
+            Transports = new ObservableCollection<Transport>(await _dataService.GetAllTransportsAsync()) ?? new();
+            //OnPropertyChanged();
         }
 
-        //
-        private bool CanExecuteAdd()
+        private bool CanExecute()
         {
-            //todo: пределать ЧТОБЫ ВСЕ БЫЛО ЗАПОЛНЕНО
-            if(TourName == string.Empty || TourCost <= 0 ||
-                !StartDate.HasValue || !EndDate.HasValue|| TouristMaxCount <= 0 || StartDate >= EndDate)
+            if( (TourName == string.Empty || string.IsNullOrWhiteSpace(TourName) ) || TourCost <= 0 ||
+                !StartDate.HasValue || !EndDate.HasValue || TouristMaxCount <= 0 || StartDate > EndDate ||
+                (Description == string.Empty || string.IsNullOrWhiteSpace(Description)) ||
+                !SelectedEmployeeID.HasValue || !HotelID.HasValue || !CountryID.HasValue || !TransportID.HasValue)
             {
                 return false;
             }    
             return true;
         }
 
-        private void AddTour()
+        private async Task AddTour()
         {
-            if(!CanExecuteAdd())
+            if(!CanExecute())
             {
                 MessageBox.Show("Заполните все обязательные поля!");
                 return;
             }
 
-            Tour tours = new Tour();
-            tours.Name = TourName;
-            tours.Cost = TourCost;
-            tours.StartDate = StartDate.Value;
-            tours.EndDate = EndDate.Value;
-            tours.MaxTouristCount = TouristMaxCount;
-            tours.ResponsibleEmployeeID = SelectedEmployee;
-            //tours.HotelID = //добалвение отеля
-                //добавление страны
-                //добавление транспорта
-
+            Tour tours = new Tour()
+            {
+                Name = TourName,
+                Cost = TourCost,
+                StartDate = StartDate!.Value, 
+                EndDate = EndDate!.Value,
+                Description = Description,
+                MaxTouristCount = TouristMaxCount,
+                ResponsibleEmployeeID = SelectedEmployeeID!.Value,
+                CountyID = CountryID!.Value,
+                TransoprtTypeID = TransportID!.Value,
+                HotelID = HotelID!.Value,
+                Photos = Images.ToList()
+            };
 
             try
             {
-                tours = _dataService.AddTour(tours);
+                ActualTours.Add(await _dataService.AddTourAsync(tours));
                 MessageBox.Show("Тур успешно добавлен");
+                ClearTour();
             }
             catch (Exception ex)
             {
@@ -265,9 +280,11 @@ namespace TourAgencyApp.ViewModels
             StartDate = null;
             EndDate = null;
             TouristMaxCount = 0;
-            SelectedEmployee = _all_employees.Select(e => e.ID).First();
-            //Country = string.Empty;
-            Hotel = string.Empty;
+
+            SelectedEmployeeID = AllEmployees.Select(e => e.ID).FirstOrDefault();
+            CountryID = Countries.Select(c => c.ID).FirstOrDefault();
+            TransportID = Transports.Select(t => t.ID).FirstOrDefault();
+            HotelID = AllHotels.Select(h => h.ID).FirstOrDefault();
         }
 
         private void DeleteTour()

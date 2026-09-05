@@ -67,7 +67,7 @@ namespace TourAgencyApp.ViewModels
             TransportsVM = new EmployeeTransportsViewModel(dataService);
 
             NavigateToStatsCommand = new RelayCommand(() => { StatsVM.LoadData(); CurrentPage = StatsVM; });
-            NavigateToToursCommand = new RelayCommand(() => {  ToursVM.LoadData(); CurrentPage =  ToursVM; });
+            NavigateToToursCommand = new RelayCommand(async () => {  await ToursVM.LoadDataFromDB(); CurrentPage =  ToursVM; });
             NavigateToHotelsCommand = new RelayCommand(() => {  CurrentPage =  HotelsVM; });
             NavigateToClientCheckCommand = new RelayCommand(() => CurrentPage = ClientCheckVM);
             NavigateToCountriesCommand = new RelayCommand(() =>  CurrentPage = CountriesVM);

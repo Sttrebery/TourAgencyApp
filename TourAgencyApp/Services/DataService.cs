@@ -26,7 +26,7 @@ namespace TourAgencyApp.Services
             {
                 using (var db = new TourAgencyDbContext())
                 {
-                    actualTours = db.Tours.ToList();
+                    actualTours = db.Tours.Include("Photos").ToList();
                 }
             }
             catch (Exception ex)
@@ -284,6 +284,29 @@ namespace TourAgencyApp.Services
                 await db.SaveChangesAsync();
             }
         }
+
+        //добавить тур
+        public Tour AddTour(Tour to_add)
+        {
+            using (var db = new TourAgencyDbContext())
+            {
+                db.Tours.Add(to_add);
+                db.SaveChanges();
+            }
+            return to_add;
+        }
+
+        //добавить тур async
+        public async Task<Tour> AddTourAsync(Tour to_add)
+        {
+            using (var db = new TourAgencyDbContext())
+            {
+                await db.Tours.AddAsync(to_add);
+                await db.SaveChangesAsync();
+            }
+            return to_add;
+        }
+
         #endregion
 
         #region Save Changes to Data (detached mode)
@@ -459,22 +482,7 @@ namespace TourAgencyApp.Services
             }
         }
 
-        //добавить тур
-        public Tour AddTour(Tour to_add)
-        {
-            using (var db = new TourAgencyDbContext())
-            {
-                if( db.Tours.Where(t => t.Name ==  to_add.Name).Any()) //todo: сделать проверку по ВСЕМ полям
-                {
-                    throw new Exception("Такой тур уже существует");
-                }
 
-                db.Tours.Attach(to_add);
-                db.Tours.Add(to_add);
-                db.SaveChanges();
-            }
-            return to_add;
-        }
 
         //удалить тур (поместить в архив)
         public void DeleteActualTour(Tour del)
@@ -484,8 +492,7 @@ namespace TourAgencyApp.Services
                 Tour tour_to_del = db.Tours.FirstOrDefault(t => t.ID == del.ID);
                 if( tour_to_del != null )
                 {
-                    tour_to_del.IsOnTour = false;
-                    tour_to_del.IsConducted = false;
+                    tour_to_del.IsConducted = true;
                     db.SaveChanges();
                 }
             }

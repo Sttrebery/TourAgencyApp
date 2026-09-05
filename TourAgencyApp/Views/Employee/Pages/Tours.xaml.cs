@@ -24,10 +24,5 @@ namespace TourAgencyApp.Views.Employee.Pages
         {
             InitializeComponent();
         }
-
-        private void actual_tours_LostFocus(object sender, RoutedEventArgs e)
-        {
-
-        }
     }
 }

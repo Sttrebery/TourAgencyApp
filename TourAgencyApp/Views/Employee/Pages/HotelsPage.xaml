@@ -87,8 +87,8 @@
 
                 </StackPanel>
             </TabItem>
-            
-            <TabItem Header="Редактировать отель">
+
+            <TabItem Header="Редактировать отель" Selector.Selected="tab_AddHotel_Selected">
                 <StackPanel>
                     <Label Style="{StaticResource LabelStyle1}" FontSize="20" Margin="30,20,30,0" >Выберите отель:</Label>
                     <ComboBox Name="cmb_hotel" Margin="30,20,30,0"  FontSize="20"
