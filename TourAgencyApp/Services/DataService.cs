@@ -218,18 +218,18 @@ namespace TourAgencyApp.Services
         public async Task<Tourist> GetClientByID(int id)
         {
             using var db = new TourAgencyDbContext();
-            Tourist c = await db.Clients.FirstOrDefaultAsync(cl => cl.UserID == id);
+            Tourist c = await db.Clients.Include("User").FirstOrDefaultAsync(cl => cl.UserID == id);
             return c;
         }
 
         public async Task<Employee> GetEmployeeByID(int id)
         {
             using var db = new TourAgencyDbContext();
-            Employee emp = await db.Employees.FirstOrDefaultAsync(e => e.UserID == id);
+            Employee emp = await db.Employees.Include("User").FirstOrDefaultAsync(e => e.UserID == id);
             return emp;
         }
 
-        //Туры пользователя
+        //Туры пользователя :todo
         public IEnumerable<Tour> GetClientTours(string name, string surname, string patronimyc)
         {
             List<Tour> tours = new List<Tour>();
@@ -280,7 +280,6 @@ namespace TourAgencyApp.Services
                     throw new Exception("Отель уже есть в базе");
                 }
 
-                //db.Hotels.Attach(h);
                 await db.Hotels.AddAsync(h);
                 await db.SaveChangesAsync();
             }

@@ -154,9 +154,9 @@ namespace TourAgencyApp.ViewModels
                 MessageBox.Show("Отель успешно добавлен");
                 ClearForm();
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Не удалось добавить отель");
+                MessageBox.Show($"Не удалось добавить отель: {ex.Message}");
             }
         }
 
@@ -175,9 +175,9 @@ namespace TourAgencyApp.ViewModels
                 _isChanged = true;
                 MessageBox.Show("Изменения сохранены");
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Не удалось внести изменения");
+                MessageBox.Show($"Не удалось внести изменения: {ex.Message}");
             }
         }
 

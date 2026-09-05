@@ -20,7 +20,6 @@ namespace TourAgencyApp.Models
         [Required]
         public string Patronimyc { get; set; }
 
-        //[Required] //Проверку валидации узнать как делать в WPF
         public string PhoneNumber { get; set; }
         public int? PhotoID { get; set; }
         [ForeignKey("PhotoID")]
