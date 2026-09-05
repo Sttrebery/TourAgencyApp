@@ -68,8 +68,21 @@
                     </TextBox>
                     <Label>Ответственный сотрудник*:</Label>
                     <Label Content="{Binding SelectedEmployeeFullName}"></Label>
-                    <ComboBox ItemsSource="{Binding AllEmployees}" SelectedValue="{Binding SelectedEmployee}">
+                    <ComboBox ItemsSource="{Binding AllEmployees}"
+                              SelectedValue="{Binding SelectedEmployee}"
+                              SelectedValuePath="ID">
                         <!--todo:DataTemplate-->
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding ID}" Margin="5"></TextBlock>
+                                    <TextBlock Text="-" Margin="1,5,1,5"></TextBlock>
+                                    <TextBlock Text="{Binding Surname}" Margin="5"></TextBlock>
+                                    <TextBlock Text="{Binding Name}" Margin="5"></TextBlock>
+                                    <TextBlock Text="{Binding Patronimyc}" Margin="5"></TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
                     </ComboBox>
 
                     <Label>Страна посещения:</Label>
@@ -101,8 +114,18 @@
                     </ComboBox>
 
                     <Label>Отель:</Label>
-                    <ComboBox ItemsSource="{Binding AllHotels}" SelectedValue="{Binding Hotel}">
-                       
+                    <ComboBox ItemsSource="{Binding AllHotels}"
+                              SelectedValue="{Binding Hotel}"
+                              SelectedValuePath="ID">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding ID}" Margin="5"></TextBlock>
+                                    <TextBlock Text="-" Margin="1,5,1,5"></TextBlock>
+                                    <TextBlock Text="{Binding Name}" Margin="5"></TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
                     </ComboBox>
 
                     <!--todo: Add Command-->

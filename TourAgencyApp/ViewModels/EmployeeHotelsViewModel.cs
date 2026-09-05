@@ -102,7 +102,7 @@ namespace TourAgencyApp.ViewModels
 
             AddHotelCommand = new AsyncRelayCommand(AddHotel);
             ClearFormCommand = new RelayCommand(ClearForm);
-            LoadPhotosCommand = new RelayCommand(LoadPhoto);
+            LoadPhotosCommand = new AsyncRelayCommand(LoadPhoto);
             SaveHotelCommand = new AsyncRelayCommand(EditHotel);
             DeletePhotoCommand = new RelayCommand<object>(parameter => DeletePhoto(parameter));
             ShowPhotoCommand = new RelayCommand<object>(parameter => ShowPhoto(parameter));
@@ -207,72 +207,20 @@ namespace TourAgencyApp.ViewModels
             }
         }
 
-        private void LoadPhoto()
+        private async Task LoadPhoto()
         {
             OpenFileDialog fileDialog = new OpenFileDialog();
             fileDialog.Multiselect = true;
             fileDialog.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp";
 
-            List<Photo> photosToAdd = new List<Photo>();
-
             bool? result = fileDialog.ShowDialog();
             if (result == true)
             {
-                //todo: вынести загрузку всех фото в асинхронный метод
-                foreach (string filename in fileDialog.FileNames)
-                {
-                    byte[] image_data = null;
-                    try
-                    {
-                        using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read))
-                        {
-                            image_data = new byte[fs.Length];
-                            fs.Read(image_data, 0, (int)fs.Length);
-                        }
-
-                        if (image_data != null)
-                        {
-                            photosToAdd.Add(new Photo() { PhotoValue = image_data });
-                        }
-                    }
-                    catch
-                    {
-                        MessageBox.Show($"Не удалось загрузить файл: {filename}", "Ошибка");
-                    }
-                }
-                Images = new ObservableCollection<Photo>(photosToAdd);
+                // Выполняем загрузку асинхронно
+                var photos = await ImageService.LoadPhotosAsync(fileDialog.FileNames) ?? new();
+                Images = new ObservableCollection<Photo>(photos);
             }
         }
-
-        //private byte[] CreateCopy()
-        //{
-        //    try
-        //    {
-        //        System.Drawing.Image img = Bitmap.FromFile(_filename);
-        //        int maxWidth = 300, maxHeight = 300;
-        //        double ratioX = (double)maxWidth / img.Width;
-        //        double ratioY = (double)maxHeight / img.Height;
-        //        double ratio = Math.Min(ratioX, ratioY);
-        //        int newWidth = (int)(img.Width * ratio);
-        //        int newHeight = (int)(img.Height * ratio);
-
-        //        Image im = new Bitmap(newWidth, newHeight);
-        //        Graphics g = Graphics.FromImage(im);
-        //        g.DrawImage(img, 0, 0, newWidth, newHeight);
-        //        MemoryStream ms = new MemoryStream();
-        //        im.Save(ms, ImageFormat.Jpeg);
-        //        ms.Flush();
-        //        ms.Seek(0, SeekOrigin.Begin);
-        //        BinaryReader br = new BinaryReader(ms);
-        //        byte[] buf = br.ReadBytes((int)ms.Length);
-        //        return buf;
-        //    }
-        //    catch (Exception)
-        //    {
-        //        MessageBox.Show("Error CreateCopy");
-        //        return null;
-        //    }
-        //}
 
         public void LoadHotels()
         {

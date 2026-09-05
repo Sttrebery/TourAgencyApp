@@ -41,13 +41,13 @@ namespace TourAgencyApp.ViewModels
         private string _hotelName;
         private int _transportId;
         private IEnumerable<Transport> _transports;
-        private List<Photo> _images = new();
+        private ObservableCollection<Photo> _images = new();
 
         //поля для удаления тура (помещения в архив)
         private int? _del_tour;
 
         #region props
-        public List<Photo> Images
+        public ObservableCollection<Photo> Images
         {
             get { return _images; }
             set { _images = value; OnPropertyChanged(); }
@@ -180,45 +180,22 @@ namespace TourAgencyApp.ViewModels
             AddTourCommand = new RelayCommand(() => { AddTour(); LoadData(); } );
             ClearTourCommand = new RelayCommand(ClearTour);
             DeleteTourCommand = new RelayCommand( () => { DeleteTour(); LoadData(); });
-            AddPhotoCommand = new RelayCommand(AddPhoto);
+            AddPhotoCommand = new AsyncRelayCommand(AddPhoto);
         }
 
-        private void AddPhoto()
+        private async Task AddPhoto()
         {
             OpenFileDialog fileDialog = new OpenFileDialog();
             fileDialog.Multiselect = true;
             fileDialog.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp";
 
-            List<Photo> photosToAdd = new List<Photo>();
-
             bool? result = fileDialog.ShowDialog();
             if (result == true)
             {
-                //todo: вынести загрузку всех фото в асинхронный метод
-                foreach (string filename in fileDialog.FileNames)
-                {
-                    byte[] image_data = null;
-                    try
-                    {
-                        using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read))
-                        {
-                            image_data = new byte[fs.Length];
-                            fs.Read(image_data, 0, (int)fs.Length);
-                        }
-
-                        if(image_data != null)
-                        {
-                            photosToAdd.Add(new Photo() { PhotoValue = image_data });
-                        }
-                    }
-                    catch
-                    {
-                        MessageBox.Show($"Не удалось загрузить файл: {filename}", "Ошибка");
-                    }
-                }
-                Images = photosToAdd;
+                // Выполняем загрузку асинхронно
+                var photos = await ImageService.LoadPhotosAsync(fileDialog.FileNames) ?? new();
+                Images = new ObservableCollection<Photo>(photos);
             }
-
         }
 
         //загрузка данных из бд
