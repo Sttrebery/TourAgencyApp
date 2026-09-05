@@ -24,7 +24,7 @@ namespace TourAgencyApp.ViewModels
         
         //поля для просмотра
         private ObservableCollection<Tour> _actualTours;   //Актуальных туров
-        private ObservableCollection<Tour> _archiveTours; //Архивных туров //todo: мб сделать вычисляемым
+        private ObservableCollection<Tour> _archiveTours; //Архивных туров 
         private ICollectionView _toursView;
         private ICollectionView _archiveToursView;
 
@@ -51,7 +51,7 @@ namespace TourAgencyApp.ViewModels
         private ObservableCollection<Transport> _transports;
 
         //редактирование тура
-
+        private int? tourToEditId;
 
         //поля для удаления тура (помещения в архив)
         private int? tourToDeleteId;
@@ -166,15 +166,17 @@ namespace TourAgencyApp.ViewModels
         }
         #endregion
 
-        #region Delete Tour
-
         public int? TourToDeleteID
         {
             get => tourToDeleteId;
             set { tourToDeleteId = value; OnPropertyChanged(); }
         }
 
-        #endregion
+        public int? TourToEditID
+        {
+            get => tourToEditId;
+            set { tourToEditId = value; OnPropertyChanged(); }
+        }
 
         #endregion
 
@@ -183,6 +185,9 @@ namespace TourAgencyApp.ViewModels
         public ICommand ClearTourCommand { get; set; } //очистка формы в окне добавления
         public ICommand DeleteTourCommand { get; set; }
         public ICommand ShowPhotoCommand { get; set; }
+        public ICommand DeletePhotoCommand { get; set; }
+        public ICommand EditTourCommand { get; set; }
+        public ICommand CancelCommand { get; set; }
 
         public EmployeeTourViewModel(DataService d)
         {
@@ -193,6 +198,9 @@ namespace TourAgencyApp.ViewModels
             DeleteTourCommand = new AsyncRelayCommand(DeleteTour);
             AddPhotoCommand = new AsyncRelayCommand(AddPhoto);
             ShowPhotoCommand = new RelayCommand<object>(parameter => ShowPhoto(parameter));
+            DeletePhotoCommand = new RelayCommand<object>(parameter => DeletePhoto(parameter));
+            EditTourCommand = new AsyncRelayCommand(EditTour);
+            CancelCommand = new RelayCommand(UpdateUI);
         }
 
         private void ShowPhoto(object? param)
@@ -227,6 +235,15 @@ namespace TourAgencyApp.ViewModels
             }
         }
 
+        private void DeletePhoto(object? param)
+        {
+            var p = param as Photo;
+            if (p != null)
+            {
+                Images.Remove(p);
+            }
+        }
+
         //загрузка данных из бд
         public async Task LoadDataFromDB()
         {
@@ -234,8 +251,7 @@ namespace TourAgencyApp.ViewModels
             ActualTours = new ObservableCollection<Tour>(tours.Where(t=>t.IsConducted == false));
             ArchiveTours = new ObservableCollection<Tour>(tours.Where(t=> t.IsConducted == true));
 
-            //todo: async
-            AllEmployees = new ObservableCollection<Employee>(_dataService.GetAllEmployees());
+            AllEmployees = new ObservableCollection<Employee>(await _dataService.GetAllEmployeesAsync());
             AllHotels = new ObservableCollection<Hotel>(await _dataService.GetHotelsAsync());
             Countries = new ObservableCollection<Country>(await _dataService.GetAllCountriesAsync());
             Transports = new ObservableCollection<Transport>(await _dataService.GetAllTransportsAsync());
@@ -293,7 +309,78 @@ namespace TourAgencyApp.ViewModels
             }
         }
 
-        private void ClearTour()
+        private async Task EditTour()
+        {
+            if (!CanExecute())
+            {
+                MessageBox.Show("Заполните все обязательные поля!");
+                return;
+            }
+            else if (StartDate > EndDate || StartDate < DateTime.Today)
+            {
+                MessageBox.Show("Дата начала не может быть позднее даты окончания или текущего дня!");
+                return;
+            }
+
+            Tour edited = new Tour()
+            {
+                ID = TourToEditID!.Value,
+                Name = TourName,
+                Cost = TourCost,
+                StartDate = StartDate!.Value,
+                EndDate = EndDate!.Value,
+                Description = Description,
+                MaxTouristCount = TouristMaxCount,
+                ResponsibleEmployeeID = SelectedEmployeeID!.Value,
+                CountyID = CountryID!.Value,
+                TransoprtTypeID = TransportID!.Value,
+                HotelID = HotelID!.Value,
+                Photos = Images.ToList()
+            };
+
+            try
+            {
+                await _dataService.EditTourAsync(TourToEditID!.Value, edited);
+
+                var selected = ActualTours.FirstOrDefault(h => h.ID == TourToEditID);
+                ActualTours.Remove(selected);
+                ActualTours.Add(edited);
+
+                MessageBox.Show("Изменения сохранены");
+                ClearTour();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Не удалось внести изменения: {ex.Message}");
+            }
+
+        }
+
+        public void UpdateUI()
+        {
+            var selected = ActualTours.FirstOrDefault(h => h.ID == TourToEditID);
+            if (selected != null)
+            {
+                TourName = selected.Name;
+                Description = selected.Description;
+                TourCost = selected.Cost;
+                StartDate = selected.StartDate;
+                EndDate = selected.EndDate;
+                TouristMaxCount = selected.MaxTouristCount;
+                Images = new(selected.Photos);
+
+                SelectedEmployeeID = selected.ResponsibleEmployeeID;
+                CountryID = selected.CountyID;
+                TransportID = selected.TransoprtTypeID;
+                HotelID = selected.HotelID;
+            }
+            else
+            {
+                ClearTour();
+            }
+        }
+
+        public void ClearTour()
         {
             TourName = string.Empty;
             Description = string.Empty;
@@ -307,6 +394,9 @@ namespace TourAgencyApp.ViewModels
             CountryID = null;
             TransportID = null;
             HotelID = null;
+
+            TourToDeleteID = null;
+            TourToEditID = null;
         }
 
         private async Task DeleteTour()
@@ -324,6 +414,7 @@ namespace TourAgencyApp.ViewModels
                 ArchiveTours.Add(tour_to_delete);
 
                 MessageBox.Show("Тур был помещен в архив");
+                TourToDeleteID = null;
             }
             catch
             {

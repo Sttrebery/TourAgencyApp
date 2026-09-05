@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TourAgencyApp.ViewModels;
 
 namespace TourAgencyApp.Views.Employee.Pages
 {
@@ -23,6 +24,22 @@ namespace TourAgencyApp.Views.Employee.Pages
         public Tours()
         {
             InitializeComponent();
+        }
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (DataContext != null)
+            {
+                (DataContext as EmployeeTourViewModel).UpdateUI();
+            }
+        }
+
+        private void TabItem_Selected(object sender, RoutedEventArgs e)
+        {
+            if (DataContext != null)
+            {
+                (DataContext as EmployeeTourViewModel).ClearTour();
+            }
         }
     }
 }

@@ -172,7 +172,7 @@ namespace TourAgencyApp.ViewModels
                 return;
             }
 
-            Hotel edited = new Hotel() { Name = EditName, Description = EditDescription, Address = EditAddress, Photos = Images.ToList()};
+            Hotel edited = new Hotel() { ID=SelectedHotelID, Name = EditName, Description = EditDescription, Address = EditAddress, Photos = Images.ToList()};
             try
             {
                 await _dataService.EditHotel(SelectedHotelID, edited);

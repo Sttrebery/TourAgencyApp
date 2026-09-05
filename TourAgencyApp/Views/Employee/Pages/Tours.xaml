@@ -48,7 +48,7 @@
                     </DataGrid>
                 </StackPanel>
             </TabItem>
-            <TabItem Header="Добавить тур" HorizontalContentAlignment="Center">
+            <TabItem Header="Добавить тур" HorizontalContentAlignment="Center" Selector.Selected="TabItem_Selected">
                 <StackPanel Margin="30" >
                     <Label>Название тура*:</Label>
                     <TextBox Text="{Binding TourName}"></TextBox>
@@ -174,14 +174,155 @@
                         <Button Margin="20,0,20,0" Height="40" Width="100" Command="{Binding AddTourCommand}" IsEnabled="True">Добавить</Button>
                         <Button Margin="20,0,20,0" Height="40" Width="100" Command="{Binding ClearTourCommand}">Очистить</Button>
                     </WrapPanel>
-                    
-                    
                 </StackPanel>
             </TabItem>
+
+            <TabItem Header="Редактировать тур" HorizontalContentAlignment="Center" Selector.Selected="TabItem_Selected">
+                <StackPanel Margin="30,20,20,20" >
+                    <Label Style="{StaticResource LabelStyle1}" Margin="10,20,0,0">Выберите тур:</Label>
+                    <ComboBox  Style="{StaticResource ComboboxStyle1}" Selector.SelectionChanged="ComboBox_SelectionChanged"
+                          ItemsSource="{Binding ActualTours}" 
+                          SelectedValuePath="ID"
+                          SelectedValue="{Binding TourToEditID}">     
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Name}" Margin="5"></TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <Label>Название тура*:</Label>
+                    <TextBox Text="{Binding TourName}"></TextBox>
+                    <Label>Стоимость тура*:</Label>
+                    <TextBox>
+                        <TextBox.Text>
+                            <Binding Path="TourCost">
+                                <Binding.ValidationRules>
+                                    <l:DecimalValidationRule />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <Label>Дата начала*:</Label>
+                    <DatePicker SelectedDate="{Binding StartDate}"></DatePicker>
+                    <Label>Дата окончания*:</Label>
+                    <DatePicker SelectedDate="{Binding EndDate}"></DatePicker>
+                    <Label>Описание тура:</Label>
+                    <TextBox Text="{Binding Description}" TextWrapping="Wrap" Height="150"></TextBox>
+                    <Label>Максимальное количество туристов*:</Label>
+                    <TextBox>
+                        <TextBox.Text>
+                            <Binding Path="TouristMaxCount">
+                                <Binding.ValidationRules>
+                                    <l:IntValidationRule />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+
+                    <Label>Ответственный сотрудник*:</Label>
+                    <ComboBox ItemsSource="{Binding Path=AllEmployees}"
+                              SelectedValue="{Binding Path=SelectedEmployeeID}"
+                              SelectedValuePath="ID">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <WrapPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding ID}" Margin="5"></TextBlock>
+                                    <TextBlock Text="." Margin="1,5,1,5"></TextBlock>
+                                    <TextBlock Text="{Binding Surname}" Margin="2,5,2,5"></TextBlock>
+                                    <TextBlock Text="{Binding Name}" Margin="2,5,2,5"></TextBlock>
+                                    <TextBlock Text="{Binding Patronimyc}" Margin="2,5,2,5"></TextBlock>
+                                    <TextBlock Text="-" Margin="1,5,1,5"></TextBlock>
+                                    <TextBlock Text="{Binding Position, Converter={StaticResource enumConverter}}" Margin="5"></TextBlock>
+                                </WrapPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <Label>Страна посещения:</Label>
+                    <ComboBox
+                        ItemsSource="{Binding Path=Countries}"
+                        SelectedValuePath="ID"
+                        SelectedValue="{Binding Path=CountryID}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Name}" Margin="5"></TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <Label>Транспорт:</Label>
+                    <ComboBox
+                        ItemsSource="{Binding Path=Transports}"
+                        SelectedValuePath="ID"
+                        SelectedValue="{Binding Path=TransportID}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Name}" Margin="5"></TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <Label>Отель:</Label>
+                    <ComboBox ItemsSource="{Binding AllHotels}"
+                              SelectedValue="{Binding HotelID}"
+                              SelectedValuePath="ID">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding ID}" Margin="5"></TextBlock>
+                                    <TextBlock Text="-" Margin="1,5,1,5"></TextBlock>
+                                    <TextBlock Text="{Binding Name}" Margin="5"></TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <Button Margin="10" Height="35" Width="150" HorizontalAlignment="Left" Command="{Binding AddPhotoCommand}">Загрузить фото</Button>
+                    <ListView ItemsSource="{Binding Images}" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Превью">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Image Source="{Binding Path=PhotoValue, Converter={StaticResource ByteToImage}}" 
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Height="150" Stretch="Uniform" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn>
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Command="{Binding DataContext.DeletePhotoCommand, 
+                                                RelativeSource={RelativeSource AncestorType=ListView}}"
+                                                CommandParameter="{Binding}">
+                                                Удалить
+                                            </Button>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+
+                    <WrapPanel Margin="10" HorizontalAlignment="Center" >
+                        <Button Margin="20,0,20,0" Height="40" Width="100" Command="{Binding EditTourCommand}" IsEnabled="True">Сохранить</Button>
+                        <Button Margin="20,0,20,0" Height="40" Width="100" Command="{Binding CancelCommand}">Отмена</Button>
+                    </WrapPanel>
+                </StackPanel>
+            </TabItem>
+            
             <TabItem Header="Удалить тур">
                 <StackPanel>
                     <Label Style="{StaticResource LabelStyle1}" Margin="30,20,0,0">Выберите тур, который хотите удалить</Label>
-                    <!--todo-->
                     <ComboBox Style="{StaticResource ComboboxStyle1}" Width="550"
                               ItemsSource="{Binding ActualTours}" 
                               SelectedValuePath="ID"
@@ -190,9 +331,9 @@
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="{Binding Name}" Margin="5"></TextBlock>
-                                    <TextBlock Text="{Binding StartDate}" Margin="5"></TextBlock>
+                                    <TextBlock Text="{Binding StartDate, StringFormat=dd.MM.yyyy}" Margin="5"></TextBlock>
                                     <TextBlock Text="-" Margin="5"></TextBlock>
-                                    <TextBlock Text="{Binding EndDate}" Margin="5"></TextBlock>
+                                    <TextBlock Text="{Binding EndDate, StringFormat=dd.MM.yyyy}" Margin="5"></TextBlock>
                                 </StackPanel>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
@@ -201,20 +342,21 @@
                 </StackPanel>
                 
             </TabItem>
+            
             <TabItem Header="Архивные туры">
                 <DataGrid ItemsSource="{Binding ArchiveTours}" AutoGenerateColumns="False" IsReadOnly="True">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Наименование" Binding="{Binding Name}" />
                         <DataGridTextColumn Header="Цена" Binding="{Binding Cost}" />
-                        <DataGridTextColumn Header="Дата начала" Binding="{Binding StartDate}" />
-                        <DataGridTextColumn Header="Дата окончания" Binding="{Binding EndDate}" />
+                        <DataGridTextColumn Header="Дата начала" Binding="{Binding StartDate, StringFormat=dd.MM.yyyy}" />
+                        <DataGridTextColumn Header="Дата окончания" Binding="{Binding EndDate, StringFormat=dd.MM.yyyy}" />
                         <DataGridTextColumn Header="Описание" Binding="{Binding Description}" />
                         <DataGridTextColumn Header="Количество мест" Binding="{Binding MaxTouristCount}" />
                         <DataGridTemplateColumn Header="Фото">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Button Margin="10" Command="{Binding DataContext.ShowPhotoCommand, 
-                     RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                         RelativeSource={RelativeSource AncestorType=DataGrid}}"
                          CommandParameter="{Binding}">Посмотреть фото</Button>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>

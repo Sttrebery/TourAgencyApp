@@ -72,6 +72,24 @@ namespace TourAgencyApp.Services
             return emps;
         }
 
+        //получение всех сотрудников async
+        public async Task<IEnumerable<Employee>> GetAllEmployeesAsync()
+        {
+            List<Employee> emps = null!;
+            try
+            {
+                using (var db = new TourAgencyDbContext())
+                {
+                    emps = await db.Employees.ToListAsync();
+                }
+            }
+            catch
+            {
+                emps = new List<Employee>();
+            }
+            return emps;
+        }
+
         //получение всех отелей
         public IEnumerable<Hotel> GetHotels()
         {
@@ -373,8 +391,77 @@ namespace TourAgencyApp.Services
                 }
                 else
                 {
-                    db.Hotels.Attach(changes);
-                    db.Entry(changes).State = EntityState.Modified;
+                    db.Entry(founded).CurrentValues.SetValues(changes);
+
+                    //удаление фото
+                    foreach (var photo in founded.Photos)
+                    {
+                        if (!changes.Photos.Any(p => p.ID == photo.ID))
+                        {
+                            db.Photos.Remove(photo);
+                        }
+                    }
+
+                    //  добавление/изменение новых фото
+                    foreach (var photo in changes.Photos)
+                    {
+                        var existingPhoto = founded.Photos
+                            .FirstOrDefault(p => p.ID == photo.ID);
+
+                        if (existingPhoto == null)
+                        {
+                            founded.Photos.Add(photo);
+                        }
+                        else
+                        {
+                            db.Entry(existingPhoto).CurrentValues.SetValues(photo);
+                        }
+                    }
+                }
+                await db.SaveChangesAsync();
+            }
+        }
+
+
+        //внести изменения в данные Тура async
+        public async Task EditTourAsync(int origId, Tour changes)
+        {
+            using (var db = new TourAgencyDbContext())
+            {
+                var founded = await db.Tours.Include("Photos").Where(t => t.ID == origId).FirstOrDefaultAsync();
+                
+                if (founded == null)
+                {
+                    await AddTourAsync(changes);
+                }
+                else
+                {
+                    db.Entry(founded).CurrentValues.SetValues(changes);
+                    
+                    //удаление фото
+                    foreach (var photo in founded.Photos)
+                    {
+                        if (!changes.Photos.Any(p => p.ID == photo.ID))
+                        {
+                            db.Photos.Remove(photo);
+                        }
+                    }
+
+                    //  добавление/изменение новых фото
+                    foreach (var photo in changes.Photos)
+                    {
+                        var existingPhoto = founded.Photos
+                            .FirstOrDefault(p => p.ID == photo.ID);
+
+                        if (existingPhoto == null)
+                        {
+                            founded.Photos.Add(photo);
+                        }
+                        else
+                        {
+                            db.Entry(existingPhoto).CurrentValues.SetValues(photo);
+                        }
+                    }
                 }
                 await db.SaveChangesAsync();
             }
@@ -482,7 +569,7 @@ namespace TourAgencyApp.Services
             }
         }
 
-        //удалить тур (поместить в архив) фынтс
+        //удалить тур (поместить в архив) async
         public async Task DeleteTourAsync(int tour_id)
         {
             using (var db = new TourAgencyDbContext())
@@ -490,7 +577,6 @@ namespace TourAgencyApp.Services
                 Tour? tour_to_del = await db.Tours.FirstOrDefaultAsync(t => t.ID == tour_id);
                 if(tour_to_del != null)
                 {
-                    //db.Tours.Attach(tour_to_del);
                     tour_to_del.IsConducted = true;
                     await db.SaveChangesAsync();
                 }
@@ -577,42 +663,6 @@ namespace TourAgencyApp.Services
             }
             return tours;
         }
-
-        //todo: получение клиента по ФИО
-        //public AgencyClients GetClientByFIO(string surname, string name, string patronimyc)
-        //{
-        //    AgencyClients client;
-        //    try
-        //    {
-        //        using (var db = new TourAgencyDbContext())
-        //        {
-        //            client = db.AgencyClients.Where(c => c.Name_ == name && c.Surname == surname && c.Patronymic == patronimyc).FirstOrDefault();
-        //        }
-        //    }
-        //    catch
-        //    {
-        //        client = null;
-        //    }
-        //    return client;
-        //}
-
-        //todo: получени сотрудника по логину
-        //public Employee GetEmployeeByLogin(string login)
-        //{
-        //    Employee emp;
-        //    try
-        //    {
-        //        using (var db = new TourAgencyDbContext())
-        //        {
-        //            emp = db.Employees.Where(e => e.Login == login).FirstOrDefault();
-        //        }
-        //    }
-        //    catch
-        //    {
-        //        emp = null;
-        //    }
-        //    return emp;
-        //}
 
     }
 }
