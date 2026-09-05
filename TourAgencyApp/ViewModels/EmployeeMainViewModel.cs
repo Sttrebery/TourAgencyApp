@@ -41,7 +41,6 @@ namespace TourAgencyApp.ViewModels
         public EmployeeTourViewModel ToursVM { get; set; }
         public EmployeeHotelsViewModel HotelsVM { get; set; }
         public StatsViewModel StatsVM { get; set; }
-        public ClientCheckViewModel ClientCheckVM { get; set; }
         public EmployeeCountriesViewModel CountriesVM { get; set; }
         public EmployeeTransportsViewModel TransportsVM { get; set; }
         #endregion
@@ -49,7 +48,6 @@ namespace TourAgencyApp.ViewModels
         public ICommand NavigateToToursCommand { get; }
         public ICommand NavigateToHotelsCommand { get; }
         public ICommand NavigateToStatsCommand { get; }
-        public ICommand NavigateToClientCheckCommand { get; }
         public ICommand NavigateToCountriesCommand { get; }
         public ICommand NavigateToTransportsCommand { get; }
 
@@ -62,14 +60,12 @@ namespace TourAgencyApp.ViewModels
             StatsVM = new StatsViewModel(dataService);
             ToursVM = new EmployeeTourViewModel(dataService);
             HotelsVM = new EmployeeHotelsViewModel(dataService);
-            ClientCheckVM = new ClientCheckViewModel(dataService);
             CountriesVM = new EmployeeCountriesViewModel(dataService);
             TransportsVM = new EmployeeTransportsViewModel(dataService);
 
             NavigateToStatsCommand = new RelayCommand(() => { StatsVM.LoadData(); CurrentPage = StatsVM; });
             NavigateToToursCommand = new RelayCommand(async () => {  await ToursVM.LoadDataFromDB(); CurrentPage =  ToursVM; });
             NavigateToHotelsCommand = new RelayCommand(() => {  CurrentPage =  HotelsVM; });
-            NavigateToClientCheckCommand = new RelayCommand(() => CurrentPage = ClientCheckVM);
             NavigateToCountriesCommand = new RelayCommand(() =>  CurrentPage = CountriesVM);
             NavigateToTransportsCommand = new RelayCommand(() =>  CurrentPage = TransportsVM);
         }

@@ -467,6 +467,7 @@ namespace TourAgencyApp.Services
             }
         }
         #endregion
+        
         // todo: Получение популярной страны
         //public void GetTopCountry(out string name, out int count)
         //{

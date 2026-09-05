@@ -74,13 +74,11 @@ namespace TourAgencyApp.ViewModels
         public PopularityViewModel PopularityVM { get; set; }
         public MyToursViewModel MyToursVM { get; set; }
         public ClientProfileViewModel ProfileVM { get; set; }
-        public ClientHotelsViewModels HotelsVM { get; set; }
         #endregion
 
         #region Commands
         public event Action SearchEvent;
         public ICommand NavigateToActualCommand { get; }
-        public ICommand NavigateToHotelsCommand { get; }
         public ICommand NavigateToPopularityCommand { get; }
         public ICommand NavigateToMyToursCommand { get; }
         public ICommand NavigateToProfileCommand { get; }
@@ -98,7 +96,6 @@ namespace TourAgencyApp.ViewModels
 
             // viewModels
             ActualToursVM = new ActualToursViewModel(dataService);
-            HotelsVM = new ClientHotelsViewModels(dataService);
             ProfileVM = new ClientProfileViewModel(Client);
             PopularityVM = new PopularityViewModel(dataService);
             SearchVM = new SearchViewModel(dataService);
@@ -111,7 +108,6 @@ namespace TourAgencyApp.ViewModels
             SearchVM.ExtSearchEvent += () => CurrentPage = SearchVM;
 
             NavigateToActualCommand = new RelayCommand(() => { ActualToursVM.LoadTours(); CurrentPage = ActualToursVM; });
-            NavigateToHotelsCommand = new RelayCommand(() => { HotelsVM.LoadHotels(); CurrentPage = HotelsVM; });
             NavigateToPopularityCommand = new RelayCommand(() => { PopularityVM.LoadData(); CurrentPage = PopularityVM; });
             NavigateToMyToursCommand = new RelayCommand(() => { MyToursVM.LoadTours(); CurrentPage = MyToursVM; });
             NavigateToProfileCommand = new RelayCommand(() => CurrentPage = ProfileVM);

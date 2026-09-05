@@ -120,7 +120,6 @@ namespace TourAgencyApp.ViewModels
         }
         #endregion
 
-        //public delegate Task AsyncEventHandler();
         public event Action RegisterEvent;
         public ICommand RegisterCommand { get; set; } 
 
@@ -128,7 +127,7 @@ namespace TourAgencyApp.ViewModels
         {
             _dataService = new DataService();
 
-            RegisterEvent += async () => { await Register(); }; //todo: нет ли ошибок
+            RegisterEvent += async () => { await Register(); };
             RegisterCommand = new RelayCommand(() => RegisterEvent());
         }
 
@@ -163,6 +162,8 @@ namespace TourAgencyApp.ViewModels
                 Validation = "Форма не заполнена полностью";
                 return false;
             }
+
+            //todo: ChechEmail with Regex
 
             if (!CheckPassword())
             {

@@ -65,7 +65,6 @@
 
                 <Button x:Name="btn_popularity" Style="{StaticResource BordersButtonStyle}" Command="{Binding NavigateToPopularityCommand}">Сейчас популярно!</Button>
                 <Button x:Name="btn_show_actual_tours" Style="{StaticResource BordersButtonStyle}" Command="{Binding NavigateToActualCommand}" >Актуальные туры</Button>
-                <Button x:Name="btn_show_hotels" Style="{StaticResource BordersButtonStyle}" Command="{Binding NavigateToHotelsCommand}" >Отели</Button>
 
             </StackPanel>
         </Border>
