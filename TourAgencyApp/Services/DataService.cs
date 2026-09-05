@@ -17,6 +17,7 @@ namespace TourAgencyApp.Services
     public class DataService
     {
         #region Get data From Database
+        
         // получение актуальных туров
         public IEnumerable<Tour> GetTours()
         {
@@ -80,6 +81,27 @@ namespace TourAgencyApp.Services
                 using (var db = new TourAgencyDbContext())
                 {
                     hotels = db.Hotels.Include("Photos").ToList();
+                }
+            }
+            catch
+            {
+                hotels = new List<Hotel>();
+            }
+            return hotels;
+        }
+
+        /// <summary>
+        /// Получение списка отелей асинхронно
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IEnumerable<Hotel>> GetHotelsAsync()
+        {
+            List<Hotel> hotels = null!;
+            try
+            {
+                using (var db = new TourAgencyDbContext())
+                {
+                    hotels = await db.Hotels.Include("Photos").ToListAsync();
                 }
             }
             catch

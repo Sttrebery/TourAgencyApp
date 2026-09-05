@@ -125,7 +125,6 @@ namespace TourAgencyApp.ViewModels
             Description = string.Empty;
             Address = string.Empty;
             Images = null;
-            //OnPropertyChanged();
         }
 
         private bool CanExecute()
@@ -222,11 +221,11 @@ namespace TourAgencyApp.ViewModels
             }
         }
 
-        public void LoadHotels()
+        public async Task LoadHotels()
         {
             if(_isChanged)
             {
-                var hotelsFromDB = _dataService.GetHotels(); //todo: async
+                var hotelsFromDB = await _dataService.GetHotelsAsync();
                 Hotels = new ObservableCollection<Hotel>(hotelsFromDB);
                 _isChanged = false;
             }

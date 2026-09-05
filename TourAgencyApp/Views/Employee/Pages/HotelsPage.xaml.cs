@@ -43,11 +43,11 @@ namespace TourAgencyApp.Views.Employee.Pages
             }
         }
 
-        private void tab_hotels_list_Selected(object sender, RoutedEventArgs e)
+        private async void tab_hotels_list_Selected(object sender, RoutedEventArgs e)
         {
             if (DataContext != null)
             {
-                (DataContext as EmployeeHotelsViewModel).LoadHotels();
+                await (DataContext as EmployeeHotelsViewModel).LoadHotels();
             }
         }
     }
