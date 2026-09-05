@@ -1,15 +1,15 @@
 ﻿using Microsoft.Win32;
-using SixLabors.ImageSharp.Formats.Jpeg;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Processing;
 using TourAgencyApp.Models;
 
 namespace TourAgencyApp.Services
@@ -20,11 +20,6 @@ namespace TourAgencyApp.Services
         {
             var photosToAdd = new List<Photo>();
 
-            // Параметры сжатия можно настроить
-            const int maxWidth = 1920;
-            const int maxHeight = 1080;
-            const int quality = 80; // 1-100, где 100 - максимальное качество
-
             foreach (string filename in fileNames)
             {
                 try
@@ -32,7 +27,7 @@ namespace TourAgencyApp.Services
                     byte[] imageData = await File.ReadAllBytesAsync(filename);
 
                     // Сжимаем изображение
-                    byte[] compressedData = CompressImage(imageData, maxWidth, maxHeight, quality);
+                    byte[] compressedData = CompressImage(imageData);
 
                     photosToAdd.Add(new Photo() { PhotoValue = compressedData });
                 }
@@ -52,42 +47,46 @@ namespace TourAgencyApp.Services
         {
             try
             {
-                using (var inputStream = new MemoryStream(imageData))
-                using (var image = Image.Load(inputStream))
+                using (var ms = new MemoryStream(imageData))
+                using (var originalImage = Image.FromStream(ms))
                 {
-                    // Вычисляем новые размеры с сохранением пропорций
-                    var ratio = Math.Min((double)maxWidth / image.Width, (double)maxHeight / image.Height);
+                    // Вычисляем новые размеры
+                    var ratio = Math.Min((double)maxWidth / originalImage.Width,
+                                         (double)maxHeight / originalImage.Height);
 
-                    // Если изображение меньше максимальных размеров, сжимаем только по качеству
-                    if (ratio >= 1)
+                    if (ratio >= 1) return imageData;
+
+                    int newWidth = (int)(originalImage.Width * ratio);
+                    int newHeight = (int)(originalImage.Height * ratio);
+
+                    using (var bitmap = new Bitmap(newWidth, newHeight))
+                    using (var graphics = Graphics.FromImage(bitmap))
                     {
-                        using (var outputStream = new MemoryStream())
+                        graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                        graphics.DrawImage(originalImage, 0, 0, newWidth, newHeight);
+
+                        var encoder = GetEncoder(ImageFormat.Jpeg);
+                        var encoderParams = new EncoderParameters(1);
+                        encoderParams.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality);
+
+                        using (var resultMs = new MemoryStream())
                         {
-                            var encoder = new JpegEncoder { Quality = quality };
-                            image.Save(outputStream, encoder);
-                            return outputStream.ToArray();
+                            bitmap.Save(resultMs, encoder, encoderParams);
+                            return resultMs.ToArray();
                         }
-                    }
-
-                    // Изменяем размер
-                    int newWidth = (int)(image.Width * ratio);
-                    int newHeight = (int)(image.Height * ratio);
-
-                    image.Mutate(x => x.Resize(newWidth, newHeight));
-
-                    using (var outputStream = new MemoryStream())
-                    {
-                        var encoder = new JpegEncoder { Quality = quality };
-                        image.Save(outputStream, encoder);
-                        return outputStream.ToArray();
                     }
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                // Если сжатие не удалось, возвращаем оригинал
                 return imageData;
             }
+        }
+
+        private static ImageCodecInfo GetEncoder(ImageFormat format)
+        {
+            var codecs = ImageCodecInfo.GetImageEncoders();
+            return codecs.FirstOrDefault(c => c.FormatID == format.Guid)!;
         }
     }
 }

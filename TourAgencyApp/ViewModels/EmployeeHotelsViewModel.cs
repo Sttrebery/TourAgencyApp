@@ -21,6 +21,7 @@ namespace TourAgencyApp.ViewModels
         private ObservableCollection<Hotel> _hotels;
 
         private bool _isChanged = false;
+
         //поля для добавления
         private string _name;
         private string _desc;
@@ -99,6 +100,7 @@ namespace TourAgencyApp.ViewModels
         {
             _dataService = dataService;
             Hotels = new ObservableCollection<Hotel>(_dataService.GetHotels());
+            Images = new();
 
             AddHotelCommand = new AsyncRelayCommand(AddHotel);
             ClearFormCommand = new RelayCommand(ClearForm);
@@ -124,7 +126,7 @@ namespace TourAgencyApp.ViewModels
             Name = string.Empty;
             Description = string.Empty;
             Address = string.Empty;
-            Images = null;
+            Images.Clear();
         }
 
         private bool CanExecute()
@@ -202,7 +204,7 @@ namespace TourAgencyApp.ViewModels
             else
             {
                 EditName = EditAddress = EditDescription = string.Empty;
-                Images = null;
+                Images.Clear();
             }
         }
 
@@ -216,8 +218,11 @@ namespace TourAgencyApp.ViewModels
             if (result == true)
             {
                 // Выполняем загрузку асинхронно
-                var photos = await ImageService.LoadPhotosAsync(fileDialog.FileNames) ?? new();
-                Images = new ObservableCollection<Photo>(photos);
+                List<Photo> photos = await ImageService.LoadPhotosAsync(fileDialog.FileNames) ?? new();
+                foreach (var photo in photos)
+                {
+                    Images.Add(photo);
+                }
             }
         }
 

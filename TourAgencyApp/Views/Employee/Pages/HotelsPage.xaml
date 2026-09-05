@@ -11,7 +11,6 @@
       Title="HotelsPage">
     <Page.Resources>
         <ResourceDictionary>
-            <!---todo: -->
             <local_page:ByteArrayToImageConverter x:Key="ByteToImageConverter"/>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Dictionaries/PagesDictionary.xaml"/>
@@ -55,8 +54,31 @@
                     <TextBox FontSize="18" Padding="2" Height="50" Text="{Binding Address}"></TextBox>
 
                     <Button Margin="10" HorizontalAlignment="Left" Height="25" Width="120" Command="{Binding LoadPhotosCommand}">Загрузить фото</Button>
-                    <l:ViewingPhotoControl Images="{Binding Images}">
-                    </l:ViewingPhotoControl>
+
+                    <ListView ItemsSource="{Binding Images}" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Превью">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Image Source="{Binding Path=PhotoValue, Converter={StaticResource ByteToImageConverter}}" 
+                                                 HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   Height="150" Stretch="Uniform" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn>
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Command="{Binding DataContext.DeletePhotoCommand, 
+                                          RelativeSource={RelativeSource AncestorType=ListView}}" CommandParameter="{Binding}">Удалить</Button>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
 
                     <WrapPanel HorizontalAlignment="Center" Margin="10">
                         <Button Margin="20,0,20,0" FontSize="16" Height="40" Width="100" Command="{Binding AddHotelCommand}">Добавить</Button>
@@ -94,7 +116,6 @@
                         <Label FontSize="18" >Адрес*:</Label>
                         <TextBox FontSize="18"  Text="{Binding EditAddress}"></TextBox>
 
-                        <!--todo редактирование списка фото-->
                         <Button Margin="10" HorizontalAlignment="Left" Height="25" Width="120" Command="{Binding LoadPhotosCommand}">Загрузить фото</Button>
    
                         <ListView ItemsSource="{Binding Images}" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True">

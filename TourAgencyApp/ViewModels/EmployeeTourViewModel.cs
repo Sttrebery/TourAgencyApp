@@ -194,7 +194,11 @@ namespace TourAgencyApp.ViewModels
             {
                 // Выполняем загрузку асинхронно
                 var photos = await ImageService.LoadPhotosAsync(fileDialog.FileNames) ?? new();
-                Images = new ObservableCollection<Photo>(photos);
+                //Images = new ObservableCollection<Photo>(photos); надо чтобы Images не был null
+                foreach (var photo in photos)
+                {
+                    Images.Add(photo);
+                }
             }
         }
 
