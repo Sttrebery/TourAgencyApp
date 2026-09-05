@@ -25,6 +25,8 @@ namespace TourAgencyApp.ViewModels
         //поля для просмотра
         private ObservableCollection<Tour> _actualTours;   //Актуальных туров
         private ObservableCollection<Tour> _archiveTours; //Архивных туров //todo: мб сделать вычисляемым
+        private ICollectionView _toursView;
+        private ICollectionView _archiveToursView;
 
         //поля при добавлении тура
         private string _tourName;
@@ -49,7 +51,7 @@ namespace TourAgencyApp.ViewModels
         private ObservableCollection<Transport> _transports;
 
         //редактирование тура
-        private ICollectionView _toursView; //todo:
+
 
         //поля для удаления тура (помещения в архив)
         private int? tourToDeleteId;
@@ -74,6 +76,18 @@ namespace TourAgencyApp.ViewModels
             get => _archiveTours;
             set { _archiveTours = value; OnPropertyChanged(); }
         }
+
+        public ICollectionView ToursView
+        {
+            get => _toursView;
+            set { _toursView = value; OnPropertyChanged(); }
+        }
+        public ICollectionView ArchiveToursView
+        {
+            get => _archiveToursView;
+            set { _archiveToursView = value; OnPropertyChanged(); }
+        }
+
         #endregion
 
         #region Add Tour
@@ -154,7 +168,7 @@ namespace TourAgencyApp.ViewModels
 
         #region Delete Tour
 
-        public int? TourToDelete
+        public int? TourToDeleteID
         {
             get => tourToDeleteId;
             set { tourToDeleteId = value; OnPropertyChanged(); }
@@ -174,11 +188,9 @@ namespace TourAgencyApp.ViewModels
         {
             _dataService = d;
 
-            //команды
-            //todo: вот тут мб убрать load data - работать с локальными изменениями, а потом отправлять изменения в бд
             AddTourCommand = new AsyncRelayCommand(AddTour);
             ClearTourCommand = new RelayCommand(ClearTour);
-            DeleteTourCommand = new RelayCommand(DeleteTour);
+            DeleteTourCommand = new AsyncRelayCommand(DeleteTour);
             AddPhotoCommand = new AsyncRelayCommand(AddPhoto);
             ShowPhotoCommand = new RelayCommand<object>(parameter => ShowPhoto(parameter));
         }
@@ -190,6 +202,10 @@ namespace TourAgencyApp.ViewModels
             {
                 var view = new PhotoViewer() { ImagesCollection = new ObservableCollection<Photo>(tour.Photos) };
                 view.Show();
+            }
+            else
+            {
+                MessageBox.Show("Не найдено ни одной фотографии.");
             }
         }
 
@@ -204,7 +220,6 @@ namespace TourAgencyApp.ViewModels
             {
                 // Выполняем загрузку асинхронно
                 var photos = await ImageService.LoadPhotosAsync(fileDialog.FileNames) ?? new();
-                //Images = new ObservableCollection<Photo>(photos); надо чтобы Images не был null
                 foreach (var photo in photos)
                 {
                     Images.Add(photo);
@@ -215,26 +230,26 @@ namespace TourAgencyApp.ViewModels
         //загрузка данных из бд
         public async Task LoadDataFromDB()
         {
-            //todo: переделать потом мб
-            ActualTours = new ObservableCollection<Tour>(_dataService.GetTours()) ?? new();
-            ArchiveTours = new ObservableCollection<Tour>( ActualTours.Where(t=> t.IsConducted == true) ) ?? new();
+            var tours = await _dataService.GetToursAsync();
+            ActualTours = new ObservableCollection<Tour>(tours.Where(t=>t.IsConducted == false));
+            ArchiveTours = new ObservableCollection<Tour>(tours.Where(t=> t.IsConducted == true));
 
-            AllEmployees = new ObservableCollection<Employee>(_dataService.GetAllEmployees()) ?? new();
-            AllHotels = new ObservableCollection<Hotel>(await _dataService.GetHotelsAsync()) ?? new();
-            Countries = new ObservableCollection<Country>(await _dataService.GetAllCountriesAsync()) ?? new();
-            Transports = new ObservableCollection<Transport>(await _dataService.GetAllTransportsAsync()) ?? new();
-            //OnPropertyChanged();
+            //todo: async
+            AllEmployees = new ObservableCollection<Employee>(_dataService.GetAllEmployees());
+            AllHotels = new ObservableCollection<Hotel>(await _dataService.GetHotelsAsync());
+            Countries = new ObservableCollection<Country>(await _dataService.GetAllCountriesAsync());
+            Transports = new ObservableCollection<Transport>(await _dataService.GetAllTransportsAsync());
         }
 
         private bool CanExecute()
         {
             if( (TourName == string.Empty || string.IsNullOrWhiteSpace(TourName) ) || TourCost <= 0 ||
-                !StartDate.HasValue || !EndDate.HasValue || TouristMaxCount <= 0 || StartDate > EndDate ||
+                !StartDate.HasValue || !EndDate.HasValue || TouristMaxCount <= 0 ||
                 (Description == string.Empty || string.IsNullOrWhiteSpace(Description)) ||
                 !SelectedEmployeeID.HasValue || !HotelID.HasValue || !CountryID.HasValue || !TransportID.HasValue)
             {
                 return false;
-            }    
+            }
             return true;
         }
 
@@ -243,6 +258,11 @@ namespace TourAgencyApp.ViewModels
             if(!CanExecute())
             {
                 MessageBox.Show("Заполните все обязательные поля!");
+                return;
+            }
+            else if (StartDate > EndDate || StartDate < DateTime.Today)
+            {
+                MessageBox.Show("Дата начала не может быть позднее даты окончания или текущего дня!");
                 return;
             }
 
@@ -264,35 +284,45 @@ namespace TourAgencyApp.ViewModels
             try
             {
                 ActualTours.Add(await _dataService.AddTourAsync(tours));
-                MessageBox.Show("Тур успешно добавлен");
+                MessageBox.Show("Тур успешно добавлен.");
                 ClearTour();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Не удалось добавить тур\n{ex.Message}");
+                MessageBox.Show($"Не удалось добавить тур:\n{ex.Message}");
             }
         }
 
         private void ClearTour()
         {
             TourName = string.Empty;
+            Description = string.Empty;
             TourCost = 0;
             StartDate = null;
             EndDate = null;
             TouristMaxCount = 0;
+            Images.Clear();
 
-            SelectedEmployeeID = AllEmployees.Select(e => e.ID).FirstOrDefault();
-            CountryID = Countries.Select(c => c.ID).FirstOrDefault();
-            TransportID = Transports.Select(t => t.ID).FirstOrDefault();
-            HotelID = AllHotels.Select(h => h.ID).FirstOrDefault();
+            SelectedEmployeeID = null;
+            CountryID = null;
+            TransportID = null;
+            HotelID = null;
         }
 
-        private void DeleteTour()
+        private async Task DeleteTour()
         {
+            var tour_to_delete = ActualTours.FirstOrDefault(t=>t.ID == TourToDeleteID!.Value);
+            if (tour_to_delete == null)
+                return;
+
             try
             {
-                //todo:
-                //_dataService.DeleteActualTour(_del_tour.Value);
+                await _dataService.DeleteTourAsync(TourToDeleteID!.Value);
+
+                ActualTours.Remove(tour_to_delete);
+                tour_to_delete.IsConducted = true;
+                ArchiveTours.Add(tour_to_delete);
+
                 MessageBox.Show("Тур был помещен в архив");
             }
             catch

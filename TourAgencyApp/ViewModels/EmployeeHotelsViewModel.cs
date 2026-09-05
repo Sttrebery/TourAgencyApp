@@ -119,6 +119,10 @@ namespace TourAgencyApp.ViewModels
                 var view = new PhotoViewer() { ImagesCollection = new ObservableCollection<Photo>(hotel.Photos)};
                 view.Show();
             }
+            else
+            {
+                MessageBox.Show("Не найдено ни одной фотографии.");
+            }
         }
 
         public void ClearForm()

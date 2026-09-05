@@ -183,16 +183,15 @@
                     <Label Style="{StaticResource LabelStyle1}" Margin="30,20,0,0">Выберите тур, который хотите удалить</Label>
                     <!--todo-->
                     <ComboBox Style="{StaticResource ComboboxStyle1}" Width="550"
-                              ItemsSource="{Binding }" 
+                              ItemsSource="{Binding ActualTours}" 
                               SelectedValuePath="ID"
-                              SelectedValue="{Binding TourToDelete}">
+                              SelectedValue="{Binding TourToDeleteID}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding ID}" Margin="5"></TextBlock>
-                                    <TextBlock Text="-" Margin="5"></TextBlock>
                                     <TextBlock Text="{Binding Name}" Margin="5"></TextBlock>
                                     <TextBlock Text="{Binding StartDate}" Margin="5"></TextBlock>
+                                    <TextBlock Text="-" Margin="5"></TextBlock>
                                     <TextBlock Text="{Binding EndDate}" Margin="5"></TextBlock>
                                 </StackPanel>
                             </DataTemplate>

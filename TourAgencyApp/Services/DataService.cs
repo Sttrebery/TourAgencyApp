@@ -18,7 +18,7 @@ namespace TourAgencyApp.Services
     {
         #region Get data From Database
         
-        // получение актуальных туров
+        // получение туров
         public IEnumerable<Tour> GetTours()
         {
             List<Tour> actualTours = null!;
@@ -36,22 +36,22 @@ namespace TourAgencyApp.Services
             return actualTours;
         }
 
-        //получение архивных туров
-        public IEnumerable<Tour> GetArchiveTours()
+        // получение туров async
+        public async Task<IEnumerable<Tour>> GetToursAsync()
         {
-            List<Tour> archiveTours = null!;
+            List<Tour> actualTours = null!;
             try
             {
                 using (var db = new TourAgencyDbContext())
                 {
-                    archiveTours = db.Tours.Where(t => t.IsConducted == true).ToList();
+                    actualTours = await db.Tours.Include("Photos").ToListAsync();
                 }
             }
             catch (Exception ex)
             {
-                archiveTours = new();
+                actualTours = new();
             }
-            return archiveTours;
+            return actualTours;
         }
 
         //получение всех сотрудников
@@ -482,18 +482,17 @@ namespace TourAgencyApp.Services
             }
         }
 
-
-
-        //удалить тур (поместить в архив)
-        public void DeleteActualTour(Tour del)
+        //удалить тур (поместить в архив) фынтс
+        public async Task DeleteTourAsync(int tour_id)
         {
             using (var db = new TourAgencyDbContext())
             {
-                Tour tour_to_del = db.Tours.FirstOrDefault(t => t.ID == del.ID);
-                if( tour_to_del != null )
+                Tour? tour_to_del = await db.Tours.FirstOrDefaultAsync(t => t.ID == tour_id);
+                if(tour_to_del != null)
                 {
+                    //db.Tours.Attach(tour_to_del);
                     tour_to_del.IsConducted = true;
-                    db.SaveChanges();
+                    await db.SaveChangesAsync();
                 }
             }
         }
