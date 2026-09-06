@@ -32,13 +32,19 @@
                             <DataGridTextColumn Header="Цена" Binding="{Binding Cost}" />
                             <DataGridTextColumn Header="Дата начала" Binding="{Binding StartDate, StringFormat=dd.MM.yyyy}" />
                             <DataGridTextColumn Header="Дата окончания" Binding="{Binding EndDate, StringFormat=dd.MM.yyyy}" />
-                            <DataGridTextColumn Header="Описание" Binding="{Binding Description}" />
+                            <DataGridTextColumn Header="Описание" Binding="{Binding Description}" Width="200" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="TextWrapping" Value="Wrap"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
                             <DataGridTextColumn Header="Количество мест" Binding="{Binding MaxTouristCount}" />
                             <DataGridTextColumn Header="Есть свободные места" Binding="{Binding HasAvailableSpots, Converter={StaticResource boolConverter}}" />
                             <DataGridTemplateColumn Header="Фото">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Margin="10" Command="{Binding DataContext.ShowPhotoCommand, 
+                                        <Button Margin="10" Height="25" Command="{Binding DataContext.ShowPhotoCommand, 
                                             RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                                 CommandParameter="{Binding}">Посмотреть фото</Button>
                                     </DataTemplate>
@@ -350,12 +356,18 @@
                         <DataGridTextColumn Header="Цена" Binding="{Binding Cost}" />
                         <DataGridTextColumn Header="Дата начала" Binding="{Binding StartDate, StringFormat=dd.MM.yyyy}" />
                         <DataGridTextColumn Header="Дата окончания" Binding="{Binding EndDate, StringFormat=dd.MM.yyyy}" />
-                        <DataGridTextColumn Header="Описание" Binding="{Binding Description}" />
+                        <DataGridTextColumn Header="Описание" Binding="{Binding Description}" Width="200">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextWrapping" Value="Wrap"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
                         <DataGridTextColumn Header="Количество мест" Binding="{Binding MaxTouristCount}" />
                         <DataGridTemplateColumn Header="Фото">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Margin="10" Command="{Binding DataContext.ShowPhotoCommand, 
+                                    <Button Margin="10" Height="25" Command="{Binding DataContext.ShowPhotoCommand, 
                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
                          CommandParameter="{Binding}">Посмотреть фото</Button>
                                 </DataTemplate>

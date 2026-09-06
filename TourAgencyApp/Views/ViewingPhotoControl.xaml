@@ -24,7 +24,7 @@
                                 <Image Source="{Binding Path=PhotoValue, Converter={StaticResource ByteToImageConverter}}" 
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
-                           Height="150" Stretch="Uniform" />
+                           Height="200" Stretch="Uniform" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>

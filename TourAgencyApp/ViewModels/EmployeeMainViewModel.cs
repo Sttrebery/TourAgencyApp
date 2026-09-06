@@ -45,6 +45,7 @@ namespace TourAgencyApp.ViewModels
         public EmployeeTransportsViewModel TransportsVM { get; set; }
         #endregion
 
+        //add: navigateToProfile
         public ICommand NavigateToToursCommand { get; }
         public ICommand NavigateToHotelsCommand { get; }
         public ICommand NavigateToStatsCommand { get; }

@@ -26,12 +26,18 @@
                     <DataGrid ItemsSource="{Binding Hotels}" AutoGenerateColumns="False" IsReadOnly="True" >
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Название" Binding="{Binding Name}" />
-                            <DataGridTextColumn Header="Описание" Binding="{Binding Description}" />
+                            <DataGridTextColumn Header="Описание" Binding="{Binding Description}" Width="200">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="TextWrapping" Value="Wrap"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
                             <DataGridTextColumn Header="Адрес" Binding="{Binding Address}" />
                             <DataGridTemplateColumn Header="Фото" Width="Auto">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Margin="10" Command="{Binding DataContext.ShowPhotoCommand, 
+                                        <Button Margin="10" Height="25" Command="{Binding DataContext.ShowPhotoCommand, 
                                           RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="{Binding}">Посмотреть фото</Button>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
