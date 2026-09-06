@@ -38,10 +38,6 @@
                 <views:ClientProfile />
             </DataTemplate>
 
-            <DataTemplate DataType="{x:Type vm:ClientHotelsViewModels}">
-                <views:HotelsView/>
-            </DataTemplate>
-            
         </ResourceDictionary>
     </Window.Resources>
     

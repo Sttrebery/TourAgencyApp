@@ -26,10 +26,6 @@
                 <views:Stats />
             </DataTemplate>
 
-            <DataTemplate DataType="{x:Type vm:ClientCheckViewModel}">
-                <views:CheckPage />
-            </DataTemplate>
-
             <DataTemplate DataType="{x:Type vm:EmployeeCountriesViewModel}">
                 <views:CountriesPage />
             </DataTemplate>

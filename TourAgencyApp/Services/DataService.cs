@@ -376,7 +376,6 @@ namespace TourAgencyApp.Services
 
         #endregion
 
-
         #region Edit data (without detached mode)
 
         //внести изменения в данные Отеля async
