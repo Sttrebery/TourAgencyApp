@@ -73,7 +73,7 @@ namespace TourAgencyApp.ViewModels
         public ActualToursViewModel ActualToursVM { get; set; }
         public PopularityViewModel PopularityVM { get; set; }
         public MyToursViewModel MyToursVM { get; set; }
-        public ClientProfileViewModel ProfileVM { get; set; }
+        public ProfileViewModel ProfileVM { get; set; }
         #endregion
 
         #region Commands
@@ -96,7 +96,7 @@ namespace TourAgencyApp.ViewModels
 
             // viewModels
             ActualToursVM = new ActualToursViewModel(dataService);
-            ProfileVM = new ClientProfileViewModel(Client);
+            ProfileVM = new ProfileViewModel(Client.UserID);
             PopularityVM = new PopularityViewModel(dataService);
             SearchVM = new SearchViewModel(dataService);
             MyToursVM = new MyToursViewModel(dataService, Client);

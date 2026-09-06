@@ -6,6 +6,7 @@
         xmlns:vm="clr-namespace:TourAgencyApp.ViewModels"
         xmlns:views="clr-namespace:TourAgencyApp.Views.Client.Pages"
         xmlns:local="clr-namespace:TourAgencyApp.Views.Client"
+        xmlns:shared="clr-namespace:TourAgencyApp.Views"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Icon="/res/world_travel_icon.ico"
@@ -34,8 +35,8 @@
                 <views:SearchResults />
             </DataTemplate>
 
-            <DataTemplate DataType="{x:Type vm:ClientProfileViewModel}">
-                <views:ClientProfile />
+            <DataTemplate DataType="{x:Type vm:ProfileViewModel}">
+                <shared:ProfilePage />
             </DataTemplate>
 
         </ResourceDictionary>

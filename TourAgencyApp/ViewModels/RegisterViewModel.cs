@@ -60,37 +60,37 @@ namespace TourAgencyApp.ViewModels
         public string Username
         {
             get => _username;
-            set { _username = value; OnPropertyChanged(); }
+            set { _username = value.Trim(); OnPropertyChanged(); }
         }
 
         public string MyPassword
         {
             get => _myPassword;
-            set { _myPassword = value; OnPropertyChanged(); }
+            set { _myPassword = value.Trim(); OnPropertyChanged(); }
         }
 
         public string RepeatedPassword
         {
             get => _repeatedPassword;
-            set { _repeatedPassword = value; OnPropertyChanged(); }
+            set { _repeatedPassword = value.Trim(); OnPropertyChanged(); }
         }
 
         public string Surname
         {
             get => _surname;
-            set { _surname = value; OnPropertyChanged(); }
+            set { _surname = value.Trim(); OnPropertyChanged(); }
         }
 
         public string Firstname
         {
             get => _firstName;
-            set { _firstName = value; OnPropertyChanged(); }
+            set { _firstName = value.Trim(); OnPropertyChanged(); }
         }
 
         public string Patronimyc
         {
             get => _patronimyc;
-            set { _patronimyc = value; OnPropertyChanged(); }
+            set { _patronimyc = value.Trim(); OnPropertyChanged(); }
         }
 
         public string Number
@@ -102,7 +102,7 @@ namespace TourAgencyApp.ViewModels
         public string Email
         {
             get => _email;
-            set { _email = value; OnPropertyChanged(); }
+            set { _email = value.Trim(); OnPropertyChanged(); }
         }
 
         public PositionEnum? Position
@@ -163,7 +163,11 @@ namespace TourAgencyApp.ViewModels
                 return false;
             }
 
-            //todo: ChechEmail with Regex
+            if(!EmailConfirmService.ValidateEmail(Email))
+            {
+                Validation = "Некорректный адрес электронной почты";
+                return false;
+            }
 
             if (!CheckPassword())
             {
@@ -181,32 +185,6 @@ namespace TourAgencyApp.ViewModels
             return true;
         }
 
-        private async Task<bool> ConfirmEmail()
-        {
-            string code = GenerateCode();
-            Window email_confirm = new EmailConfirmView() { DataContext = new EmailConfirmViewModel(code) };
-            
-            await MailService.SendConfirmationEmail(code, Email);
-            
-            email_confirm.ShowDialog();
-            if((email_confirm.DataContext as EmailConfirmViewModel)!.Success)
-            {
-                return true;
-            }
-            else return false;
-        }
-
-        private string GenerateCode()
-        {
-            Random rand = new Random();
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < 6; i++)
-            {
-                builder.Append(rand.Next(0, 10).ToString());
-            }
-            return builder.ToString();
-        }
-
         private async Task Register()
         {
             if (!CanRegister())
@@ -216,7 +194,7 @@ namespace TourAgencyApp.ViewModels
             }
 
             //код подтверждения с почты
-            bool _isConfirmed = await ConfirmEmail();
+            bool _isConfirmed = await EmailConfirmService.EmailConfirmAsync(Email);
             if (!_isConfirmed)
             {
                 MessageBox.Show("Не удалось подтвердить почту", "Ошибка");

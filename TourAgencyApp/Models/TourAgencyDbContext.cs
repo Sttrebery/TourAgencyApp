@@ -12,8 +12,6 @@ namespace TourAgencyApp.Models
     {
         public TourAgencyDbContext() 
         {
-            //Database.EnsureDeleted();
-            //Database.EnsureCreated();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -38,6 +38,7 @@ namespace TourAgencyApp.ViewModels
         public Visibility IsRoot { get => Employee.Position != PositionEnum.Manager ? Visibility.Visible : Visibility.Collapsed; }
 
         #region Viewmodels
+        public ProfileViewModel ProfileVM { get; set; }
         public EmployeeTourViewModel ToursVM { get; set; }
         public EmployeeHotelsViewModel HotelsVM { get; set; }
         public StatsViewModel StatsVM { get; set; }
@@ -46,6 +47,7 @@ namespace TourAgencyApp.ViewModels
         #endregion
 
         //add: navigateToProfile
+        public ICommand NavigateToProfileCommand { get; }
         public ICommand NavigateToToursCommand { get; }
         public ICommand NavigateToHotelsCommand { get; }
         public ICommand NavigateToStatsCommand { get; }
@@ -63,12 +65,14 @@ namespace TourAgencyApp.ViewModels
             HotelsVM = new EmployeeHotelsViewModel(dataService);
             CountriesVM = new EmployeeCountriesViewModel(dataService);
             TransportsVM = new EmployeeTransportsViewModel(dataService);
+            ProfileVM = new ProfileViewModel(Employee.UserID);
 
             NavigateToStatsCommand = new RelayCommand(() => { StatsVM.LoadData(); CurrentPage = StatsVM; });
             NavigateToToursCommand = new RelayCommand(async () => {  await ToursVM.LoadDataFromDB(); CurrentPage =  ToursVM; });
             NavigateToHotelsCommand = new RelayCommand(() => {  CurrentPage =  HotelsVM; });
             NavigateToCountriesCommand = new RelayCommand(() =>  CurrentPage = CountriesVM);
             NavigateToTransportsCommand = new RelayCommand(() =>  CurrentPage = TransportsVM);
+            NavigateToProfileCommand = new RelayCommand(() => CurrentPage = ProfileVM);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

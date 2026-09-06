@@ -63,5 +63,10 @@ namespace TourAgencyApp.Views
                 r.RegisterEvent += () => { if (r._isValidated) this.Close(); };
             }      
         }
+
+        private void btn_register_Click(object sender, RoutedEventArgs e)
+        {
+            psw_1.Password = psw_2.Password = string.Empty;
+        }
     }
 }

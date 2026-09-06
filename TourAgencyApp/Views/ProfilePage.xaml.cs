@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace TourAgencyApp.Views.Client.Pages
+namespace TourAgencyApp.Views
 {
     /// <summary>
-    /// Логика взаимодействия для ClientProfile.xaml
+    /// Логика взаимодействия для ProfilePage.xaml
     /// </summary>
-    public partial class ClientProfile : Page
+    public partial class ProfilePage : Page
     {
-        public ClientProfile()
+        public ProfilePage()
         {
             InitializeComponent();
         }

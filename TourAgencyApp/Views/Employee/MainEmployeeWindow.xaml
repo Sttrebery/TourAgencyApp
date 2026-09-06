@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:TourAgencyApp.ViewModels"
+        xmlns:shared="clr-namespace:TourAgencyApp.Views"
         xmlns:views="clr-namespace:TourAgencyApp.Views.Employee.Pages"
         xmlns:local="clr-namespace:TourAgencyApp.Views.Employee"
         mc:Ignorable="d"
@@ -32,6 +33,10 @@
 
             <DataTemplate DataType="{x:Type vm:EmployeeTransportsViewModel}">
                 <views:TransportsPage />
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:ProfileViewModel}">
+                <shared:ProfilePage />
             </DataTemplate>
 
             <ResourceDictionary.MergedDictionaries>

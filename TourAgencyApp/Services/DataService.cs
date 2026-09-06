@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
 using System.Xml.Linq;
+using System.Configuration;
 using TourAgencyApp.Models;
 using TourAgencyApp.Views.Client.Pages;
 
@@ -261,6 +263,34 @@ namespace TourAgencyApp.Services
             return tours;
         }
 
+        //Получение данных профиля пользователя
+        public Profile GetProfileByUserID(int id)
+        {
+            var connectionString = ConfigurationManager.ConnectionStrings["TourAgencyDB"].ConnectionString;
+            using var conn = new SqlConnection(connectionString);
+            conn.Open();
+            using var cmd = new SqlCommand("st_GetProfileByUserID", conn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@userID", id);
+            using var reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                return new Profile()
+                {
+                    Name = reader.GetString(0),
+                    Surname = reader.GetString(1),
+                    Patronimyc = reader.GetString(2),
+                    PhoneNumber = reader.GetString(3),
+                    PhotoID = reader.IsDBNull(4) ? null : reader.GetInt32(4),
+                    Photo = reader.IsDBNull(5) ? null : ((byte[]?)reader.GetSqlBinary(5)),
+                    Email = reader.GetString(6)
+                };
+            }
+            return null;
+        }
+
+
+
         #endregion
 
         #region Adding data into Database
@@ -378,6 +408,29 @@ namespace TourAgencyApp.Services
 
         #region Edit data (without detached mode)
 
+        public async Task EditProfileAsync(int userID, Profile changes)
+        {
+            using var db = new TourAgencyDbContext();
+            User u = await db.Users.FirstAsync(f => f.ID == userID);
+            u.Email = changes.Email;
+            db.Update(u);
+            if(u.Role == RoleEnum.Client)
+            {
+                Tourist c = await db.Clients.Include(c=>c.Photo).FirstAsync(f => f.UserID == userID);
+                db.Entry(c).CurrentValues.SetValues(changes);
+                if (changes.Photo != null) c.Photo = new Photo() { PhotoValue = changes.Photo };
+                else c.PhotoID = null;
+            }
+            else //employee
+            {
+                Employee emp = await db.Employees.Include(e => e.Photo).FirstAsync(f => f.UserID == userID);
+                db.Entry(emp).CurrentValues.SetValues(changes);
+                if(changes.Photo != null) emp.Photo = new Photo() { PhotoValue = changes.Photo };
+                else emp.PhotoID = null;
+            }
+            await db.SaveChangesAsync();
+        }
+
         //внести изменения в данные Отеля async
         public async Task EditHotel(int origId, Hotel changes)
         {
@@ -419,6 +472,15 @@ namespace TourAgencyApp.Services
                 }
                 await db.SaveChangesAsync();
             }
+        }
+
+        //Изменение пароля пользователя async
+        public async Task ChangePasswordAsync(int user_id, string new_hashed_password)
+        {
+            using var db = new TourAgencyDbContext();
+            User founded = await db.Users.FirstAsync(u=> u.ID == user_id);
+            founded.Password = new_hashed_password;
+            await db.SaveChangesAsync();
         }
 
 
