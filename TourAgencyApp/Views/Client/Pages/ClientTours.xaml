@@ -4,26 +4,95 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:TourAgencyApp.Views.Client.Pages"
+      xmlns:l="clr-namespace:TourAgencyApp"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ClientTours">
     <Page.Resources>
-        <ResourceDictionary Source="/Dictionaries/PagesDictionary.xaml"/>
+        <ResourceDictionary>
+            <l:ByteArrayToImageConverter x:Key="ByteToImage" />
+            <l:EnumDescriptionConverter x:Key="enumConverter" />
+            <l:BoolToYesNoConverter x:Key="boolConverter" />
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Dictionaries/PagesDictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Page.Resources>
 
-    <ScrollViewer Background="#c2dbfc" VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="10">
-            <Label Content="Мои туры" Style="{StaticResource LabelPageHeader}" />
-            <DataGrid ItemsSource="{Binding MyTours}" AutoGenerateColumns="False" IsReadOnly="True">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" />
-                    <DataGridTextColumn Header="Наименование" Binding="{Binding NameTour}" />
-                    <DataGridTextColumn Header="Цена" Binding="{Binding CostTour}" />
-                    <DataGridTextColumn Header="Дата начала" Binding="{Binding StartDate}" />
-                    <DataGridTextColumn Header="Дата окончания" Binding="{Binding EndDate}" />
-                    <DataGridTextColumn Header="Количество мест" Binding="{Binding MaxValueTourist}" />
-                </DataGrid.Columns>
-            </DataGrid>
-        </StackPanel>
-    </ScrollViewer>
+
+    <StackPanel Margin="10" Background="#c2dbfc">
+        <Label Content="Мои туры" Style="{StaticResource LabelPageHeader}" />
+        <Button Width="150" Margin="10" HorizontalAlignment="Left" Command="{Binding LoadToursCommand}">
+            Обновить
+        </Button>
+        <ScrollViewer Margin="10" VerticalScrollBarVisibility="Auto">
+            <ListView ItemsSource="{Binding MyTours}" >
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Название" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="" TextWrapping="Wrap"></TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Описание" Width="200">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="" TextWrapping="Wrap"></TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Стоимость" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="" TextWrapping="Wrap"></TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Даты проведения">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel>
+                                        <TextBlock Text="" TextWrapping="Wrap"></TextBlock>
+                                        <TextBlock Text="-" TextWrapping="Wrap"></TextBlock>
+                                        <TextBlock Text="" TextWrapping="Wrap"></TextBlock>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <!--- Количество СВОБОДНЫХ МЕСТ (скорее для актуальных туров сделать) -->
+                        <GridViewColumn>
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <!--- Кнопка подробнее -->
+                        <GridViewColumn Header="Детали" Width="100">
+                            <!--<GridViewColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock TextAlignment="Justify" HorizontalAlignment="Right">
+                                        Детали
+                                    </TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.HeaderTemplate>-->
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Command="{Binding DataContext.ShowDetailCommand, 
+                                         RelativeSource={RelativeSource AncestorType=ListView}}"
+                                         CommandParameter="{Binding}">
+                                        Подробнее
+                                    </Button>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </ScrollViewer>
+    </StackPanel>
 </Page>

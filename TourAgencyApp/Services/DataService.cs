@@ -249,16 +249,14 @@ namespace TourAgencyApp.Services
             return emp;
         }
 
-        //Туры пользователя :todo
-        public IEnumerable<Tour> GetClientTours(string name, string surname, string patronimyc)
+        //Туры пользователя
+        public IEnumerable<Tour> GetClientTours(int user_id)
         {
             List<Tour> tours = new List<Tour>();
             using (var db = new TourAgencyDbContext())
             {
-                //fOrDef + try-catch or if
-                var clients = db.Clients.Include("ClientTours").First(c => c.ID == 1); //брать айди из User.ID, который будет хранится при входе в программу
-                                                                                       //(отношение таблиц 1-1)
-                tours = clients.ClientTours.ToList();
+                var client = db.Clients.Include(c=>c.ClientTours).FirstOrDefault(c => c.UserID == user_id);                        
+                if (client != null) tours = client.ClientTours.ToList();
             }
             return tours;
         }
@@ -288,8 +286,6 @@ namespace TourAgencyApp.Services
             }
             return null;
         }
-
-
 
         #endregion
 
@@ -483,7 +479,6 @@ namespace TourAgencyApp.Services
             await db.SaveChangesAsync();
         }
 
-
         //внести изменения в данные Тура async
         public async Task EditTourAsync(int origId, Tour changes)
         {
@@ -528,7 +523,22 @@ namespace TourAgencyApp.Services
             }
         }
         #endregion
-        
+
+        //удалить тур (поместить в архив) async
+        public async Task DeleteTourAsync(int tour_id)
+        {
+            using (var db = new TourAgencyDbContext())
+            {
+                Tour? tour_to_del = await db.Tours.FirstOrDefaultAsync(t => t.ID == tour_id);
+                if (tour_to_del != null)
+                {
+                    tour_to_del.IsConducted = true;
+                    await db.SaveChangesAsync();
+                }
+            }
+        }
+
+
         // todo: Получение популярной страны
         //public void GetTopCountry(out string name, out int count)
         //{
@@ -628,38 +638,6 @@ namespace TourAgencyApp.Services
             catch
             {
                 return false;
-            }
-        }
-
-        //удалить тур (поместить в архив) async
-        public async Task DeleteTourAsync(int tour_id)
-        {
-            using (var db = new TourAgencyDbContext())
-            {
-                Tour? tour_to_del = await db.Tours.FirstOrDefaultAsync(t => t.ID == tour_id);
-                if(tour_to_del != null)
-                {
-                    tour_to_del.IsConducted = true;
-                    await db.SaveChangesAsync();
-                }
-            }
-        }
-
-
-        //удалить отель из базы 
-        public void DeleteHotel(string hotelName)
-        {
-            using (var db = new TourAgencyDbContext())
-            {
-                var founded = db.Hotels.Where(h => h.Name == hotelName).ToList();
-                if (founded != null)
-                {
-                    foreach (var f in founded)
-                    {
-                        db.Hotels.Remove(f);
-                    }
-                    db.SaveChanges();
-                }
             }
         }
 

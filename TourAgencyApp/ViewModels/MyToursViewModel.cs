@@ -26,19 +26,20 @@ namespace TourAgencyApp.ViewModels
         }
 
         public ICommand LoadToursCommand { get; }
+        public ICommand ShowDetailCommand { get; }
 
         public MyToursViewModel(DataService dataService, Tourist client)
         {
             _dataService = dataService;
             _client = client;
-            LoadToursCommand = new RelayCommand(LoadTours);
+            LoadToursCommand = new AsyncRelayCommand(LoadTours);
             LoadTours();
         }
 
-        public void LoadTours()
+        public async Task LoadTours()
         {
-            var result = _dataService.GetClientTours(_client.Name,_client.Surname,_client.Patronimyc);
-            MyTours = new ObservableCollection<Tour>(result);
+            //var result = _dataService.GetClientTours(_userId);
+            //MyTours = new ObservableCollection<Tour>(result);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
