@@ -4,9 +4,105 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TourAgencyApp.Views"
+        xmlns:convs ="clr-namespace:TourAgencyApp"
         mc:Ignorable="d"
-        Title="TourDetailView" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="Детали тура" Height="450" Width="800">
+
+    <Window.Resources>
+        <convs:ByteArrayToImageConverter x:Key="ByteToImageConverter"/>
+
+        <!-- Анимация перехода -->
+        <Storyboard x:Key="FadeTransition">
+            <DoubleAnimation 
+                Storyboard.TargetProperty="Opacity"
+                From="0" To="1" 
+                Duration="0:0:0.8"/>
+        </Storyboard>
+
+        <Storyboard x:Key="SlideTransition">
+            <ThicknessAnimation 
+                Storyboard.TargetProperty="Margin"
+                From="10,0,0,0" To="0,0,0,0"
+                Duration="0:0:0.6"/>
+            <DoubleAnimation 
+                Storyboard.TargetProperty="Opacity"
+                From="0.5" To="1" 
+                Duration="0:0:0.6"/>
+        </Storyboard>
+    </Window.Resources>
+    
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock>
+                    Тур:
+                </TextBlock>
+                <TextBlock Text="{Binding TourName}">
+                </TextBlock>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <TextBlock>
+                    Даты проведения:
+                </TextBlock>
+                <TextBlock Text="{Binding StartDate, StringFormat=dd.MM.yyyy}">
+                </TextBlock>
+                <TextBlock Text=" - ">
+                </TextBlock>
+                <TextBlock Text="{Binding EndDate, StringFormat=dd.MM.yyyy}">
+                </TextBlock>
+            </StackPanel>
+            
+        </StackPanel>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0">
+                <WrapPanel>
+                    <TextBlock>Описание:</TextBlock>
+                    <Border>
+                        <TextBlock Text="{Binding Description}">
+                            
+                        </TextBlock>
+                    </Border>
+                </WrapPanel>
+
+                <WrapPanel>
+                    <TextBlock>Страна:</TextBlock>
+                    <TextBlock></TextBlock>
+                </WrapPanel>
+
+                <WrapPanel>
+                    <TextBlock>Тип трансфера:</TextBlock>
+                    <TextBlock></TextBlock>
+                </WrapPanel>
+
+                <WrapPanel>
+                    <TextBlock>Отель:</TextBlock>
+                    <TextBlock></TextBlock>
+                </WrapPanel>
+
+            </StackPanel>
+
+            <StackPanel Grid.Column="1">
+                <WrapPanel>
+                    <TextBlock>Размер группы:</TextBlock>
+                    <TextBlock></TextBlock>
+                </WrapPanel>
+                <WrapPanel>
+                    <TextBlock>Стоимость:</TextBlock>
+                    <TextBlock></TextBlock>
+                </WrapPanel>
+
+                <!-- Элемент для отображения изображения -->
+                <Image x:Name="DisplayImage" >
+                </Image>
+
+            </StackPanel>
+        </Grid>
+    </DockPanel>
 </Window>

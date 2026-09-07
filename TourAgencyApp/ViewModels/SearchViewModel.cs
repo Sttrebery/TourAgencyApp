@@ -32,7 +32,7 @@ namespace TourAgencyApp.ViewModels
             get => _searchText;
             set
             {
-                _searchText = value; OnPropertyChanged();
+                _searchText = value.Trim(); OnPropertyChanged();
             }
         }
 
@@ -139,7 +139,11 @@ namespace TourAgencyApp.ViewModels
             }
 
             if (result == null) SearchResults = new ObservableCollection<Tour>();
-            else SearchResults = new ObservableCollection<Tour>(result);
+            else
+            {
+                result = result.Where(t => t.IsConducted == false && t.IsOnTour == false);
+                SearchResults = new ObservableCollection<Tour>(result);
+            }
         }
 
         private void ClearExtended()

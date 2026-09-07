@@ -23,19 +23,37 @@ namespace TourAgencyApp.Services
         // получение туров
         public IEnumerable<Tour> GetTours()
         {
-            List<Tour> actualTours = null!;
+            List<Tour> tours = null!;
             try
             {
                 using (var db = new TourAgencyDbContext())
                 {
-                    actualTours = db.Tours.Include("Photos").ToList();
+                    tours = db.Tours.Include("Photos").ToList();
                 }
             }
             catch (Exception ex)
             {
-                actualTours = new();
+                tours = new();
             }
-            return actualTours;
+            return tours;
+        }
+
+        //получение Актуальных туров async
+        public async Task<IEnumerable<Tour>> GetActualTours()
+        {
+            List<Tour> tours = null!;
+            try
+            {
+                using (var db = new TourAgencyDbContext())
+                {
+                    tours = await db.Tours.Include("Photos").Where(t => t.IsConducted == false && t.IsOnTour == false).ToListAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                tours = new();
+            }
+            return tours;
         }
 
         // получение туров async
