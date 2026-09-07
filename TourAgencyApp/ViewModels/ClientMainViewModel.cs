@@ -107,7 +107,7 @@ namespace TourAgencyApp.ViewModels
 
             SearchVM.ExtSearchEvent += () => CurrentPage = SearchVM;
 
-            NavigateToActualCommand = new RelayCommand(() => { ActualToursVM.LoadTours(); CurrentPage = ActualToursVM; });
+            NavigateToActualCommand = new RelayCommand(() => { CurrentPage = ActualToursVM; });
             NavigateToPopularityCommand = new RelayCommand(() => { PopularityVM.LoadData(); CurrentPage = PopularityVM; });
             NavigateToMyToursCommand = new RelayCommand(() => { MyToursVM.LoadTours(); CurrentPage = MyToursVM; });
             NavigateToProfileCommand = new RelayCommand(() => CurrentPage = ProfileVM);

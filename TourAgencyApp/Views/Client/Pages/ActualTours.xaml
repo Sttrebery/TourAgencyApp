@@ -28,28 +28,31 @@
         <StackPanel>
         
         <Label Style="{StaticResource LabelPageHeader}" Content="Актуальные туры"/>
-        <ScrollViewer Margin="10" VerticalScrollBarVisibility="Auto">
+            <Button Width="150" Margin="10" HorizontalAlignment="Left" Command="{Binding LoadToursCommand}">
+                Обновить
+            </Button>
+            <ScrollViewer Margin="10" VerticalScrollBarVisibility="Auto">
                 <ListView ItemsSource="{Binding Tours}" >
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Название" Width="100">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="" TextWrapping="Wrap"></TextBlock>
+                                        <TextBlock Text="{Binding Name}" TextWrapping="Wrap"></TextBlock>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
                             <GridViewColumn Header="Описание" Width="200">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="" TextWrapping="Wrap"></TextBlock>
+                                        <TextBlock Text="{Binding Description}" TextWrapping="Wrap"></TextBlock>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
                             <GridViewColumn Header="Стоимость" Width="100">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="" TextWrapping="Wrap"></TextBlock>
+                                        <TextBlock Text="{Binding Cost}" TextWrapping="Wrap"></TextBlock>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
@@ -57,9 +60,9 @@
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel>
-                                            <TextBlock Text="" TextWrapping="Wrap"></TextBlock>
+                                            <TextBlock Text="{Binding StartDate, StringFormat=dd.MM.yyyy}" TextWrapping="Wrap"></TextBlock>
                                             <TextBlock Text="-" TextWrapping="Wrap"></TextBlock>
-                                            <TextBlock Text="" TextWrapping="Wrap"></TextBlock>
+                                            <TextBlock Text="{Binding EndDate, StringFormat=dd.MM.yyyy}" TextWrapping="Wrap"></TextBlock>
                                         </StackPanel>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>

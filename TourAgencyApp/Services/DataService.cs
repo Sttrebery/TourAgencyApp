@@ -38,15 +38,44 @@ namespace TourAgencyApp.Services
             return tours;
         }
 
+
+        //получение Актуальных туров
+        public IEnumerable<Tour> GetActualTours()
+        {
+            List<Tour> tours = null!;
+
+            try
+            {
+                using (var db = new TourAgencyDbContext())
+                {
+                    tours = db.Tours.Include(t => t.Country)
+                        .Include(t => t.Photos)
+                        .Include(t => t.TransoprtType)
+                        .Include(t => t.Hotel)
+                        .ToList();
+                    tours = tours.Where(t => t.IsConducted == false && t.IsOnTour == false).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                tours = new();
+            }
+            return tours;
+        }
         //получение Актуальных туров async
-        public async Task<IEnumerable<Tour>> GetActualTours()
+        public async Task<IEnumerable<Tour>> GetActualToursAsync()
         {
             List<Tour> tours = null!;
             try
             {
                 using (var db = new TourAgencyDbContext())
                 {
-                    tours = await db.Tours.Include("Photos").Where(t => t.IsConducted == false && t.IsOnTour == false).ToListAsync();
+                    tours = await db.Tours.Include(t => t.Country)
+                        .Include(t => t.Photos)
+                        .Include(t => t.TransoprtType)
+                        .Include(t => t.Hotel)
+                        .Where(t => t.IsConducted == false && t.IsOnTour == false).ToListAsync();
+                    tours = tours.Where(t => t.IsConducted == false && t.IsOnTour == false).ToList();
                 }
             }
             catch (Exception ex)

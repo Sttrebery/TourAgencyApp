@@ -7,9 +7,11 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using TourAgencyApp.Models;
 using TourAgencyApp.Services;
+using TourAgencyApp.Views;
 
 namespace TourAgencyApp.ViewModels
 {
@@ -25,17 +27,33 @@ namespace TourAgencyApp.ViewModels
         }
 
         public ICommand LoadToursCommand { get; }
+        public ICommand ShowDetailCommand { get; }
 
         public ActualToursViewModel(DataService dataService)
         {
             _dataService = dataService;
-            LoadToursCommand = new RelayCommand(LoadTours);
-            LoadTours();
+            LoadToursCommand = new AsyncRelayCommand(LoadTours);
+            ShowDetailCommand = new RelayCommand<object>(ShowDetail);
+            Tours = new(_dataService.GetActualTours());
         }
 
-        public void LoadTours()
+        private void ShowDetail(object? param)
         {
-            var toursFromDb = _dataService.GetTours();
+            var tour = param as Tour;
+            if(tour != null)
+            {
+                var view = new TourDetailView() { DataContext = new TourDetailViewModel(tour) };
+                view.Show();
+            }
+            else
+            {
+                MessageBox.Show("Неизвестная ошибка!");
+            }
+        }
+
+        public async Task LoadTours()
+        {
+            var toursFromDb = await _dataService.GetActualToursAsync();
             Tours = new ObservableCollection<Tour>(toursFromDb);
         }
 
