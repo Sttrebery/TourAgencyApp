@@ -7,9 +7,11 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using TourAgencyApp.Models;
 using TourAgencyApp.Services;
+using TourAgencyApp.Views;
 
 namespace TourAgencyApp.ViewModels
 {
@@ -17,54 +19,72 @@ namespace TourAgencyApp.ViewModels
     {
         #region поля
         private readonly DataService _dataService;
-        private string _topCountryName;
-        private int _topCountryCount;
 
-        private ObservableCollection<Tour> _topTour;
-        private ObservableCollection<Hotel> _topHotel;
+        private string _topCountryName;
+        private int? _topCountryCount;
+
+        private ObservableCollection<Tour> _topTours;
         #endregion
 
         #region Properties
+
+
         public string TopCountryName
         {
             get { return _topCountryName; }
             set { _topCountryName = value; OnPropertyChanged(); }
         }
-        public int TopCountryCount
+        public int? TopCountryCount
         {
             get { return _topCountryCount; }
             set { _topCountryCount = value; OnPropertyChanged(); }
         }
 
-        public ObservableCollection<Tour> TopTour
+        public ObservableCollection<Tour> TopTours
         {
-            get { return _topTour; }
-            set { _topTour = value; OnPropertyChanged(); }
-        }
-
-        public ObservableCollection<Hotel> TopHotel
-        {
-            get { return _topHotel; }
-            set { _topHotel = value; OnPropertyChanged(); }
+            get { return _topTours; }
+            set { _topTours = value; OnPropertyChanged(); }
         }
         #endregion
 
         public ICommand LoadDataCommand { get; }
+        public ICommand ShowDetailCommand { get; }
 
         public PopularityViewModel(DataService dataService)
         {
             _dataService = dataService;
-            LoadDataCommand = new RelayCommand(LoadData);
+            (TopCountryName, TopCountryCount) = _dataService.GetTopCountry();
+            TopTours = new ObservableCollection<Tour>(_dataService.GetTopActualTour().Take(10));
+
+            ShowDetailCommand = new AsyncRelayCommand<object>(ShowDetail);
+            LoadDataCommand = new AsyncRelayCommand(LoadData);
         }
 
-        public void LoadData()
+        private async Task ShowDetail(object? param)
         {
-            //_dataService.GetTopCountry(out _topCountryName,out _topCountryCount);
-            OnPropertyChanged(nameof(TopCountryName));
-            OnPropertyChanged(nameof(TopCountryCount));
+            var tour = param as Tour;
 
-            //TopTour = new ObservableCollection<Tour>(_dataService.GetTopActualTour());
-            //TopHotel = new ObservableCollection<Hotel>(_dataService.GetTopHotel());
+            try
+            {
+                if (tour != null)
+                {
+                    var full_info = await _dataService.GetFullTourInfoByIDAsync(tour.ID);
+                    var view = new TourDetailView() { DataContext = new TourDetailViewModel(full_info) };
+                    view.Show();
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Неизвестная ошибка!");
+            }
+
+        }
+
+        public async Task LoadData()
+        {
+            (TopCountryName, TopCountryCount) = await _dataService.GetTopCountryAsync();
+
+            TopTours = new ObservableCollection<Tour>(await _dataService.GetTopActualTourAsync());
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

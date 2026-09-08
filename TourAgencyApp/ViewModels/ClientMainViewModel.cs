@@ -20,9 +20,6 @@ namespace TourAgencyApp.ViewModels
         //todo: перепривязать combobox с турами
         private readonly DataService _dataService;
         private Tourist _client;
-        private string _name;
-        private string _surname;
-        private string _patronimyc;
         private int _selectedTour;
         private ObservableCollection<Tour> _allTours;
 
@@ -112,7 +109,7 @@ namespace TourAgencyApp.ViewModels
             SearchVM.ExtSearchEvent += () => CurrentPage = SearchVM;
 
             NavigateToActualCommand = new RelayCommand(() => { CurrentPage = ActualToursVM; });
-            NavigateToPopularityCommand = new RelayCommand(() => { PopularityVM.LoadData(); CurrentPage = PopularityVM; });
+            NavigateToPopularityCommand = new RelayCommand(() => { CurrentPage = PopularityVM; });
             NavigateToMyToursCommand = new RelayCommand(() => { CurrentPage = MyToursVM; });
             NavigateToProfileCommand = new RelayCommand(() => CurrentPage = ProfileVM);
             SearchCommand = new RelayCommand(() => SearchEvent());

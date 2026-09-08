@@ -10,8 +10,8 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Icon="/res/world_travel_icon.ico"
-        Height="600" Width="970"
-        MinHeight="600" MinWidth="970">
+        Height="600" Width="1100"
+        MinHeight="600" MinWidth="1100">
 
     <Window.Resources>
         <ResourceDictionary>

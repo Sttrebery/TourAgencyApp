@@ -33,12 +33,7 @@ namespace TourAgencyApp.Models
         {
             base.OnModelCreating(modelBuilder);
 
-            //modelBuilder.Entity<User>().HasData(
-            //    new User { ID = 1, Username = "Tom", Password = "", Role = RoleEnum.Client },
-            //    new User { ID = 2, Username = "Alice", Password = "", Role = RoleEnum.Employee }
-
-
-            // Явная настройка связи многие-ко-многим
+            // настройка связи многие-ко-многим
             modelBuilder.Entity<Tour>()
                 .HasMany(t => t.Tourists)
                 .WithMany(t => t.ClientTours)

@@ -597,53 +597,70 @@ namespace TourAgencyApp.Services
             }
         }
 
-        // todo: Получение популярной страны
-        //public void GetTopCountry(out string name, out int count)
-        //{
-        //    using (var db = new TourAgencyDbContext())
-        //    {
-        //        var res = db.Populist_Country();
-        //        name = res.Select(r => r.NameCountry).First();
-        //        count = res.Select(r => r.AllTours).First() ?? 0;
-        //    }
-        //}
+        // Получение популярной страны
+        public (string, int?) GetTopCountry()
+        {
+            return GetTopCountryAsync().GetAwaiter().GetResult();
+        }
 
+        // Получение популярной страны async
+        public async Task<(string, int?)> GetTopCountryAsync()
+        {
+            string name = null; int? count = null;
+            var connectionString = ConfigurationManager.ConnectionStrings["TourAgencyDB"].ConnectionString;
+            string sql = "SELECT * FROM GetTopCountry()";
+            using var conn = new SqlConnection(connectionString);
+            await conn.OpenAsync();
+            using SqlCommand cmd = new SqlCommand(sql, conn);
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                if (await reader.ReadAsync())
+                {
+                    name = reader.GetString(0);
+                    count = reader.GetInt32(1);
+                }
+            }
+            return (name, count);
+        }
 
-        // todo:  Получение популярного актуального тура
-        //public IEnumerable<Tour> GetTopActualTour()
-        //{
-        //    List<Tour> topTour = new List<Tour>();
-        //    try
-        //    {
-        //        using (var db = new TourAgencyDbContext())
-        //        {
-        //            var res = db.PopularTour;
-        //            Tour tmp = db.Tours.First(t => t.NameTour == res.Select(r => r.NameTour).FirstOrDefault());
-        //            topTour.Add(tmp);
-        //        }
-        //    }
-        //    catch { }
-        //    return topTour;
-        //}
+        //  Получение популярных туров 
+        public IEnumerable<Tour> GetTopActualTour()
+        {
+            return GetTopActualTourAsync().GetAwaiter().GetResult();
+        }
 
-        // todo: Получение популярного отеля
-        //
-        //public IEnumerable<Hotel> GetTopHotel()
-        //{
-        //    List<Hotel> topHotel = new List<Hotel>();
-        //    try
-        //    {
-        //        using (var db = new TourAgencyDbContext())
-        //        {
-        //            var res = db.Populist_Hotel();
-        //            string name = res.Select(r => r.NameHotel).First();
-        //            Hotel tmp = db.Hotels.First(h => h.Name_ == name);
-        //            topHotel.Add(tmp);
-        //        }
-        //    }
-        //    catch { }
-        //    return topHotel;
-        //}
+        //  Получение популярных туров async 
+        public async Task<IEnumerable<Tour>> GetTopActualTourAsync()
+        {
+            var result = new List<Tour>();
+            var connectionString = ConfigurationManager.ConnectionStrings["TourAgencyDB"].ConnectionString;
+            string sql = "SELECT * FROM PopularTours";
+            using var conn = new SqlConnection(connectionString);
+            await conn.OpenAsync();
+            using SqlCommand cmd = new SqlCommand(sql, conn);
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (await reader.ReadAsync())
+                {
+                    result.Add(new Tour
+                    {
+                        ID = reader.GetInt32(1),
+                        Name = reader.GetString(2),
+                        Cost = reader.GetDecimal(3),
+                        StartDate = reader.GetDateTime(4),
+                        EndDate = reader.GetDateTime(5),
+                        Description = reader.GetString(6),
+                        MaxTouristCount = reader.GetInt32(7),
+                        ResponsibleEmployeeID = reader.GetInt32(8),
+                        CountyID = reader.GetInt32(9),
+                        TransoprtTypeID = reader.GetInt32(10),
+                        HotelID = reader.GetInt32(11),
+                        IsConducted = reader.GetBoolean(12)
+                    });
+                }
+            }
+            return result;
+        }
 
         // todo: Получение непопулярного тура - также как и популярные, просто last, а не first
         //public IEnumerable<Tour> GetUnpopularTour()

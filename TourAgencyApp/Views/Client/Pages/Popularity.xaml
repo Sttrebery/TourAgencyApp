@@ -23,14 +23,13 @@
                 <RowDefinition/>
                 <RowDefinition/>
                 <RowDefinition/>
-                <RowDefinition/>
             </Grid.RowDefinitions>
 
             <Border Grid.Row="0" Grid.RowSpan="2" Style="{StaticResource BorderStyle1}">
                 <StackPanel Margin="10">
                     <Label Style="{StaticResource LabelStyle2}">Популярные туры</Label>
                     <ScrollViewer Margin="10" VerticalScrollBarVisibility="Auto">
-                        <ListView ItemsSource="{Binding Tours}" >
+                        <ListView ItemsSource="{Binding TopTours}" >
                             <ListView.View>
                                 <GridView>
                                     <GridViewColumn Header="Название" Width="100">
@@ -65,15 +64,6 @@
                                                     <TextBlock Text="-" TextWrapping="Wrap"></TextBlock>
                                                     <TextBlock Text="{Binding EndDate, StringFormat=dd.MM.yyyy}" TextWrapping="Wrap"></TextBlock>
                                                 </StackPanel>
-                                            </DataTemplate>
-                                        </GridViewColumn.CellTemplate>
-                                    </GridViewColumn>
-
-                                    <!--- Количество СВОБОДНЫХ МЕСТ (скорее для актуальных туров сделать) -->
-                                    <GridViewColumn>
-                                        <GridViewColumn.CellTemplate>
-                                            <DataTemplate>
-
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
