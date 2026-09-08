@@ -662,7 +662,7 @@ namespace TourAgencyApp.Services
         //    return antiTour;
         //}
 
-        //todo: check записаться на тур( туристом)
+        //записаться на тур (туристом)
         public async Task<bool> SignUpFoTour(int clientId, int tourId)
         {
             try
@@ -671,7 +671,7 @@ namespace TourAgencyApp.Services
                 var db_client = await db.Clients.Include("ClientTours").FirstAsync(c => c.ID == clientId);
                 var db_tour = await db.Tours.Include(t => t.Tourists).FirstAsync(t => t.ID == tourId);
 
-                if( db_tour.HasAvailableSpots && // !db_tour.IsOnTour проверяется в GetActualTours
+                if( db_tour.HasAvailableSpots && // !db_tour.IsOnTour - проверяется в GetActualTours
                     !db_client.ClientTours.Contains(db_tour, new ToursEqualityComparer()))
                 {
                     db_client.ClientTours.Add(db_tour);
@@ -686,7 +686,7 @@ namespace TourAgencyApp.Services
             return false;
         }
 
-        // ======Поиск=====
+        #region Search
 
         //Поиск тура в диапазоне дат
         public IEnumerable<Tour> GetToursByDate(DateTime date1, DateTime date2)
@@ -700,7 +700,7 @@ namespace TourAgencyApp.Services
             return tours;
         }
 
-        //todo: check Поиск тура по странам
+        //Поиск тура по странам
         public IEnumerable<Tour> GetToursByCountry(string country)
         {
             List<Tour> tours = null;
@@ -711,7 +711,7 @@ namespace TourAgencyApp.Services
             return tours;
         }
 
-        //todo: check Поиск тура по способу передвижения
+        // Поиск тура по способу передвижения
         public IEnumerable<Tour> GetToursByTransport(string transport)
         {
             List<Tour> tours = null;
@@ -721,7 +721,8 @@ namespace TourAgencyApp.Services
             }
             return tours;
         }
-
+        #endregion
+        //Получение подробных сведений о туре по ID (async)
         public async Task<Tour> GetFullTourInfoByIDAsync(int tour_id)
         {
             Tour result = null!;

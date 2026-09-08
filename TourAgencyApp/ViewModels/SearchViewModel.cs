@@ -11,39 +11,36 @@ using System.Windows;
 using System.Windows.Input;
 using TourAgencyApp.Models;
 using TourAgencyApp.Services;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using TourAgencyApp.Views;
 
 namespace TourAgencyApp.ViewModels
 {
     public class SearchViewModel : INotifyPropertyChanged
     {
-        private IEnumerable<Tour> _allTours; //локальный поиск сделать
+        private IEnumerable<Tour> _allTours;
         private readonly DataService _dataService;
         private string _searchText;
         private ObservableCollection<Tour> _searchResults;
-        private IEnumerable<string> _countries;
-        private IEnumerable<string> _transports;
+        private ObservableCollection<Country> _countries;
+        private ObservableCollection<Transport> _transports;
         DateTime? _date1;
         DateTime? _date2;
-        string _country;
-        string _transport;
+        int? _countryId;
+        int? _transportId;
 
         public string SearchText
         {
             get => _searchText;
-            set
-            {
-                _searchText = value.Trim(); OnPropertyChanged();
-            }
+            set { _searchText = value.Trim(); OnPropertyChanged(); }
         }
 
-        public IEnumerable<string> Countries
+        public ObservableCollection<Country> Countries
         {
             get => _countries;
             set { _countries = value; OnPropertyChanged(); }
         }
 
-        public IEnumerable<string> Transports
+        public ObservableCollection<Transport> Transports
         {
             get => _transports;
             set { _transports = value; OnPropertyChanged(); }
@@ -65,16 +62,16 @@ namespace TourAgencyApp.ViewModels
             set { _date2 = value; OnPropertyChanged(); }
         }
 
-        public string Country
+        public int? CountryId
         {
-            get => _country;
-            set { _country = value; OnPropertyChanged(); }
+            get => _countryId;
+            set { _countryId = value; OnPropertyChanged(); }
         }
 
-        public string Transport
+        public int? TransportId
         {
-            get => _transport;
-            set { _transport = value; OnPropertyChanged(); }
+            get => _transportId;
+            set { _transportId = value; OnPropertyChanged(); }
         }
 
         public event Action ExtSearchEvent;
@@ -82,23 +79,36 @@ namespace TourAgencyApp.ViewModels
         public ICommand ExtSearchCommand { get; }
         public ICommand ClearTextCommand { get; }
         public ICommand ClearExtendedCommand { get; }
-
+        public ICommand ShowDetailCommand { get; }
         public SearchViewModel(DataService dataService)
         {
             _dataService = dataService;
             _allTours = _dataService.GetActualTours();
-            Countries = _dataService.GetAllCountries().Select(c => c.Name).Distinct().ToList();
-            Transports = _dataService.GetAllTransports().Select(t => t.Name).Distinct().ToList();
+            Countries = new(_dataService.GetAllCountries());
+            Transports = new(_dataService.GetAllTransports());
             SearchResults = new ObservableCollection<Tour>();
 
             MiniSearchCommand = new RelayCommand(ExecuteTextSearch, CanExecuteSearch);
             ClearTextCommand = new RelayCommand(() => SearchText = string.Empty);
             ClearExtendedCommand = new RelayCommand(ClearExtended);
-             
+            ShowDetailCommand = new RelayCommand<object>(ShowDetail);
             ExtSearchEvent += ExtSearch;
             ExtSearchCommand = new RelayCommand(() => ExtSearchEvent());
         }
 
+        private void ShowDetail(object? param)
+        {
+            var tour = param as Tour;
+            if (tour != null)
+            {
+                var view = new TourDetailView() { DataContext = new TourDetailViewModel(tour) };
+                view.Show();
+            }
+            else
+            {
+                MessageBox.Show("Неизвестная ошибка!");
+            }
+        }
 
         private bool CanExecuteSearch()
         {
@@ -124,21 +134,18 @@ namespace TourAgencyApp.ViewModels
 
             if (Date1.HasValue)
             {
-                //result = _dataService.GetToursByDate(Date1.Value, Date2 ?? DateTime.MaxValue);
                 result = GetToursByDate(Date1.Value, Date2 ?? DateTime.MaxValue);
             }
 
-            if (!string.IsNullOrEmpty(Country))
+            if (CountryId.HasValue)
             {
-                //var temp = _dataService.GetToursByCountry(Country);
-                var temp = _allTours.Where(t=> t.Country.Name == Country); //на айди поменять и изменить combobox-ы в поиске
+                var temp = _allTours.Where(t=> t.Country!.ID == CountryId);
                 result = result == null ? temp : result.Intersect(temp, comparer);
             }
 
-            if (!string.IsNullOrEmpty(Transport))
+            if (TransportId.HasValue)
             {
-                //var temp = _dataService.GetToursByTransport(Transport);
-                var temp = _allTours.Where(t => t.TransoprtType.Name == Transport);
+                var temp = _allTours.Where(t => t.TransoprtType!.ID == TransportId);
                 result = result == null ? temp : result.Intersect(temp, comparer);
             }
 
@@ -158,8 +165,8 @@ namespace TourAgencyApp.ViewModels
         {
             Date1 = null;
             Date2 = null;
-            Transport = string.Empty;
-            Country = string.Empty;
+            TransportId = null;
+            CountryId = null;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

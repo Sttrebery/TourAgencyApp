@@ -16,7 +16,7 @@
             <Label Content="Найденные туры" Style="{StaticResource LabelPageHeader}" />
 
             <ScrollViewer Margin="10" VerticalScrollBarVisibility="Auto">
-                <ListView ItemsSource="{Binding Tours}" >
+                <ListView ItemsSource="{Binding SearchResults}" >
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Название" Width="100">
