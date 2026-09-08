@@ -11,31 +11,35 @@ using System.Windows.Input;
 using TourAgencyApp.Services;
 using TourAgencyApp.Models;
 using TourAgencyApp.Views;
+using System.Collections.ObjectModel;
 
 namespace TourAgencyApp.ViewModels
 {
     public class ClientMainViewModel : INotifyPropertyChanged
     {
+        //todo: перепривязать combobox с турами
+        private readonly DataService _dataService;
         private Tourist _client;
         private string _name;
         private string _surname;
         private string _patronimyc;
-        private Tour _selectedTour;
-        private IEnumerable<Tour> _allTours;
+        private int _selectedTour;
+        private ObservableCollection<Tour> _allTours;
+
 
         #region Properties
-        public string SelectedTour
+        public int SelectedTour
         {
-            get => _selectedTour?.Name;
+            get => _selectedTour;
             set
             {
-                _selectedTour = _allTours.First(t => t.Name == value);
-                OnPropertyChanged();
+                _selectedTour = value; OnPropertyChanged();
             }
         }
-        public IEnumerable<string> AllTours
+        public ObservableCollection<Tour> AllTours
         {
-            get { return _allTours.Select(a => a.Name); }
+            get => _allTours;
+            set { _allTours = value; OnPropertyChanged(); }
         }
         public Tourist Client
         {
@@ -91,15 +95,15 @@ namespace TourAgencyApp.ViewModels
         public ClientMainViewModel(Tourist client)
         {
             Client = client; 
-            var dataService = new DataService();
-            _allTours = dataService.GetTours();
+            _dataService = new DataService();
+            _allTours = new(_dataService.GetActualTours());
 
             // viewModels
-            ActualToursVM = new ActualToursViewModel(dataService);
+            ActualToursVM = new ActualToursViewModel(_dataService);
             ProfileVM = new ProfileViewModel(Client.UserID);
-            PopularityVM = new PopularityViewModel(dataService);
-            SearchVM = new SearchViewModel(dataService);
-            MyToursVM = new MyToursViewModel(dataService, Client);
+            PopularityVM = new PopularityViewModel(_dataService);
+            SearchVM = new SearchViewModel(_dataService);
+            MyToursVM = new MyToursViewModel(_dataService, Client.UserID);
 
             // команды 
             SearchEvent += SearchVM.ExecuteTextSearch;
@@ -109,7 +113,7 @@ namespace TourAgencyApp.ViewModels
 
             NavigateToActualCommand = new RelayCommand(() => { CurrentPage = ActualToursVM; });
             NavigateToPopularityCommand = new RelayCommand(() => { PopularityVM.LoadData(); CurrentPage = PopularityVM; });
-            NavigateToMyToursCommand = new RelayCommand(() => { MyToursVM.LoadTours(); CurrentPage = MyToursVM; });
+            NavigateToMyToursCommand = new RelayCommand(() => { CurrentPage = MyToursVM; });
             NavigateToProfileCommand = new RelayCommand(() => CurrentPage = ProfileVM);
             SearchCommand = new RelayCommand(() => SearchEvent());
             ExtendedSearchCommand = new RelayCommand(ExtendedSearch);
@@ -121,10 +125,9 @@ namespace TourAgencyApp.ViewModels
 
         public async void SignUpForTour()
         {
-            var data = new DataService();
-            if(await data.SignUpFoTour(Client, _selectedTour))
+            if(await _dataService.SignUpFoTour(Client.ID, SelectedTour))
             {
-                MessageBox.Show($"Вы были записаны на тур {SelectedTour}");
+                MessageBox.Show($"Вы были записаны на тур {AllTours.First(f=>f.ID == SelectedTour).Name}");
             }
             else
             {

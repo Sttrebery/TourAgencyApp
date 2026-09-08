@@ -15,18 +15,24 @@
             <Label Margin="20,20,20,0" FontSize="26">Начало тура</Label>
             <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="20" >
                 <TextBlock FontSize="24">с</TextBlock>
-                <DatePicker x:Name="dtp_1" Margin="20,0,20,0" FontSize="20" SelectedDate="{Binding Date1}"></DatePicker>
+                <DatePicker x:Name="dtp_1" Margin="20,0,20,0" FontSize="20"
+                            SelectedDate="{Binding Date1}"></DatePicker>
                 <TextBlock FontSize="24">по</TextBlock>
-                <DatePicker x:Name="dtp_2" Margin="20,0,20,0" FontSize="20" SelectedDate="{Binding Date2}"></DatePicker>
+                <DatePicker x:Name="dtp_2" Margin="20,0,20,0" FontSize="20"
+                            SelectedDate="{Binding Date2}"></DatePicker>
             </WrapPanel>
 
             <WrapPanel Margin="20" >
                 <TextBlock FontSize="24">Выберите страну:</TextBlock>
-                <ComboBox x:Name="cb_country" Margin="20,0,20,0" FontSize="20" ItemsSource="{Binding Countries}" SelectedValue="{Binding Country}" ></ComboBox>
+                <ComboBox x:Name="cb_country" Margin="20,0,20,0" FontSize="20"
+                          ItemsSource="{Binding Countries}"
+                          SelectedValue="{Binding Country}" ></ComboBox>
             </WrapPanel>
 
             <Label Margin="20,20,20,0" FontSize="24">Способ передвижения</Label>
-            <ComboBox x:Name="cb_transfer" Margin="20,0,20,20" FontSize="20" ItemsSource="{Binding Transports}" SelectedValue="{Binding Transport}"></ComboBox>
+            <ComboBox x:Name="cb_transfer" Margin="20,0,20,20" FontSize="20"
+                      ItemsSource="{Binding Transports}"
+                      SelectedValue="{Binding Transport}"></ComboBox>
 
             <WrapPanel Margin="20,50,20,50" HorizontalAlignment="Center">
                 <Button x:Name="btn_find" Margin="20,0,20,0" FontSize="26" Height="50" Width="150" Command="{Binding ExtSearchCommand}">Поиск</Button>

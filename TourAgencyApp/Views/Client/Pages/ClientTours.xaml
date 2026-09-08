@@ -32,54 +32,41 @@
                         <GridViewColumn Header="Название" Width="100">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="" TextWrapping="Wrap"></TextBlock>
+                                    <TextBlock Text="{Binding Name}" TextWrapping="Wrap"></TextBlock>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Header="Описание" Width="200">
+                        <GridViewColumn Header="Описание" Width="250">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="" TextWrapping="Wrap"></TextBlock>
+                                    <TextBlock Text="{Binding Description}" TextWrapping="Wrap"></TextBlock>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn Header="Стоимость" Width="100">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="" TextWrapping="Wrap"></TextBlock>
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                        <GridViewColumn Header="Даты проведения">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <StackPanel>
-                                        <TextBlock Text="" TextWrapping="Wrap"></TextBlock>
-                                        <TextBlock Text="-" TextWrapping="Wrap"></TextBlock>
-                                        <TextBlock Text="" TextWrapping="Wrap"></TextBlock>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Cost}" ></TextBlock>
+                                        <TextBlock Text=" .руб" ></TextBlock>
                                     </StackPanel>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-
-                        <!--- Количество СВОБОДНЫХ МЕСТ (скорее для актуальных туров сделать) -->
-                        <GridViewColumn>
+                        <GridViewColumn Header="Даты проведения" Width="150">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding StartDate, StringFormat=dd.MM.yyyy}" TextWrapping="Wrap"></TextBlock>
+                                        <TextBlock Text="-" TextWrapping="Wrap"></TextBlock>
+                                        <TextBlock Text="{Binding EndDate, StringFormat=dd.MM.yyyy}" TextWrapping="Wrap"></TextBlock>
+                                    </StackPanel>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
 
                         <!--- Кнопка подробнее -->
                         <GridViewColumn Header="Детали" Width="100">
-                            <!--<GridViewColumn.HeaderTemplate>
-                                <DataTemplate>
-                                    <TextBlock TextAlignment="Justify" HorizontalAlignment="Right">
-                                        Детали
-                                    </TextBlock>
-                                </DataTemplate>
-                            </GridViewColumn.HeaderTemplate>-->
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <Button Command="{Binding DataContext.ShowDetailCommand, 

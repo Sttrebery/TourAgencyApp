@@ -78,7 +78,21 @@
 
             <WrapPanel>
                 <Label Style="{StaticResource LabelStyle1}">Выберите тур:</Label>
-                <ComboBox Name="cmb_tour" Style="{StaticResource ComboboxStyle1}" ItemsSource="{Binding AllTours}" SelectedValue="{Binding SelectedTour}" SelectionChanged="ComboBox_SelectionChanged"></ComboBox>
+                <ComboBox Name="cmb_tour" Style="{StaticResource ComboboxStyle1}"
+                          ItemsSource="{Binding Path=AllTours}"
+                          SelectedValue="{Binding Path=SelectedTour}"
+                          SelectedValuePath="ID"
+                          SelectionChanged="ComboBox_SelectionChanged">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding ID}" Margin="5"></TextBlock>
+                                <TextBlock Text="-" Margin="1,5,1,5"></TextBlock>
+                                <TextBlock Text="{Binding Name}" Margin="5"></TextBlock>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
                 <Button Name="btn_tourSign" Style="{StaticResource ButtonStyle1}" Command="{Binding SignUpForTourCommand}">Записаться</Button>
             </WrapPanel>
         </StackPanel>

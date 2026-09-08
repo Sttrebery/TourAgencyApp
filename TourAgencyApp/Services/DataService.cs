@@ -74,7 +74,7 @@ namespace TourAgencyApp.Services
                         .Include(t => t.Photos)
                         .Include(t => t.TransoprtType)
                         .Include(t => t.Hotel)
-                        .Where(t => t.IsConducted == false && t.IsOnTour == false).ToListAsync();
+                        .ToListAsync();
                     tours = tours.Where(t => t.IsConducted == false && t.IsOnTour == false).ToList();
                 }
             }
@@ -303,6 +303,18 @@ namespace TourAgencyApp.Services
             using (var db = new TourAgencyDbContext())
             {
                 var client = db.Clients.Include(c=>c.ClientTours).FirstOrDefault(c => c.UserID == user_id);                        
+                if (client != null) tours = client.ClientTours.ToList();
+            }
+            return tours;
+        }
+
+        //Туры пользователя async
+        public async Task<IEnumerable<Tour>> GetClientToursAsync(int user_id)
+        {
+            List<Tour> tours = new List<Tour>();
+            using (var db = new TourAgencyDbContext())
+            {
+                var client = await db.Clients.Include(c => c.ClientTours).FirstOrDefaultAsync(c => c.UserID == user_id);
                 if (client != null) tours = client.ClientTours.ToList();
             }
             return tours;
@@ -585,7 +597,6 @@ namespace TourAgencyApp.Services
             }
         }
 
-
         // todo: Получение популярной страны
         //public void GetTopCountry(out string name, out int count)
         //{
@@ -596,6 +607,7 @@ namespace TourAgencyApp.Services
         //        count = res.Select(r => r.AllTours).First() ?? 0;
         //    }
         //}
+
 
         // todo:  Получение популярного актуального тура
         //public IEnumerable<Tour> GetTopActualTour()
@@ -650,70 +662,29 @@ namespace TourAgencyApp.Services
         //    return antiTour;
         //}
 
-        // todo: Получение активного пользователя
-        //public string GetActiveTourist()
-        //{
-        //    string tourist = string.Empty;
-        //    try
-        //    {
-        //        using (var db = new TourAgencyDbContext())
-        //        {
-        //            var res = db.ActiveTourist().First();
-        //            tourist = $"{res.Surname} {res.FirstName} {res.Patronymic}";
-        //        }
-        //    }
-        //    catch { }
-        //    return tourist;
-        //}
-
-
         //todo: check записаться на тур( туристом)
-        public async Task<bool> SignUpFoTour(Tourist client, Tour tour)
+        public async Task<bool> SignUpFoTour(int clientId, int tourId)
         {
             try
             {
-                //sp_проверка не записан ли турист(если не получится, то c#)
                 using var db = new TourAgencyDbContext();
-                var db_client = db.Clients.Include("ClientTours").FirstOrDefault(c => c.ID == client.ID);
-                if(!db_client.ClientTours.Contains(tour, new ToursEqualityComparer()))
+                var db_client = await db.Clients.Include("ClientTours").FirstAsync(c => c.ID == clientId);
+                var db_tour = await db.Tours.Include(t => t.Tourists).FirstAsync(t => t.ID == tourId);
+
+                if( db_tour.HasAvailableSpots && // !db_tour.IsOnTour проверяется в GetActualTours
+                    !db_client.ClientTours.Contains(db_tour, new ToursEqualityComparer()))
                 {
-                    db_client.ClientTours.Add(tour);
+                    db_client.ClientTours.Add(db_tour);
                     await db.SaveChangesAsync();
+                    return true;
                 }
-                return true;
             }
             catch
             {
                 return false;
             }
+            return false;
         }
-
-        //todo: проверка клиента в туре ли он
-        //public string CheckClient(string surname, string name, string patronimyc)
-        //{
-        //    string result = string.Empty;
-        //    try
-        //    {
-        //        using(var db = new TourAgencyDbContext())
-        //        {
-        //            var temp = db.stp_GetLocation2(name,patronimyc,surname).First();
-
-        //            if (temp.IsOnTour.Value)
-        //            {
-        //                result = $"{temp.Surname} {temp.FirstName} {temp.Patronymic} в туре {temp.NameTour} с {temp.StartDate} по {temp.EndDate}";
-        //            }
-        //            else
-        //            {
-        //                result = $"{temp.Surname} {temp.FirstName} {temp.Patronymic} сейчас не в туре";
-        //            }
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        result = e.Message;
-        //    }
-        //    return result;
-        //}
 
         // ======Поиск=====
 
@@ -751,5 +722,19 @@ namespace TourAgencyApp.Services
             return tours;
         }
 
+        public async Task<Tour> GetFullTourInfoByIDAsync(int tour_id)
+        {
+            Tour result = null!;
+            using (var db = new TourAgencyDbContext())
+            {
+                result = await db.Tours.Include(t => t.Country)
+                    .Include(t => t.Photos)
+                    .Include(t => t.TransoprtType)
+                    .Include(t => t.Hotel)
+                    .Where(t => t.ID == tour_id)
+                    .FirstAsync();
+            }
+            return result;
+        }
     }
 }

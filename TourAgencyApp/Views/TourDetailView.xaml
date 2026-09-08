@@ -6,12 +6,11 @@
         xmlns:local="clr-namespace:TourAgencyApp.Views"
         xmlns:convs ="clr-namespace:TourAgencyApp"
         mc:Ignorable="d"
-        Title="Детали тура" Height="450" Width="800">
+        Title="Детали тура" Height="450" Width="800" WindowStartupLocation="CenterScreen" Icon="/res/world_travel_icon.ico">
 
     <Window.Resources>
         <convs:ByteArrayToImageConverter x:Key="ByteToImageConverter"/>
 
-        
         <!-- Анимация перехода -->
         <Storyboard x:Key="FadeInAnimation">
             <DoubleAnimation 
@@ -102,7 +101,6 @@
                 </WrapPanel>
 
                 <!-- Элемент для отображения изображения -->
-
                 <!-- Основное изображение -->
                 <Border Name="border_image" Grid.Row="1" Margin="20" Background="Black">
                     <Image Source="{Binding SelectedPhoto.PhotoValue, Converter={StaticResource ByteToImageConverter}}"

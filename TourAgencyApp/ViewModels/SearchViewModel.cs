@@ -11,12 +11,13 @@ using System.Windows;
 using System.Windows.Input;
 using TourAgencyApp.Models;
 using TourAgencyApp.Services;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TourAgencyApp.ViewModels
 {
     public class SearchViewModel : INotifyPropertyChanged
     {
-        private IEnumerable<Tour> _allTours;
+        private IEnumerable<Tour> _allTours; //локальный поиск сделать
         private readonly DataService _dataService;
         private string _searchText;
         private ObservableCollection<Tour> _searchResults;
@@ -85,7 +86,7 @@ namespace TourAgencyApp.ViewModels
         public SearchViewModel(DataService dataService)
         {
             _dataService = dataService;
-            _allTours = _dataService.GetTours();
+            _allTours = _dataService.GetActualTours();
             Countries = _dataService.GetAllCountries().Select(c => c.Name).Distinct().ToList();
             Transports = _dataService.GetAllTransports().Select(t => t.Name).Distinct().ToList();
             SearchResults = new ObservableCollection<Tour>();
@@ -123,27 +124,34 @@ namespace TourAgencyApp.ViewModels
 
             if (Date1.HasValue)
             {
-                result = _dataService.GetToursByDate(Date1.Value, Date2 ?? DateTime.MaxValue);
+                //result = _dataService.GetToursByDate(Date1.Value, Date2 ?? DateTime.MaxValue);
+                result = GetToursByDate(Date1.Value, Date2 ?? DateTime.MaxValue);
             }
 
             if (!string.IsNullOrEmpty(Country))
             {
-                var temp = _dataService.GetToursByCountry(Country);
+                //var temp = _dataService.GetToursByCountry(Country);
+                var temp = _allTours.Where(t=> t.Country.Name == Country); //на айди поменять и изменить combobox-ы в поиске
                 result = result == null ? temp : result.Intersect(temp, comparer);
             }
 
             if (!string.IsNullOrEmpty(Transport))
             {
-                var temp = _dataService.GetToursByTransport(Transport);
+                //var temp = _dataService.GetToursByTransport(Transport);
+                var temp = _allTours.Where(t => t.TransoprtType.Name == Transport);
                 result = result == null ? temp : result.Intersect(temp, comparer);
             }
 
             if (result == null) SearchResults = new ObservableCollection<Tour>();
             else
             {
-                result = result.Where(t => t.IsConducted == false && t.IsOnTour == false);
                 SearchResults = new ObservableCollection<Tour>(result);
             }
+        }
+
+        public IEnumerable<Tour> GetToursByDate(DateTime date1, DateTime date2)
+        {
+            return _allTours.Where(t => t.StartDate >= date1 && t.StartDate <= date2).ToList();
         }
 
         private void ClearExtended()
