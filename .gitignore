@@ -361,3 +361,8 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/SendingRemindingEmailToClients/SendingRemindingEmailToClients.csproj
+/SendingRemindingEmailToClients/Program.cs
+/TourAgencyApp/ViewModels/TaskManagerViewModel.cs
+/TourAgencyApp/Views/Employee/Pages/TaskManagerView.xaml
+/TourAgencyApp/Views/Employee/Pages/TaskManagerView.xaml.cs
