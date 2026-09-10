@@ -346,6 +346,109 @@ namespace TourAgencyApp.Services
             return null;
         }
 
+        // Получение популярной страны
+        public (string, int?) GetTopCountry()
+        {
+            return GetTopCountryAsync().GetAwaiter().GetResult();
+        }
+
+        // Получение популярной страны async
+        public async Task<(string, int?)> GetTopCountryAsync()
+        {
+            string name = null; int? count = null;
+            var connectionString = ConfigurationManager.ConnectionStrings["TourAgencyDB"].ConnectionString;
+            string sql = "SELECT * FROM GetTopCountry()";
+            using var conn = new SqlConnection(connectionString);
+            await conn.OpenAsync();
+            using SqlCommand cmd = new SqlCommand(sql, conn);
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                if (await reader.ReadAsync())
+                {
+                    name = reader.GetString(0);
+                    count = reader.GetInt32(1);
+                }
+            }
+            return (name, count);
+        }
+
+        //  Получение популярных туров 
+        public IEnumerable<Tour> GetTopActualTour()
+        {
+            return GetTopActualTourAsync().GetAwaiter().GetResult();
+        }
+
+        //  Получение популярных туров async 
+        public async Task<IEnumerable<Tour>> GetTopActualTourAsync()
+        {
+            var result = new List<Tour>();
+            var connectionString = ConfigurationManager.ConnectionStrings["TourAgencyDB"].ConnectionString;
+            string sql = "SELECT * FROM PopularTours";
+            using var conn = new SqlConnection(connectionString);
+            await conn.OpenAsync();
+            using SqlCommand cmd = new SqlCommand(sql, conn);
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (await reader.ReadAsync())
+                {
+                    result.Add(new Tour
+                    {
+                        ID = reader.GetInt32(1),
+                        Name = reader.GetString(2),
+                        Cost = reader.GetDecimal(3),
+                        StartDate = reader.GetDateTime(4),
+                        EndDate = reader.GetDateTime(5),
+                        Description = reader.GetString(6),
+                        MaxTouristCount = reader.GetInt32(7),
+                        ResponsibleEmployeeID = reader.GetInt32(8),
+                        CountyID = reader.GetInt32(9),
+                        TransoprtTypeID = reader.GetInt32(10),
+                        HotelID = reader.GetInt32(11),
+                        IsConducted = reader.GetBoolean(12)
+                    });
+                }
+            }
+            return result;
+        }
+
+        //  Получение архивных туров по популярности async 
+        public IEnumerable<Tour> GetTopArchiveTour()
+        {
+            return GetTopArchiveTourAsync().GetAwaiter().GetResult();
+        }
+        //  Получение архивных туров по популярности async 
+        public async Task<IEnumerable<Tour>> GetTopArchiveTourAsync()
+        {
+            var result = new List<Tour>();
+            var connectionString = ConfigurationManager.ConnectionStrings["TourAgencyDB"].ConnectionString;
+            string sql = "SELECT * FROM PopularArchiveTours";
+            using var conn = new SqlConnection(connectionString);
+            await conn.OpenAsync();
+            using SqlCommand cmd = new SqlCommand(sql, conn);
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (await reader.ReadAsync())
+                {
+                    result.Add(new Tour
+                    {
+                        ID = reader.GetInt32(1),
+                        Name = reader.GetString(2),
+                        Cost = reader.GetDecimal(3),
+                        StartDate = reader.GetDateTime(4),
+                        EndDate = reader.GetDateTime(5),
+                        Description = reader.GetString(6),
+                        MaxTouristCount = reader.GetInt32(7),
+                        ResponsibleEmployeeID = reader.GetInt32(8),
+                        CountyID = reader.GetInt32(9),
+                        TransoprtTypeID = reader.GetInt32(10),
+                        HotelID = reader.GetInt32(11),
+                        IsConducted = reader.GetBoolean(12)
+                    });
+                }
+            }
+            return result;
+        }
+
         #endregion
 
         #region Adding data into Database
@@ -596,88 +699,6 @@ namespace TourAgencyApp.Services
                 }
             }
         }
-
-        // Получение популярной страны
-        public (string, int?) GetTopCountry()
-        {
-            return GetTopCountryAsync().GetAwaiter().GetResult();
-        }
-
-        // Получение популярной страны async
-        public async Task<(string, int?)> GetTopCountryAsync()
-        {
-            string name = null; int? count = null;
-            var connectionString = ConfigurationManager.ConnectionStrings["TourAgencyDB"].ConnectionString;
-            string sql = "SELECT * FROM GetTopCountry()";
-            using var conn = new SqlConnection(connectionString);
-            await conn.OpenAsync();
-            using SqlCommand cmd = new SqlCommand(sql, conn);
-            using (SqlDataReader reader = cmd.ExecuteReader())
-            {
-                if (await reader.ReadAsync())
-                {
-                    name = reader.GetString(0);
-                    count = reader.GetInt32(1);
-                }
-            }
-            return (name, count);
-        }
-
-        //  Получение популярных туров 
-        public IEnumerable<Tour> GetTopActualTour()
-        {
-            return GetTopActualTourAsync().GetAwaiter().GetResult();
-        }
-
-        //  Получение популярных туров async 
-        public async Task<IEnumerable<Tour>> GetTopActualTourAsync()
-        {
-            var result = new List<Tour>();
-            var connectionString = ConfigurationManager.ConnectionStrings["TourAgencyDB"].ConnectionString;
-            string sql = "SELECT * FROM PopularTours";
-            using var conn = new SqlConnection(connectionString);
-            await conn.OpenAsync();
-            using SqlCommand cmd = new SqlCommand(sql, conn);
-            using (SqlDataReader reader = cmd.ExecuteReader())
-            {
-                while (await reader.ReadAsync())
-                {
-                    result.Add(new Tour
-                    {
-                        ID = reader.GetInt32(1),
-                        Name = reader.GetString(2),
-                        Cost = reader.GetDecimal(3),
-                        StartDate = reader.GetDateTime(4),
-                        EndDate = reader.GetDateTime(5),
-                        Description = reader.GetString(6),
-                        MaxTouristCount = reader.GetInt32(7),
-                        ResponsibleEmployeeID = reader.GetInt32(8),
-                        CountyID = reader.GetInt32(9),
-                        TransoprtTypeID = reader.GetInt32(10),
-                        HotelID = reader.GetInt32(11),
-                        IsConducted = reader.GetBoolean(12)
-                    });
-                }
-            }
-            return result;
-        }
-
-        // todo: Получение непопулярного тура - также как и популярные, просто last, а не first
-        //public IEnumerable<Tour> GetUnpopularTour()
-        //{
-        //    List<Tour> antiTour = new List<Tour>();
-        //    try
-        //    {
-        //        using (var db = new TourAgencyDbContext())
-        //        {
-        //            var res = db.AntiPopularTour;
-        //            Tour tmp = db.Tours.First(t => t.NameTour == res.Select(r => r.NameTour).FirstOrDefault());
-        //            antiTour.Add(tmp);
-        //        }
-        //    }
-        //    catch {}
-        //    return antiTour;
-        //}
 
         //записаться на тур (туристом)
         public async Task<bool> SignUpFoTour(int clientId, int tourId)

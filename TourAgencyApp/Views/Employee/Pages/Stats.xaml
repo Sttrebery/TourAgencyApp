@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:TourAgencyApp.Views.Employee.Pages"
       mc:Ignorable="d" 
-      d:DesignHeight="500" d:DesignWidth="700"
+      d:DesignHeight="600" d:DesignWidth="800"
       Title="Stats">
 
     <Page.Resources>
@@ -18,51 +18,229 @@
     </Page.Resources>
 
     <ScrollViewer Background="#c2dbfc" VerticalScrollBarVisibility="Auto">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
+        <DockPanel>
+            <Grid DockPanel.Dock="Top" Background="#8ca39e">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Button FontSize="18" Margin="5" Foreground="#2c2725" Command="{Binding LoadDataCommand}" >
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border"
+                    BorderBrush="#718880"
+                    BorderThickness="2"
+                    Background="#f7f2ec"
+                    CornerRadius="5">
+                                <ContentPresenter VerticalAlignment="Center"
+                                  HorizontalAlignment="Center"
+                                  Margin="4"
+                                  Content="Обновить"
+                                  TextElement.Foreground="{TemplateBinding Foreground}"
+                                  TextElement.FontSize="{TemplateBinding FontSize}"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="BorderThickness" Value="5"/>
+                                    <Setter Property="Foreground" Value="Black"/>
+                                    <Setter Property="FontSize" Value="20"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </Grid>
+            
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
 
-            <Border Grid.Row="0" Style="{StaticResource BorderStyle1}">
-                <StackPanel Margin="10">
-                    <Label Style="{StaticResource LabelStyle2}">Самый популярный тур</Label>
-                    <DataGrid ItemsSource="{Binding TopTour}" AutoGenerateColumns="False" IsReadOnly="True">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="ID" Binding="{Binding Id}" />
-                            <DataGridTextColumn Header="Наименование" Binding="{Binding NameTour}" />
-                            <DataGridTextColumn Header="Цена" Binding="{Binding CostTour}" />
-                            <DataGridTextColumn Header="Дата начала" Binding="{Binding StartDate}" />
-                            <DataGridTextColumn Header="Дата окончания" Binding="{Binding EndDate}" />
-                            <DataGridTextColumn Header="Количество мест" Binding="{Binding MaxValueTourist}" />
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </StackPanel>
-            </Border>
+                <Border Grid.Row="0" Style="{StaticResource BorderStyle1}">
+                    <StackPanel Margin="10">
+                        <Label Style="{StaticResource LabelStyle2}">Самый популярный тур</Label>
+                        <ListView ItemsSource="{Binding TopTour}" >
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Название" Width="100">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Name}" TextWrapping="Wrap"></TextBlock>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="Описание" Width="200">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Description}" TextWrapping="Wrap"></TextBlock>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="Стоимость" Width="100">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding Cost}"></TextBlock>
+                                                    <TextBlock Text=" руб."></TextBlock>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="Даты проведения" Width="150">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding StartDate, StringFormat=dd.MM.yyyy}" TextWrapping="Wrap"></TextBlock>
+                                                    <TextBlock Text="-" TextWrapping="Wrap"></TextBlock>
+                                                    <TextBlock Text="{Binding EndDate, StringFormat=dd.MM.yyyy}" TextWrapping="Wrap"></TextBlock>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
 
-            <Border  Grid.Row="1" Style="{StaticResource BorderStyle1}">
-                <StackPanel Margin="10">
-                    <Label Style="{StaticResource LabelStyle2}">Самый НЕ популярный тур</Label>
-                    <DataGrid ItemsSource="{Binding AntiTopTour}" AutoGenerateColumns="False" IsReadOnly="True">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="ID" Binding="{Binding Id}" />
-                            <DataGridTextColumn Header="Наименование" Binding="{Binding NameTour}" />
-                            <DataGridTextColumn Header="Цена" Binding="{Binding CostTour}" />
-                            <DataGridTextColumn Header="Дата начала" Binding="{Binding StartDate}" />
-                            <DataGridTextColumn Header="Дата окончания" Binding="{Binding EndDate}" />
-                            <DataGridTextColumn Header="Количество мест" Binding="{Binding MaxValueTourist}" />
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </StackPanel>
-            </Border>
+                                    <!--- Кнопка подробнее -->
+                                    <GridViewColumn Header="Детали" Width="100">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button Command="{Binding DataContext.ShowDetailCommand, 
+                                                     RelativeSource={RelativeSource AncestorType=ListView}}"
+                                                     CommandParameter="{Binding}">
+                                                    Подробнее
+                                                </Button>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </StackPanel>
+                </Border>
 
-            <Border Grid.Row="2" Style="{StaticResource BorderStyle1}">
-                <WrapPanel Margin="10" Orientation="Horizontal">
-                    <Label Style="{StaticResource LabelStyle2}">Самый популярный архивный тур</Label>
-                    <TextBlock Margin="20,0,20,0" FontSize="20" TextDecorations="Underline" Text="{Binding TopTourist}"></TextBlock>
-                </WrapPanel>
-            </Border>
-        </Grid>
+                <Border  Grid.Row="1" Style="{StaticResource BorderStyle1}">
+                    <StackPanel Margin="10">
+                        <Label Style="{StaticResource LabelStyle2}">Самый НЕ популярный тур</Label>
+                        <ListView ItemsSource="{Binding AntiTopTour}" >
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Название" Width="100">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Name}" TextWrapping="Wrap"></TextBlock>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="Описание" Width="200">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Description}" TextWrapping="Wrap"></TextBlock>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="Стоимость" Width="100">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding Cost}"></TextBlock>
+                                                    <TextBlock Text=" руб."></TextBlock>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="Даты проведения" Width="150">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding StartDate, StringFormat=dd.MM.yyyy}" TextWrapping="Wrap"></TextBlock>
+                                                    <TextBlock Text="-" TextWrapping="Wrap"></TextBlock>
+                                                    <TextBlock Text="{Binding EndDate, StringFormat=dd.MM.yyyy}" TextWrapping="Wrap"></TextBlock>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+
+                                    <!--- Кнопка подробнее -->
+                                    <GridViewColumn Header="Детали" Width="100">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button Command="{Binding DataContext.ShowDetailCommand, 
+                                                     RelativeSource={RelativeSource AncestorType=ListView}}"
+                                                     CommandParameter="{Binding}">
+                                                    Подробнее
+                                                </Button>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Row="2" Style="{StaticResource BorderStyle1}">
+                    <StackPanel Margin="10">
+                        <Label Style="{StaticResource LabelStyle2}">Самый популярный архивный тур</Label>
+                        <ListView ItemsSource="{Binding ArchiveTopTour}" >
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Название" Width="100">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Name}" TextWrapping="Wrap"></TextBlock>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="Описание" Width="200">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Description}" TextWrapping="Wrap"></TextBlock>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="Стоимость" Width="100">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding Cost}"></TextBlock>
+                                                    <TextBlock Text=" руб."></TextBlock>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="Даты проведения" Width="150">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding StartDate, StringFormat=dd.MM.yyyy}" TextWrapping="Wrap"></TextBlock>
+                                                    <TextBlock Text="-" TextWrapping="Wrap"></TextBlock>
+                                                    <TextBlock Text="{Binding EndDate, StringFormat=dd.MM.yyyy}" TextWrapping="Wrap"></TextBlock>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+
+                                    <!--- Кнопка подробнее -->
+                                    <GridViewColumn Header="Детали" Width="100">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button Command="{Binding DataContext.ShowDetailCommand, 
+                                                     RelativeSource={RelativeSource AncestorType=ListView}}"
+                                                     CommandParameter="{Binding}">
+                                                    Подробнее
+                                                </Button>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </DockPanel> 
+
     </ScrollViewer>
 </Page>
