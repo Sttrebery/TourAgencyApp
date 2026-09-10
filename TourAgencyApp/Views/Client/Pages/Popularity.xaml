@@ -27,7 +27,18 @@
 
             <Border Grid.Row="0" Grid.RowSpan="2" Style="{StaticResource BorderStyle1}">
                 <StackPanel Margin="10">
-                    <Label Style="{StaticResource LabelStyle2}">Популярные туры</Label>
+                    <WrapPanel>
+                        <Label Style="{StaticResource LabelStyle2}">Популярные туры</Label>
+                        <Button FontSize="18" Margin="5" Foreground="#2c2725" Command="{Binding LoadDataCommand}" >
+                            <Button.Template>
+                                <ControlTemplate>
+                                    <Border BorderBrush="#718880" BorderThickness="2" Background="#f7f2ec" CornerRadius="5">
+                                        <ContentControl VerticalAlignment="Center" Margin="4" HorizontalAlignment="Center" Content="Обновить"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </WrapPanel>
                     <ScrollViewer Margin="10" VerticalScrollBarVisibility="Auto">
                         <ListView ItemsSource="{Binding TopTours}" >
                             <ListView.View>

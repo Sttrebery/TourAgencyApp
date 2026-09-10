@@ -57,12 +57,11 @@
                 </StackPanel>
             </Border>
 
-            <!--- поменять на ПОПУЛЯРНЫЙ АРХИВНЫЙ ТУр -->
             <Border Grid.Row="2" Style="{StaticResource BorderStyle1}">
-                <!--<WrapPanel Margin="10" Orientation="Horizontal">
-                    <Label Style="{StaticResource LabelStyle2}">Самый активный турист</Label>
+                <WrapPanel Margin="10" Orientation="Horizontal">
+                    <Label Style="{StaticResource LabelStyle2}">Самый популярный архивный тур</Label>
                     <TextBlock Margin="20,0,20,0" FontSize="20" TextDecorations="Underline" Text="{Binding TopTourist}"></TextBlock>
-                </WrapPanel>-->
+                </WrapPanel>
             </Border>
         </Grid>
     </ScrollViewer>
