@@ -323,7 +323,8 @@ namespace TourAgencyApp.Services
         //Получение данных профиля пользователя
         public Profile GetProfileByUserID(int id)
         {
-            var connectionString = ConfigurationManager.ConnectionStrings["TourAgencyDB"].ConnectionString;
+            var connectionString = ConfigurationManager.ConnectionStrings["TourAgencyDB"]
+                .ConnectionString;
             using var conn = new SqlConnection(connectionString);
             conn.Open();
             using var cmd = new SqlCommand("st_GetProfileByUserID", conn);

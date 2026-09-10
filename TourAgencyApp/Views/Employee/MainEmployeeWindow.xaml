@@ -11,7 +11,7 @@
         WindowStartupLocation="CenterScreen"
         Icon="/res/world_travel_icon.ico"
         Height="600" Width="1100"
-        MinHeight="600" MinWidth="900">
+        MinHeight="600" MinWidth="1000">
     
     <Window.Resources>
         <ResourceDictionary>
