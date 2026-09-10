@@ -1,5 +1,9 @@
 USE [TourAgencyDB]
 GO
+
+create view PopularTours
+AS
+
 WITH ToursCount AS
 (
 SELECT tt.ClientToursID, Count(*) as cnt
@@ -9,11 +13,13 @@ GROUP BY tt.ClientToursID
 )
 
 SELECT 
+	ROW_NUMBER() OVER (ORDER BY ( tc.cnt / CAST(t.MaxTouristCount AS NUMERIC)) ) as rank,
 	t.*
-	
-	--(tc.cnt / CAST(t.MaxTouristCount AS NUMERIC)) * 100 AS rating_percent
 FROM Tours AS t
 JOIN TourTourists tt ON t.ID = tt.ClientToursID
 JOIN ToursCount tc ON tc.ClientToursID = t.ID
 WHERE t.IsConducted = 0
-ORDER BY DENSE_RANK() OVER (ORDER BY ( tc.cnt / CAST(t.MaxTouristCount AS NUMERIC)) ) ;
+GO
+
+
+SELECT * FROM  PopularTours

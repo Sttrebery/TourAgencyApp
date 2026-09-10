@@ -100,22 +100,6 @@
                     </WrapPanel>
                 </StackPanel>
             </Border>
-
-            <!--<Border Grid.Row="3" Style="{StaticResource BorderStyle1}">
-                <StackPanel Margin="10">
-                    <Label Style="{StaticResource LabelStyle2}">Самый популярный отель</Label>
-                    <DataGrid ItemsSource="{Binding TopHotel}" AutoGenerateColumns="False" IsReadOnly="True">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="ID" Binding="{Binding Id}" />
-                            <DataGridTextColumn Header="Название" Binding="{Binding Name_}" />
-                            <DataGridTextColumn Header="Местоположение" Binding="{Binding Location_}" />
-                            <DataGridTextColumn Header="Информация об отеле" Binding="{Binding  Information_}" />
-                            <DataGridTextColumn Header="Фото" Binding="{Binding ImageHotel}" />
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </StackPanel>
-            </Border>-->
-
         </Grid>
     </ScrollViewer>
 

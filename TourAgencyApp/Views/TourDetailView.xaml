@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:TourAgencyApp.Views"
         xmlns:convs ="clr-namespace:TourAgencyApp"
         mc:Ignorable="d"
-        Title="Детали тура" Height="450" Width="800" WindowStartupLocation="CenterScreen" Icon="/res/world_travel_icon.ico">
+        Title="Детали тура" MinWidth="800" MinHeight="550" Height="700" Width="800" WindowStartupLocation="CenterScreen" Icon="/res/world_travel_icon.ico">
 
     <Window.Resources>
         <convs:ByteArrayToImageConverter x:Key="ByteToImageConverter"/>
@@ -30,30 +30,35 @@
                 Duration="0:0:0.6"/>
         </Storyboard>
     </Window.Resources>
-    
-    <DockPanel>
-        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock>
-                    Тур:
+
+    <DockPanel Background="#644736">
+        <Grid DockPanel.Dock="Top" Margin="0,10,0,10" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <TextBlock FontSize="18" FontWeight="DemiBold" Foreground="#e6dac8" Padding="2">
+Тур:
                 </TextBlock>
-                <TextBlock Text="{Binding TourName}">
+                <TextBlock FontSize="18" FontWeight="DemiBold" Foreground="#e6dac8" Text="{Binding TourName}" Padding="2">
                 </TextBlock>
             </StackPanel>
 
-            <StackPanel Orientation="Horizontal">
-                <TextBlock>
-                    Даты проведения:
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="5">
+                <TextBlock FontSize="18" FontWeight="DemiBold" Foreground="#e6dac8" Padding="2">
+Даты проведения:
                 </TextBlock>
-                <TextBlock Text="{Binding StartDate, StringFormat=dd.MM.yyyy}">
+                <TextBlock FontSize="18" FontWeight="DemiBold" Foreground="#e6dac8" Padding="2" Text="{Binding StartDate, StringFormat=dd.MM.yyyy}">
                 </TextBlock>
-                <TextBlock Text=" - ">
+                <TextBlock FontSize="18" FontWeight="DemiBold" Foreground="#e6dac8" Padding="2" Text=" - ">
                 </TextBlock>
-                <TextBlock Text="{Binding EndDate, StringFormat=dd.MM.yyyy}">
+                <TextBlock FontSize="18" FontWeight="DemiBold" Foreground="#e6dac8" Padding="2" Text="{Binding EndDate, StringFormat=dd.MM.yyyy}">
                 </TextBlock>
             </StackPanel>
-            
-        </StackPanel>
+
+        </Grid>
 
         <Grid>
             <Grid.ColumnDefinitions>
@@ -61,81 +66,101 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
-            <StackPanel x:Name="stack_panel_1" Grid.Column="0" Margin="10">
-                <WrapPanel Orientation="Vertical" >
-                    <TextBlock>Описание:</TextBlock>
-                    <Border BorderBrush="Black" BorderThickness="1">
-                        <Border.Width>
-                            <Binding ElementName="stack_panel_1" Path="ActualWidth" />
-                        </Border.Width>
-                        <TextBlock Text="{Binding Description}" Height="100" TextWrapping="Wrap">
-                        </TextBlock>
+            <Border Background="#d6b08c" BorderThickness="1" BorderBrush="#332116" Padding="3" CornerRadius="2">
+                <StackPanel x:Name="stack_panel_1" Grid.Column="0" Margin="10">
+                    <Border x:Name="border_desc" Background="#f6f1e6" CornerRadius="5" Margin="0,10,0,10" >
+                        <WrapPanel Orientation="Vertical"  >
+                            <TextBlock Padding="1">Описание:</TextBlock>
+                            <Border BorderBrush="Black" Padding="5">
+                                <Border.Width>
+                                    <Binding ElementName="border_desc" Path="ActualWidth" />
+                                </Border.Width>
+                                <TextBlock Text="{Binding Description}" TextWrapping="Wrap">
+                                </TextBlock>
+                            </Border>
+                        </WrapPanel>
                     </Border>
-                </WrapPanel>
 
-                <WrapPanel>
-                    <TextBlock>Страна:</TextBlock>
-                    <TextBlock Text="{Binding CountryName}"></TextBlock>
-                </WrapPanel>
+                    <Border Background="#f6f1e6" CornerRadius="5" Margin="0,10,0,10" Padding="4">
+                        <WrapPanel>
+                            <TextBlock Padding="2">Страна:</TextBlock>
+                            <TextBlock Padding="2" Text="{Binding CountryName}"></TextBlock>
+                        </WrapPanel>
+                    </Border>
 
-                <WrapPanel>
-                    <TextBlock>Тип трансфера:</TextBlock>
-                    <TextBlock Text="{Binding TransportName}"></TextBlock>
-                </WrapPanel>
-
-                <WrapPanel>
-                    <TextBlock>Отель:</TextBlock>
-                    <TextBlock Text="{Binding HotelName}"></TextBlock>
-                </WrapPanel>
-
-            </StackPanel>
-
-            <StackPanel Grid.Column="1" Margin="20">
-                <WrapPanel>
-                    <TextBlock>Размер группы:</TextBlock>
-                    <TextBlock Text="{Binding MaxTouristCount}"></TextBlock>
-                </WrapPanel>
-                <WrapPanel>
-                    <TextBlock>Стоимость:</TextBlock>
-                    <TextBlock Text="{Binding Cost}"></TextBlock>
-                </WrapPanel>
-
-                <!-- Элемент для отображения изображения -->
-                <!-- Основное изображение -->
-                <Border Name="border_image" Grid.Row="1" Margin="20" Background="Black">
-                    <Image Source="{Binding SelectedPhoto.PhotoValue, Converter={StaticResource ByteToImageConverter}}"
-                   Stretch="Uniform">
-                        <Image.Width>
-                            <Binding ElementName="border_image" Path="ActualWidth" />
-                        </Image.Width>
-                        <!-- Триггеры для анимации -->
-                        <Image.Style>
-                            <Style TargetType="Image">
-                                <Setter Property="Opacity" Value="1"/>
-                                <Setter Property="Margin" Value="0"/>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding CurrentPhotoChanged}" Value="True">
-                                        <DataTrigger.EnterActions>
-                                            <BeginStoryboard Storyboard="{StaticResource FadeInAnimation}"/>
-                                        </DataTrigger.EnterActions>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Image.Style>
-                    </Image>
-                </Border>
-
-                <!-- Управление -->
-                <StackPanel Grid.Row="0" Orientation="Horizontal" 
-                    HorizontalAlignment="Center" Margin="10">
-                    <Button Content="◄" Command="{Binding PreviousPhotoCommand}" 
-                    FontSize="20" Width="40" Height="40" Margin="5"/>
-
-                    <Button Content="►" Command="{Binding NextPhotoCommand}" 
-                    FontSize="20" Width="40" Height="40" Margin="5"/>
+                    <Border Background="#f6f1e6" CornerRadius="5" Margin="0,10,0,10" Padding="4">
+                        <WrapPanel>
+                            <TextBlock Padding="2">Тип трансфера:</TextBlock>
+                            <TextBlock Padding="2" Text="{Binding TransportName}"></TextBlock>
+                    </WrapPanel>
+                    </Border>
+                    
+                    <Border Background="#f6f1e6" CornerRadius="5" Margin="0,10,0,10" Padding="4">
+                    <WrapPanel>
+                            <TextBlock Padding="2">Отель:</TextBlock>
+                            <TextBlock Padding="2" Text="{Binding HotelName}"></TextBlock>
+                    </WrapPanel>
+                    </Border>
+                    
                 </StackPanel>
+            </Border>
 
-            </StackPanel>
+            <Border Grid.Column="1" Background="#d6b08c" BorderThickness="1" BorderBrush="#332116" Padding="3" CornerRadius="2">
+                <StackPanel Grid.Column="1" Margin="20">
+
+                    <Border Background="#f6f1e6" CornerRadius="5" Margin="0,10,0,10" Padding="4">
+                        <WrapPanel>
+                            <TextBlock Padding="2">Размер группы:</TextBlock>
+                            <TextBlock Padding="2" Text="{Binding MaxTouristCount}"></TextBlock>
+                        </WrapPanel>
+                    </Border>
+
+                    <Border Background="#f6f1e6" CornerRadius="5" Margin="0,10,0,10" Padding="4">
+                        <WrapPanel>
+                            <TextBlock Padding="2">Стоимость:</TextBlock>
+                            <TextBlock Padding="2" Text="{Binding Cost}"></TextBlock>
+                            <TextBlock Padding="2" Text=" .руб"></TextBlock>
+                        </WrapPanel>
+                    </Border>
+                    
+                    
+                    <!-- Элемент для отображения изображения -->
+                    <!-- Основное изображение -->
+                    <Border Name="border_image" Grid.Row="1" Margin="20" BorderBrush="#2f2220" BorderThickness="3">
+                        <Image Source="{Binding SelectedPhoto.PhotoValue, Converter={StaticResource ByteToImageConverter}}"
+                   Stretch="Uniform">
+                            <Image.Width>
+                                <Binding ElementName="border_image" Path="ActualWidth" />
+                            </Image.Width>
+                            <!-- Триггеры для анимации -->
+                            <Image.Style>
+                                <Style TargetType="Image">
+                                    <Setter Property="Opacity" Value="1"/>
+                                    <Setter Property="Margin" Value="0"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding CurrentPhotoChanged}" Value="True">
+                                            <DataTrigger.EnterActions>
+                                                <BeginStoryboard Storyboard="{StaticResource FadeInAnimation}"/>
+                                            </DataTrigger.EnterActions>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
+                    </Border>
+
+                    <!-- Управление -->
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" 
+                    HorizontalAlignment="Center" Margin="10">
+                        <Button Background="#ede6da" Content="◄" Command="{Binding PreviousPhotoCommand}" 
+                    FontSize="20" Width="40" Height="40" Margin="5"/>
+
+                        <Button Background="#ede6da" Content="►" Command="{Binding NextPhotoCommand}" 
+                    FontSize="20" Width="40" Height="40" Margin="5"/>
+                    </StackPanel>
+
+                </StackPanel>
+            </Border>
         </Grid>
     </DockPanel>
 </Window>
