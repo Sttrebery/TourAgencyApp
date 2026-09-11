@@ -136,8 +136,8 @@ namespace TourAgencyApp.ViewModels
         {
             bool isFilled = true;
 
-            if(string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(MyPassword) || string.IsNullOrEmpty(RepeatedPassword)
-                || string.IsNullOrEmpty(Surname) || string.IsNullOrEmpty(Firstname) || string.IsNullOrEmpty(Patronimyc) 
+            if(string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(Surname) ||
+                string.IsNullOrEmpty(Firstname) || string.IsNullOrEmpty(Patronimyc) 
                 || string.IsNullOrEmpty(Number) || string.IsNullOrEmpty(Email))
             {
                 isFilled = false;
