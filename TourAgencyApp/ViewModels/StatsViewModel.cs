@@ -93,8 +93,8 @@ namespace TourAgencyApp.ViewModels
             }
             else
             {
-                TopTour = new ObservableCollection<Tour>([tours.Last()]);
-                AntiTopTour = new ObservableCollection<Tour>([tours.First()]);
+                TopTour = new ObservableCollection<Tour>([tours.First()]);
+                AntiTopTour = new ObservableCollection<Tour>([tours.Last()]);
             }
 
             if (arch_tours.Count() == 0)

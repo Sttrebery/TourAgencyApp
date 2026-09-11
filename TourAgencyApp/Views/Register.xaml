@@ -71,7 +71,7 @@
                 <PasswordBox x:Name="psw_2" Margin="20,5,20,10" FontSize="16" Height="40" PasswordChanged="psw_2_PasswordChanged"></PasswordBox>
             </StackPanel>
 
-            <Button x:Name="btn_register" Margin="50,20,50,50" FontSize="18" Height="40" Command="{Binding RegisterCommand}" Click="btn_register_Click" >Зарегистрироваться</Button>
+            <Button x:Name="btn_register" Margin="50,20,50,50" FontSize="18" Height="40" Command="{Binding RegisterCommand}" >Зарегистрироваться</Button>
             <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="30,30,30,200">
                 <Label FontSize="14">Уже есть аккаунт?</Label>
                 <Button x:Name="btn_login" Background="Transparent" BorderThickness="0" Foreground="Blue" FontSize="14" Click="btn_login_Click">Войдите</Button>
